@@ -125,6 +125,15 @@ export const VideoArea = styled.div<{ $color: string }>`
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   border: 1px solid ${(props) => props.$color};
   animation: ${fadeIn} 0.5s ease;
+
+  /* 비디오 태그가 영역을 꽉 채우도록 설정 */
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   @media (max-width: 900px) {
     width: 100%;
     height: 250px;
