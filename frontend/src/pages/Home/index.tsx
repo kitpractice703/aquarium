@@ -1,9 +1,10 @@
 import { useState } from "react";
-import Header from "../../components/common/Header";
-import Footer from "../../components/common/Footer";
-import HeroSection from "../../components/common/home/HeroSection";
-import ThemeSection from "../../components/home/ThemeSection";
+import Header from "../../components//Header";
+import Footer from "../../components/Footer";
 import KakaoMap from "../../components/common/KakaoMap";
+import HeroSection from "../../components/HeroSection";
+import ThemeSection from "../../components/common/ThemeSection";
+
 import * as S from "./style";
 
 const Home = () => {
@@ -87,11 +88,10 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
-      {/* 3. Theme (ID: themes) */}
-      {/* 테마 전시는 이 컴포넌트 내부에서 id="themes"를 가지고 있습니다 */}
+      {/* 3. Theme */}
       <ThemeSection />
 
-      {/* 4. Programs (ID: programs) */}
+      {/* 4. Programs */}
       <S.Section id="programs">
         <S.Container>
           <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
@@ -158,7 +158,7 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
-      {/* 5. Booking (ID: booking) */}
+      {/* 5. Booking */}
       <S.BookingSection id="booking">
         <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>
           지금 바로, 미지의 바다를 예약하세요
@@ -182,9 +182,7 @@ const Home = () => {
         </button>
       </S.BookingSection>
 
-      {/* ⚠️ Store (기프트샵) 삭제됨 */}
-
-      {/* 6. Community (ID: community) */}
+      {/* 6. Community */}
       <S.Section id="community">
         <S.Container>
           <S.SectionTitle>커뮤니티</S.SectionTitle>
