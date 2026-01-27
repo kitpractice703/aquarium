@@ -31,6 +31,7 @@ export const Gnb = styled.nav`
     font-weight: 500;
     color: #fff;
     cursor: pointer;
+    text-decoration: none;
   }
   a:hover {
     color: var(--accent-cyan);

@@ -14,7 +14,6 @@ export const Hero = styled.section`
   position: relative;
   text-align: center;
   overflow: hidden;
-  margin-bottom: 0; /* 여백 제거 */
 `;
 
 export const VideoBg = styled.video`
@@ -25,7 +24,7 @@ export const VideoBg = styled.video`
   height: 100%;
   object-fit: cover;
   z-index: -1;
-  filter: brightness(0.6); /* 글자가 잘 보이게 어둡게 처리 */
+  filter: brightness(0.6);
 `;
 
 export const Content = styled.div`
@@ -39,7 +38,6 @@ export const Title = styled.h1`
   margin-bottom: 20px;
   text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
   line-height: 1.2;
-
   @media (max-width: 768px) {
     font-size: 40px;
   }
@@ -49,7 +47,6 @@ export const Desc = styled.p`
   font-size: 20px;
   color: var(--text-gray);
   margin-bottom: 40px;
-
   @media (max-width: 768px) {
     font-size: 16px;
   }
@@ -64,7 +61,6 @@ export const BtnMain = styled.button`
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
-
   &:hover {
     background: var(--accent-cyan);
     color: #000;

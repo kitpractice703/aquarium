@@ -15,7 +15,8 @@ export const SectionTitle = styled.h2`
   font-size: 32px;
   margin-bottom: 40px;
   text-align: center;
-  color: #fff;
+  /* ⚡️ 수정됨: 흰색(#fff) -> 포인트 컬러(Cyan)로 변경하여 통일감 부여 */
+  color: var(--accent-cyan);
 `;
 
 export const Grid = styled.div`

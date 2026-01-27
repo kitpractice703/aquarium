@@ -1,8 +1,9 @@
 import { useState } from "react";
-import Header from "../../components//Header";
+import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import KakaoMap from "../../components/common/KakaoMap";
 import HeroSection from "../../components/HeroSection";
+
+import KakaoMap from "../../components/common/KakaoMap";
 import ThemeSection from "../../components/common/ThemeSection";
 
 import * as S from "./style";
@@ -88,10 +89,10 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
-      {/* 3. Theme */}
+      {/* 3. Theme (ID: themes) */}
       <ThemeSection />
 
-      {/* 4. Programs */}
+      {/* 4. Programs (ID: programs) */}
       <S.Section id="programs">
         <S.Container>
           <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
@@ -112,7 +113,6 @@ const Home = () => {
               </h4>
               <p style={{ fontSize: "14px", color: "var(--text-gray)" }}>
                 실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR 체험입니다.
-                거대한 대왕오징어와 향유고래의 전투를 눈앞에서 목격하세요.
               </p>
             </S.ProgramCol>
             <S.ProgramCol>
@@ -158,7 +158,7 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
-      {/* 5. Booking */}
+      {/* 5. Booking (ID: booking) */}
       <S.BookingSection id="booking">
         <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>
           지금 바로, 미지의 바다를 예약하세요
@@ -182,7 +182,7 @@ const Home = () => {
         </button>
       </S.BookingSection>
 
-      {/* 6. Community */}
+      {/* 6. Community (ID: community) */}
       <S.Section id="community">
         <S.Container>
           <S.SectionTitle>커뮤니티</S.SectionTitle>
@@ -237,10 +237,6 @@ const Home = () => {
                 <li style={{ marginBottom: "15px", color: "var(--text-gray)" }}>
                   주말에는 사람이 좀 많네요 ㅠㅠ{" "}
                   <span style={{ float: "right" }}>★ 4.0</span>
-                </li>
-                <li style={{ marginBottom: "15px", color: "var(--text-gray)" }}>
-                  재방문 의사 있습니다!{" "}
-                  <span style={{ float: "right" }}>★ 5.0</span>
                 </li>
               </ul>
             </S.CommBox>
