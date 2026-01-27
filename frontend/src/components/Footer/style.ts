@@ -1,73 +1,28 @@
 import styled from "styled-components";
 
+// HTML의 <footer> 태그에 해당하는 스타일 컴포넌트입니다.
 export const FooterContainer = styled.footer`
   width: 100%;
-  padding: 50px 0;
-  background-color: #05080f; /* 헤더보다 조금 더 어두운 색 */
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  margin-top: auto; /* 내용이 짧아도 바닥에 붙게 */
-`;
 
-export const Inner = styled.div`
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  /* [요청하신 디자인 반영] */
+  padding: 50px; /* 위아래 여백 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+  background-color: #05080f; /* 아주 어두운 남색 배경 */
+  color: #555; /* 텍스트 색상 (회색) */
+  font-size: 14px; /* 글자 크기 */
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    text-align: center;
+  /* [기존 프로젝트 환경 유지를 위한 설정] */
+  /* 내용이 짧아도 푸터가 화면 바닥에 붙도록 유지합니다. (Mentor's Tip) */
+  margin-top: auto;
+
+  /* 내부 <p> 태그 간의 간격을 살짝 조정하고 싶다면 아래를 추가할 수 있습니다. 
+     현재는 HTML 기본 동작(block)을 따릅니다. */
+  p {
+    margin-bottom: 5px; /* 줄 간격 확보 */
   }
-`;
 
-export const Info = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-export const Logo = styled.h2`
-  font-size: 20px;
-  color: var(--text-gray);
-  margin-bottom: 10px;
-`;
-
-export const Text = styled.p`
-  font-size: 14px;
-  color: #555;
-  line-height: 1.5;
-`;
-
-export const Copyright = styled.span`
-  font-size: 12px;
-  color: #444;
-  margin-top: 10px;
-`;
-
-export const SocialLinks = styled.div`
-  display: flex;
-  gap: 20px;
-`;
-
-export const Icon = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.3s;
-
-  &:hover {
-    background-color: var(--accent-cyan);
-    color: #000;
+  /* 마지막 p 태그는 마진 제거 */
+  p:last-child {
+    margin-bottom: 0;
   }
 `;

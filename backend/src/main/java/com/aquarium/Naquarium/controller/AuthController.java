@@ -84,4 +84,13 @@ public class AuthController {
         }
         return ResponseEntity.ok(auth.getName());
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate(); // 세션 날리기
+        }
+        return ResponseEntity.ok("로그아웃 되었습니다.");
+    }
 }

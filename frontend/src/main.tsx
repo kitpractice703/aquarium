@@ -1,11 +1,17 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
 import App from "./App.tsx";
 import { GlobalStyle } from "./styles/GlobalStyle.ts";
+import { AuthProvider } from "./context/AuthContext.tsx"; // 👈 추가
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
     <GlobalStyle />
-    <App />
-  </React.StrictMode>,
+    <AuthProvider>
+      {" "}
+      {/* 👈 이걸로 감싸야 작동함 */}
+      <App />
+    </AuthProvider>
+  </StrictMode>,
 );

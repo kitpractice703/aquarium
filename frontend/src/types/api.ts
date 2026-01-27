@@ -1,4 +1,10 @@
-// 백엔드 엔티티(Entity) 구조와 100% 일치시켰습니다.
+// axios를 쓴다면 이렇게 설정되어야 가장 깔끔합니다.
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "", // 비워두세요! (프록시가 자동으로 8080으로 연결해줍니다)
+  withCredentials: true, // 세션 유지(로그인)를 위해 필수
+});
 
 // 1. 전시 테마
 export interface Exhibition {
@@ -34,3 +40,4 @@ export interface Faq {
   question: string;
   answer: string;
 }
+export default api;
