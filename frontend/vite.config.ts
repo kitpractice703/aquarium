@@ -4,9 +4,9 @@ import react from "@vitejs/plugin-react";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "/aquarium/", // 이 부분이 추가되어야 합니다. (리포지토리 이름 앞뒤로 슬래시)
   server: {
     proxy: {
-      // '/api'로 시작하는 모든 요청을 Spring Boot 서버(8080)로 전달
       "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
