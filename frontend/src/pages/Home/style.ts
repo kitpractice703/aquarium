@@ -1,8 +1,10 @@
 import styled from "styled-components";
 
+/* 공통 섹션 */
 export const Section = styled.section`
   padding: 100px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-dark);
 `;
 
 export const Container = styled.div`
@@ -17,13 +19,13 @@ export const SectionTitle = styled.h2`
   color: var(--accent-cyan);
 `;
 
-/* [2. About Section Styles] */
+/* [2. About] */
 export const AboutGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 50px;
   align-items: center;
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }
 `;
@@ -41,7 +43,6 @@ export const InfoItem = styled.div`
   margin-bottom: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 10px;
-
   &:last-child {
     border-bottom: none;
     margin-bottom: 0;
@@ -49,7 +50,15 @@ export const InfoItem = styled.div`
   }
 `;
 
-/* [4. Program Section Styles] */
+export const MapWrapper = styled.div`
+  width: 100%;
+  height: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #222;
+`;
+
+/* [4. Programs] */
 export const ProgramLayout = styled.div`
   display: flex;
   gap: 40px;
@@ -68,7 +77,6 @@ export const ProgramCol = styled.div`
 export const ScheduleTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-
   th,
   td {
     text-align: left;
@@ -81,7 +89,7 @@ export const ScheduleTable = styled.table`
   }
 `;
 
-/* [5. Booking Section Styles] */
+/* [5. Booking] */
 export const BookingSection = styled.section`
   background: var(--accent-cyan);
   color: #000;
@@ -89,20 +97,10 @@ export const BookingSection = styled.section`
   padding: 60px 20px;
 `;
 
-/* [6. Store Section Styles] */
-export const StoreGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-`;
-
-/* [7. Community Section Styles] */
+/* [Community] - 자유게시판 제거로 2단 그리드 적용 */
 export const CommunityGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* 👈 2단으로 변경 */
   gap: 30px;
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
@@ -121,17 +119,22 @@ export const CommTitle = styled.h3`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: #fff;
+  span {
+    font-size: 14px;
+    color: var(--text-gray);
+    cursor: pointer;
+  }
 `;
 
 export const FaqItem = styled.div<{ $active: boolean }>`
   margin-bottom: 15px;
   cursor: pointer;
-
   .question {
     color: #fff;
     margin-bottom: 5px;
+    font-weight: 500;
   }
-
   .answer {
     display: ${(props) => (props.$active ? "block" : "none")};
     padding-left: 10px;
@@ -139,13 +142,6 @@ export const FaqItem = styled.div<{ $active: boolean }>`
     color: var(--text-gray);
     font-size: 13px;
     margin-top: 5px;
+    line-height: 1.5;
   }
-`;
-
-export const Footer = styled.footer`
-  padding: 50px;
-  text-align: center;
-  background: #05080f;
-  color: #555;
-  font-size: 14px;
 `;

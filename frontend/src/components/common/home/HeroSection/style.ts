@@ -1,4 +1,9 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
 
 export const Hero = styled.section`
   height: 100vh;
@@ -9,7 +14,9 @@ export const Hero = styled.section`
   position: relative;
   text-align: center;
   overflow: hidden;
+  margin-bottom: 0; /* 여백 제거 */
 `;
+
 export const VideoBg = styled.video`
   position: absolute;
   top: 0;
@@ -18,21 +25,36 @@ export const VideoBg = styled.video`
   height: 100%;
   object-fit: cover;
   z-index: -1;
-  filter: brightness(0.6); /* 어둡게 처리 */
+  filter: brightness(0.6); /* 글자가 잘 보이게 어둡게 처리 */
 `;
+
+export const Content = styled.div`
+  z-index: 10;
+  animation: ${fadeIn} 1s ease-out;
+  padding: 0 20px;
+`;
+
 export const Title = styled.h1`
   font-size: 60px;
   margin-bottom: 20px;
   text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+  line-height: 1.2;
+
   @media (max-width: 768px) {
     font-size: 40px;
   }
 `;
+
 export const Desc = styled.p`
   font-size: 20px;
   color: var(--text-gray);
   margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
+
 export const BtnMain = styled.button`
   padding: 15px 40px;
   background: transparent;
@@ -42,6 +64,7 @@ export const BtnMain = styled.button`
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
+
   &:hover {
     background: var(--accent-cyan);
     color: #000;

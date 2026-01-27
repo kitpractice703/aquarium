@@ -1,74 +1,155 @@
-import { useState } from "react";
-import * as S from "./style";
-import CommonModal from "../Modal";
+import styled from "styled-components";
 
-const Header = () => {
-  const [modalType, setModalType] = useState<"LOGIN" | "SIGNUP" | null>(null);
+/* [공통 섹션 스타일] */
+export const Section = styled.section`
+  padding: 100px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-dark);
+`;
 
-  const closeModal = () => setModalType(null);
+export const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
 
-  return (
-    <>
-      <S.HeaderContainer>
-        <S.Logo onClick={() => window.scrollTo(0, 0)}>NAQUARIUM</S.Logo>
-        <S.Gnb>
-          <a href="#about">소개</a>
-          <a href="#themes">테마 전시</a>
-          <a href="#programs">프로그램</a>
-          <a href="#community">커뮤니티</a>
-        </S.Gnb>
-        <S.UserMenu>
-          <span onClick={() => setModalType("LOGIN")}>로그인</span>
-          <span onClick={() => setModalType("SIGNUP")}>회원가입</span>
-          <span style={{ color: "var(--accent-cyan)", fontWeight: "bold" }}>
-            예매확인
-          </span>
-        </S.UserMenu>
-      </S.HeaderContainer>
+export const SectionTitle = styled.h2`
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 60px;
+  color: var(--accent-cyan);
+`;
 
-      {/* 로그인 모달 */}
-      <CommonModal
-        isOpen={modalType === "LOGIN"}
-        onClose={closeModal}
-        title="로그인"
-      >
-        <S.InputGroup>
-          <S.Label>이메일</S.Label>
-          <S.InputBox type="text" placeholder="example@email.com" />
-        </S.InputGroup>
-        <S.InputGroup>
-          <S.Label>비밀번호</S.Label>
-          <S.InputBox type="password" placeholder="••••••••" />
-        </S.InputGroup>
-        <S.BtnAction onClick={() => alert("로그인 처리 (백엔드 연동 예정)")}>
-          로그인
-        </S.BtnAction>
-      </CommonModal>
+/* [2. About Section Styles] */
+export const AboutGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
 
-      {/* 회원가입 모달 */}
-      <CommonModal
-        isOpen={modalType === "SIGNUP"}
-        onClose={closeModal}
-        title="회원가입"
-      >
-        <S.InputGroup>
-          <S.Label>이름</S.Label>
-          <S.InputBox type="text" placeholder="홍길동" />
-        </S.InputGroup>
-        <S.InputGroup>
-          <S.Label>이메일</S.Label>
-          <S.InputBox type="text" placeholder="example@email.com" />
-        </S.InputGroup>
-        <S.InputGroup>
-          <S.Label>비밀번호</S.Label>
-          <S.InputBox type="password" placeholder="••••••••" />
-        </S.InputGroup>
-        <S.BtnAction onClick={() => alert("회원가입 처리 (백엔드 연동 예정)")}>
-          가입하기
-        </S.BtnAction>
-      </CommonModal>
-    </>
-  );
-};
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+`;
 
-export default Header;
+export const InfoBox = styled.div`
+  background: var(--bg-card);
+  padding: 30px;
+  border-radius: 10px;
+  margin-top: 20px;
+`;
+
+export const InfoItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+`;
+
+export const MapWrapper = styled.div`
+  width: 100%;
+  height: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #222;
+`;
+
+/* [4. Program Section Styles] */
+export const ProgramLayout = styled.div`
+  display: flex;
+  gap: 40px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+export const ProgramCol = styled.div`
+  flex: 1;
+  background: var(--bg-card);
+  padding: 40px;
+  border-radius: 20px;
+`;
+
+export const ScheduleTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  th {
+    color: var(--text-gray);
+    font-weight: normal;
+  }
+`;
+
+/* [5. Booking Section Styles] */
+export const BookingSection = styled.section`
+  background: var(--accent-cyan);
+  color: #000;
+  text-align: center;
+  padding: 60px 20px;
+`;
+
+/* [6. Community Section Styles] */
+export const CommunityGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2단 그리드 */
+  gap: 30px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const CommBox = styled.div`
+  background: var(--bg-card);
+  padding: 30px;
+  border-radius: 15px;
+`;
+
+export const CommTitle = styled.h3`
+  font-size: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+
+  span {
+    font-size: 14px;
+    color: var(--text-gray);
+    cursor: pointer;
+  }
+`;
+
+export const FaqItem = styled.div<{ $active: boolean }>`
+  margin-bottom: 15px;
+  cursor: pointer;
+
+  .question {
+    color: #fff;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  .answer {
+    display: ${(props) => (props.$active ? "block" : "none")};
+    padding-left: 10px;
+    border-left: 2px solid var(--accent-cyan);
+    color: var(--text-gray);
+    font-size: 13px;
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+`;

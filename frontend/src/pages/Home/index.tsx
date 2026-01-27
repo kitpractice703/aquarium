@@ -1,22 +1,22 @@
 import { useState } from "react";
 import Header from "../../components/common/Header";
+import Footer from "../../components/common/Footer";
 import HeroSection from "../../components/common/home/HeroSection";
 import ThemeSection from "../../components/home/ThemeSection";
 import KakaoMap from "../../components/common/KakaoMap";
 import * as S from "./style";
 
 const Home = () => {
-  // FAQ 아코디언 상태 관리 (첫 번째 질문 0번 열어둠)
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
   return (
     <>
       <Header />
 
-      {/* 1. Hero Section (비디오 배경) */}
+      {/* 1. Hero */}
       <HeroSection />
 
-      {/* 2. About Section */}
+      {/* 2. About (ID: about) */}
       <S.Section id="about">
         <S.Container>
           <S.SectionTitle>아쿠아리움 소개</S.SectionTitle>
@@ -31,7 +31,13 @@ const Home = () => {
               >
                 심해의 비밀을 간직한 연구소
               </h3>
-              <p style={{ color: "var(--text-gray)", marginBottom: "30px" }}>
+              <p
+                style={{
+                  color: "var(--text-gray)",
+                  marginBottom: "30px",
+                  lineHeight: "1.6",
+                }}
+              >
                 Naquarium Archive는 단순한 수족관이 아닙니다.
                 <br />
                 멸종 위기종을 디지털로 복원하고, 미지의 심해 생태계를 연구하는
@@ -64,16 +70,9 @@ const Home = () => {
               <h4 style={{ marginBottom: "15px", color: "#fff" }}>
                 찾아오시는 길
               </h4>
-              <div
-                style={{
-                  width: "100%",
-                  height: "300px",
-                  borderRadius: "10px",
-                  overflow: "hidden",
-                }}
-              >
-                <KakaoMap /> {/* 기존 지도 컴포넌트 활용 */}
-              </div>
+              <S.MapWrapper>
+                <KakaoMap />
+              </S.MapWrapper>
               <p
                 style={{
                   marginTop: "10px",
@@ -88,10 +87,11 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
-      {/* 3. Theme Section (DB 연동 + 검색) */}
+      {/* 3. Theme (ID: themes) */}
+      {/* 테마 전시는 이 컴포넌트 내부에서 id="themes"를 가지고 있습니다 */}
       <ThemeSection />
 
-      {/* 4. Programs Section */}
+      {/* 4. Programs (ID: programs) */}
       <S.Section id="programs">
         <S.Container>
           <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
@@ -100,14 +100,16 @@ const Home = () => {
               <h3>체험 프로그램</h3>
               <img
                 src="https://placehold.co/500x200/222/FFF?text=Diving+Experience"
-                alt="VR 체험"
+                alt="VR"
                 style={{
                   width: "100%",
                   borderRadius: "10px",
                   marginBottom: "20px",
                 }}
               />
-              <h4 style={{ marginBottom: "10px" }}>가상 심해 다이빙 (VR)</h4>
+              <h4 style={{ marginBottom: "10px", color: "#fff" }}>
+                가상 심해 다이빙 (VR)
+              </h4>
               <p style={{ fontSize: "14px", color: "var(--text-gray)" }}>
                 실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR 체험입니다.
                 거대한 대왕오징어와 향유고래의 전투를 눈앞에서 목격하세요.
@@ -156,7 +158,7 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
-      {/* 5. Booking CTA Section */}
+      {/* 5. Booking (ID: booking) */}
       <S.BookingSection id="booking">
         <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>
           지금 바로, 미지의 바다를 예약하세요
@@ -165,6 +167,7 @@ const Home = () => {
           회원가입 시 1,000 포인트 즉시 지급!
         </p>
         <button
+          onClick={() => alert("준비중입니다.")}
           style={{
             padding: "15px 50px",
             background: "#000",
@@ -179,108 +182,14 @@ const Home = () => {
         </button>
       </S.BookingSection>
 
-      {/* 6. Store Section (Gift Shop) */}
-      <S.Section id="store">
-        <S.Container>
-          <S.SectionTitle>기프트샵</S.SectionTitle>
-          <S.StoreGrid>
-            <div
-              style={{
-                background: "var(--bg-card)",
-                borderRadius: "10px",
-                overflow: "hidden",
-                textAlign: "center",
-                paddingBottom: "20px",
-              }}
-            >
-              <img
-                src="https://placehold.co/300x300/111/fff?text=Plush"
-                alt="인형"
-                style={{ width: "100%", height: "200px", objectFit: "cover" }}
-              />
-              <h4 style={{ margin: "15px 0 5px", color: "#fff" }}>
-                심해 아귀 인형
-              </h4>
-              <p style={{ color: "var(--accent-cyan)", fontWeight: "bold" }}>
-                25,000원
-              </p>
-            </div>
-            <div
-              style={{
-                background: "var(--bg-card)",
-                borderRadius: "10px",
-                overflow: "hidden",
-                textAlign: "center",
-                paddingBottom: "20px",
-              }}
-            >
-              <img
-                src="https://placehold.co/300x300/222/fff?text=Tumbler"
-                alt="텀블러"
-                style={{ width: "100%", height: "200px", objectFit: "cover" }}
-              />
-              <h4 style={{ margin: "15px 0 5px", color: "#fff" }}>
-                친환경 텀블러
-              </h4>
-              <p style={{ color: "var(--accent-cyan)", fontWeight: "bold" }}>
-                18,000원
-              </p>
-            </div>
-            <div
-              style={{
-                background: "var(--bg-card)",
-                borderRadius: "10px",
-                overflow: "hidden",
-                textAlign: "center",
-                paddingBottom: "20px",
-              }}
-            >
-              <img
-                src="https://placehold.co/300x300/333/fff?text=Mood+Lamp"
-                alt="무드등"
-                style={{ width: "100%", height: "200px", objectFit: "cover" }}
-              />
-              <h4 style={{ margin: "15px 0 5px", color: "#fff" }}>
-                고래 무드등
-              </h4>
-              <p style={{ color: "var(--accent-cyan)", fontWeight: "bold" }}>
-                32,000원
-              </p>
-            </div>
-            <div
-              style={{
-                background: "var(--bg-card)",
-                borderRadius: "10px",
-                overflow: "hidden",
-                textAlign: "center",
-                paddingBottom: "20px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "40px",
-                  color: "var(--text-gray)",
-                  marginBottom: "10px",
-                }}
-              >
-                ➔
-              </div>
-              <h4 style={{ color: "#fff" }}>전체 상품 보기</h4>
-            </div>
-          </S.StoreGrid>
-        </S.Container>
-      </S.Section>
+      {/* ⚠️ Store (기프트샵) 삭제됨 */}
 
-      {/* 7. Community Section */}
+      {/* 6. Community (ID: community) */}
       <S.Section id="community">
         <S.Container>
           <S.SectionTitle>커뮤니티</S.SectionTitle>
           <S.CommunityGrid>
-            {/* FAQ Box */}
+            {/* FAQ */}
             <S.CommBox>
               <S.CommTitle>
                 자주 묻는 질문 <span>+</span>
@@ -309,7 +218,7 @@ const Home = () => {
               })}
             </S.CommBox>
 
-            {/* Review Box */}
+            {/* Reviews */}
             <S.CommBox>
               <S.CommTitle>
                 관람 후기 <span>more</span>
@@ -331,26 +240,9 @@ const Home = () => {
                   주말에는 사람이 좀 많네요 ㅠㅠ{" "}
                   <span style={{ float: "right" }}>★ 4.0</span>
                 </li>
-              </ul>
-            </S.CommBox>
-
-            {/* Free Board */}
-            <S.CommBox>
-              <S.CommTitle>
-                자유 게시판 <span>more</span>
-              </S.CommTitle>
-              <ul style={{ listStyle: "none" }}>
                 <li style={{ marginBottom: "15px", color: "var(--text-gray)" }}>
-                  같이 가실 분 구해요 (인천 지역)
-                </li>
-                <li style={{ marginBottom: "15px", color: "var(--text-gray)" }}>
-                  혹시 굿즈샵에 펭귄 인형 있나요?
-                </li>
-                <li style={{ marginBottom: "15px", color: "var(--text-gray)" }}>
-                  이번 시즌 포토존 위치 공유합니다
-                </li>
-                <li style={{ marginBottom: "15px", color: "var(--text-gray)" }}>
-                  홈페이지 디자인이 멋지네요 ㅎㅎ
+                  재방문 의사 있습니다!{" "}
+                  <span style={{ float: "right" }}>★ 5.0</span>
                 </li>
               </ul>
             </S.CommBox>
@@ -358,13 +250,7 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
-      <S.Footer>
-        <p>Copyright © 2026 NAQUARIUM ARCHIVE. All Rights Reserved.</p>
-        <p>
-          인천광역시 부평구 가상의 주소 | 대표: 허담 | 사업자등록번호:
-          000-00-00000
-        </p>
-      </S.Footer>
+      <Footer />
     </>
   );
 };

@@ -30,13 +30,14 @@ export const Gnb = styled.nav`
     font-size: 16px;
     font-weight: 500;
     color: #fff;
+    cursor: pointer;
   }
   a:hover {
     color: var(--accent-cyan);
   }
   @media (max-width: 768px) {
     display: none;
-  } /* 모바일 숨김 처리 */
+  }
 `;
 
 export const UserMenu = styled.div`
@@ -53,7 +54,7 @@ export const UserMenu = styled.div`
   }
 `;
 
-/* 모달 내부 폼 스타일 (여기에 정의해서 재사용) */
+/* 모달 내부 스타일 */
 export const InputGroup = styled.div`
   margin-bottom: 20px;
   text-align: left;
@@ -90,5 +91,27 @@ export const BtnAction = styled.button`
   margin-top: 10px;
   &:hover {
     background: #00dbe6;
+  }
+`;
+
+/* 구글 로그인 버튼 (흰색 배경) */
+export const GoogleBtn = styled.button`
+  width: 100%;
+  padding: 15px;
+  background: #fff;
+  color: #333;
+  border: none;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+  &:hover {
+    background: #f1f1f1;
   }
 `;
