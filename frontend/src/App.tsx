@@ -1,21 +1,44 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-// 👇 이 부분(페이지 불러오기)이 빠져서 에러가 난 것입니다. 꼭 넣어주세요!
+import styled from "styled-components";
 import Home from "./pages/Home";
 import Program from "./pages/Program";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+
+// [레이아웃] 화면 전체를 감싸는 래퍼
+const LayoutWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+`;
+
+// [본문] 헤더/푸터 사이 영역이 남은 공간을 모두 차지
+const MainContent = styled.main`
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가로 중앙 정렬 */
+`;
 
 function App() {
   return (
-    // basename 설정은 그대로 유지합니다 (GitHub Pages 배포 필수 설정)
     <Router basename={import.meta.env.BASE_URL}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/program" element={<Program />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-      </Routes>
+      <LayoutWrapper>
+        <Header />
+        <MainContent>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/program" element={<Program />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
+        </MainContent>
+        <Footer />
+      </LayoutWrapper>
     </Router>
   );
 }

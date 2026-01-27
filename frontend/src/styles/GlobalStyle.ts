@@ -12,9 +12,7 @@ export const GlobalStyle = createGlobalStyle`
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
-  html {
-    scroll-behavior: smooth; /* 👈 핵심: 부드러운 스크롤 */
-  }
+  html { scroll-behavior: smooth; }
 
   body {
     font-family: "Noto Sans KR", sans-serif;
@@ -24,6 +22,14 @@ export const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
   }
   
+  /* [핵심] 리액트 앱이 화면 전체 높이를 가지도록 강제 */
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
   a { text-decoration: none; color: inherit; transition: 0.3s; }
   ul { list-style: none; }
   button { font-family: "Noto Sans KR", sans-serif; }

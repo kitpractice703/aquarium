@@ -1,49 +1,34 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-export const Hero = styled.section`
+export const HeroContainer = styled.section`
+  width: 100%;
   height: 100vh;
+
+  /* 배경 이미지 설정 (HTML 레퍼런스 반영) */
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.3), rgba(10, 15, 28, 1)),
+    url("https://placehold.co/1920x1080/051126/FFFFFF?text=Background+Video+Loop+(Deep+Sea)")
+      no-repeat center/cover;
+
+  /* [핵심] 정중앙 정렬 */
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+  justify-content: center; /* 상하 중앙 */
+  align-items: center; /* 좌우 중앙 */
   text-align: center;
-  overflow: hidden;
 `;
 
-export const VideoBg = styled.video`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-  filter: brightness(0.6);
-`;
-
-export const Content = styled.div`
-  z-index: 10;
-  animation: ${fadeIn} 1s ease-out;
-  padding: 0 20px;
-`;
-
-export const Title = styled.h1`
+export const HeroTitle = styled.h1`
   font-size: 60px;
   margin-bottom: 20px;
+  color: #fff;
   text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
-  line-height: 1.2;
   @media (max-width: 768px) {
     font-size: 40px;
   }
 `;
 
-export const Desc = styled.p`
+export const HeroDesc = styled.p`
   font-size: 20px;
   color: var(--text-gray);
   margin-bottom: 40px;
@@ -52,7 +37,7 @@ export const Desc = styled.p`
   }
 `;
 
-export const BtnMain = styled.button`
+export const HeroBtn = styled.button`
   padding: 15px 40px;
   background: transparent;
   border: 2px solid var(--accent-cyan);

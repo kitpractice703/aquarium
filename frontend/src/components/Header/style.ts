@@ -1,18 +1,34 @@
 import styled from "styled-components";
 
-export const HeaderContainer = styled.header`
+/* [1] 배경 (Outer): 화면 전체 너비 + 유리창 효과 */
+export const HeaderWrapper = styled.header`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  padding: 20px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  height: 70px;
+  padding: 0 20px;
+
   background: rgba(10, 15, 28, 0.9);
   backdrop-filter: blur(10px);
   z-index: 1000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* 내부 콘텐츠 중앙 정렬 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+/* [2] 내용물 (Inner): 최대 1200px 제한 */
+export const HeaderContent = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const Logo = styled.div`
@@ -32,6 +48,7 @@ export const Gnb = styled.nav`
     color: #fff;
     cursor: pointer;
     text-decoration: none;
+    transition: color 0.3s;
   }
   a:hover {
     color: var(--accent-cyan);
@@ -55,7 +72,7 @@ export const UserMenu = styled.div`
   }
 `;
 
-/* 모달 내부 스타일 */
+/* 모달 스타일 유지 */
 export const InputGroup = styled.div`
   margin-bottom: 20px;
   text-align: left;
@@ -94,8 +111,6 @@ export const BtnAction = styled.button`
     background: #00dbe6;
   }
 `;
-
-/* 구글 로그인 버튼 (흰색 배경) */
 export const GoogleBtn = styled.button`
   width: 100%;
   padding: 15px;

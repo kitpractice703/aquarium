@@ -1,33 +1,53 @@
 import styled from "styled-components";
 
-export const Section = styled.section`
-  padding: 100px 0;
+/* [Outer] 배경은 꽉 차게, 내용은 중앙으로 */
+export const SectionWrapper = styled.section`
+  width: 100%;
+  padding: 100px 20px;
   background-color: var(--bg-dark);
+  display: flex;
+  justify-content: center;
 `;
 
-export const Container = styled.div`
-  width: 90%;
+/* [Inner] 내용물 제한폭 설정 */
+export const InnerContainer = styled.div`
+  width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
 `;
 
-export const SectionTitle = styled.h2`
-  font-size: 32px;
-  margin-bottom: 40px;
+export const Title = styled.h2`
+  font-size: 36px;
   text-align: center;
-  /* ⚡️ 수정됨: 흰색(#fff) -> 포인트 컬러(Cyan)로 변경하여 통일감 부여 */
+  margin-bottom: 40px;
   color: var(--accent-cyan);
 `;
 
-export const Grid = styled.div`
+export const SearchBarContainer = styled.div`
+  text-align: center;
+  margin-bottom: 50px;
+`;
+export const SearchInput = styled.input`
+  width: 50%;
+  padding: 15px;
+  border-radius: 30px;
+  border: 1px solid var(--accent-cyan);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  @media (max-width: 768px) {
+    width: 80%;
+  }
+`;
+
+export const ThemeGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 600px) {
     grid-template-columns: 1fr;
   }
 `;
@@ -36,33 +56,19 @@ export const ThemeCard = styled.div`
   background: var(--bg-card);
   border-radius: 15px;
   overflow: hidden;
+  transition: transform 0.3s;
   cursor: pointer;
-  transition: 0.3s;
-
   &:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(0, 242, 255, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   }
 `;
-
-export const CardImage = styled.img`
+export const ThemeImg = styled.img`
   width: 100%;
   height: 250px;
   object-fit: cover;
 `;
-
-export const CardInfo = styled.div`
+export const ThemeInfo = styled.div`
   padding: 20px;
   text-align: center;
-`;
-
-export const ThemeTitle = styled.h4<{ $color: string }>`
-  color: ${(props) => props.$color};
-  font-size: 20px;
-  margin-bottom: 10px;
-`;
-
-export const ThemeSubtitle = styled.p`
-  font-size: 14px;
-  color: var(--text-gray);
 `;

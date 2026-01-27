@@ -1,13 +1,18 @@
 import styled from "styled-components";
 
-/* 공통 섹션 */
+/* [핵심] justify-content: center 추가됨 */
 export const Section = styled.section`
+  width: 100%;
   padding: 100px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   background-color: var(--bg-dark);
+
+  display: flex;
+  justify-content: center;
 `;
 
 export const Container = styled.div`
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
 `;
@@ -19,7 +24,6 @@ export const SectionTitle = styled.h2`
   color: var(--accent-cyan);
 `;
 
-/* [2. About] */
 export const AboutGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -58,7 +62,6 @@ export const MapWrapper = styled.div`
   background: #222;
 `;
 
-/* [4. Programs] */
 export const ProgramLayout = styled.div`
   display: flex;
   gap: 40px;
@@ -89,18 +92,22 @@ export const ScheduleTable = styled.table`
   }
 `;
 
-/* [5. Booking] */
+/* [Booking] 내용물 중앙 정렬 추가 */
 export const BookingSection = styled.section`
+  width: 100%;
   background: var(--accent-cyan);
   color: #000;
-  text-align: center;
   padding: 60px 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 `;
 
-/* [Community] - 자유게시판 제거로 2단 그리드 적용 */
 export const CommunityGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 👈 2단으로 변경 */
+  grid-template-columns: 1fr 1fr;
   gap: 30px;
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
