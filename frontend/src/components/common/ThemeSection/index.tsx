@@ -1,94 +1,89 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
 import * as S from "./style";
-import ThemeDetailModal from "../ThemeDeatailModal";
-
-interface Exhibition {
-  id: number;
-  title: string;
-  subTitle: string;
-  imageUrl: string;
-  themeColor: string;
-}
 
 const ThemeSection = () => {
-  const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedThemeId, setSelectedThemeId] = useState(0);
-
-  useEffect(() => {
-    axios
-      .get<Exhibition[]>("http://localhost:8080/api/exhibitions")
-      .then((res) => setExhibitions(res.data))
-      .catch((err) => {
-        console.error("API 연결 실패 (더미 데이터 사용):", err);
-        setExhibitions([
-          {
-            id: 1,
-            title: "빛의 바다",
-            subTitle: "Light Sea",
-            imageUrl: "/images/theme_light.jpg",
-            themeColor: "#ffdd57",
-          },
-          {
-            id: 2,
-            title: "균형의 바다",
-            subTitle: "Balance Sea",
-            imageUrl: "/images/theme_balance.jpg",
-            themeColor: "#64ffda",
-          },
-          {
-            id: 3,
-            title: "깊은 바다",
-            subTitle: "Deep Sea",
-            imageUrl: "https://placehold.co/600x400/1a1a2e/FFF?text=Deep+Sea",
-            themeColor: "#e040fb",
-          },
-          {
-            id: 4,
-            title: "지켜야 할 바다",
-            subTitle: "Protect Sea",
-            imageUrl:
-              "https://placehold.co/600x400/1b5e20/FFF?text=Protect+Sea",
-            themeColor: "#69f0ae",
-          },
-        ]);
-      });
-  }, []);
-
-  const handleCardClick = (index: number) => {
-    setSelectedThemeId(index);
-    setIsModalOpen(true);
-  };
-
   return (
-    <>
-      {/* ⚡️ 수정됨: id="themes" 추가하여 네비게이션 스크롤 작동 */}
-      <S.Section id="themes">
-        <S.Container>
-          <S.SectionTitle>테마전시</S.SectionTitle>
-          <S.Grid>
-            {exhibitions.map((item, index) => (
-              <S.ThemeCard key={item.id} onClick={() => handleCardClick(index)}>
-                <S.CardImage src={item.imageUrl} alt={item.title} />
-                <S.CardInfo>
-                  <S.ThemeTitle $color={item.themeColor}>
-                    {item.title}
-                  </S.ThemeTitle>
-                  <S.ThemeSubtitle>{item.subTitle}</S.ThemeSubtitle>
-                </S.CardInfo>
-              </S.ThemeCard>
-            ))}
-          </S.Grid>
-        </S.Container>
-      </S.Section>
+    // 스타일 파일에 정의된 이름(SectionWrapper, InnerContainer 등)과 일치시켰습니다.
+    <S.SectionWrapper id="themes">
+      <S.InnerContainer>
+        <S.Title>테마 전시</S.Title>
 
-      <ThemeDetailModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        initialThemeId={selectedThemeId}
-      />
-    </>
+        <S.SearchBarContainer>
+          <S.SearchInput
+            type="text"
+            placeholder="관심있는 해양 생물이나 전시관을 검색해보세요. (예: 상어, 빛의 바다)"
+            onKeyPress={(e) => {
+              if (e.key === "Enter") alert("검색 기능은 준비중입니다.");
+            }}
+          />
+        </S.SearchBarContainer>
+
+        <S.ThemeGrid>
+          {/* Card 1 */}
+          <S.ThemeCard>
+            <S.ThemeImg
+              src="https://placehold.co/400x300/003366/00f2ff?text=Light+Sea"
+              alt="빛의 바다"
+            />
+            <S.ThemeInfo>
+              <h4 style={{ color: "#ffdd57" }}>빛의 바다</h4>
+              <p>
+                얕은 바다의 산호초와
+                <br />
+                공생하는 생명들의 화려한 춤
+              </p>
+            </S.ThemeInfo>
+          </S.ThemeCard>
+
+          {/* Card 2 */}
+          <S.ThemeCard>
+            <S.ThemeImg
+              src="https://placehold.co/400x300/004d40/64ffda?text=Balance+Sea"
+              alt="균형의 바다"
+            />
+            <S.ThemeInfo>
+              <h4 style={{ color: "#64ffda" }}>균형의 바다</h4>
+              <p>
+                먹이사슬의 정점과 저변,
+                <br />
+                생태계의 완벽한 조화
+              </p>
+            </S.ThemeInfo>
+          </S.ThemeCard>
+
+          {/* Card 3 */}
+          <S.ThemeCard>
+            <S.ThemeImg
+              src="https://placehold.co/400x300/1a1a2e/7b1fa2?text=Deep+Sea"
+              alt="깊은 바다"
+            />
+            <S.ThemeInfo>
+              <h4 style={{ color: "#e040fb" }}>깊은 바다</h4>
+              <p>
+                빛이 닿지 않는 곳,
+                <br />
+                발광 생물들의 신비로운 기록
+              </p>
+            </S.ThemeInfo>
+          </S.ThemeCard>
+
+          {/* Card 4 */}
+          <S.ThemeCard>
+            <S.ThemeImg
+              src="https://placehold.co/400x300/1b5e20/69f0ae?text=Protect+Sea"
+              alt="지켜야 할 바다"
+            />
+            <S.ThemeInfo>
+              <h4 style={{ color: "#69f0ae" }}>지켜야 할 바다</h4>
+              <p>
+                사라져가는 것들에 대한 기록
+                <br />
+                그리고 우리의 실천
+              </p>
+            </S.ThemeInfo>
+          </S.ThemeCard>
+        </S.ThemeGrid>
+      </S.InnerContainer>
+    </S.SectionWrapper>
   );
 };
 

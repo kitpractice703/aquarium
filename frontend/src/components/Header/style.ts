@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-/* [1] 배경 (Outer): 화면 전체 너비 + 유리창 효과 */
+/* [1] 배경 (화면 전체 너비) */
 export const HeaderWrapper = styled.header`
   position: fixed;
   top: 0;
@@ -14,13 +14,13 @@ export const HeaderWrapper = styled.header`
   z-index: 1000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-  /* 내부 콘텐츠 중앙 정렬 */
+  /* 내용물 중앙 정렬 */
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-/* [2] 내용물 (Inner): 최대 1200px 제한 */
+/* [2] 내용물 (최대 1200px) */
 export const HeaderContent = styled.div`
   width: 100%;
   max-width: 1200px;
@@ -72,7 +72,7 @@ export const UserMenu = styled.div`
   }
 `;
 
-/* 모달 스타일 유지 */
+/* 모달 내부 스타일 */
 export const InputGroup = styled.div`
   margin-bottom: 20px;
   text-align: left;
@@ -111,20 +111,22 @@ export const BtnAction = styled.button`
     background: #00dbe6;
   }
 `;
+
+/* 구글 로그인 버튼 (스타일 복구) */
 export const GoogleBtn = styled.button`
   width: 100%;
   padding: 15px;
+  margin-top: 15px;
   background: #fff;
   color: #333;
   border: none;
+  border-radius: 5px;
   font-weight: bold;
   font-size: 16px;
-  border-radius: 5px;
   cursor: pointer;
-  margin-top: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   transition: 0.3s;
   &:hover {

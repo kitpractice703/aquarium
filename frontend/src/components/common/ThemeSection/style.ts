@@ -1,15 +1,17 @@
 import styled from "styled-components";
 
-/* [Outer] 배경은 꽉 차게, 내용은 중앙으로 */
+/* [1] 배경 (화면 전체) */
 export const SectionWrapper = styled.section`
   width: 100%;
   padding: 100px 20px;
   background-color: var(--bg-dark);
+
+  /* 내용 중앙 정렬 */
   display: flex;
   justify-content: center;
 `;
 
-/* [Inner] 내용물 제한폭 설정 */
+/* [2] 내용물 (최대 1200px) */
 export const InnerContainer = styled.div`
   width: 100%;
   max-width: 1200px;
@@ -26,6 +28,7 @@ export const SearchBarContainer = styled.div`
   text-align: center;
   margin-bottom: 50px;
 `;
+
 export const SearchInput = styled.input`
   width: 50%;
   padding: 15px;
@@ -63,12 +66,23 @@ export const ThemeCard = styled.div`
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   }
 `;
+
 export const ThemeImg = styled.img`
   width: 100%;
   height: 250px;
   object-fit: cover;
 `;
+
 export const ThemeInfo = styled.div`
   padding: 20px;
   text-align: center;
+  h4 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  p {
+    color: var(--text-gray);
+    font-size: 14px;
+  }
 `;

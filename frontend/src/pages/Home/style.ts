@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-/* [핵심] justify-content: center 추가됨 */
+/* [1] 공통 레이아웃: 섹션 전체는 꽉 차게, 내용은 중앙 정렬 */
 export const Section = styled.section`
   width: 100%;
   padding: 100px 20px;
@@ -14,7 +14,6 @@ export const Section = styled.section`
 export const Container = styled.div`
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
 `;
 
 export const SectionTitle = styled.h2`
@@ -24,6 +23,7 @@ export const SectionTitle = styled.h2`
   color: var(--accent-cyan);
 `;
 
+/* [2] 소개 (About) & 오시는 길 */
 export const AboutGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -60,8 +60,10 @@ export const MapWrapper = styled.div`
   border-radius: 10px;
   overflow: hidden;
   background: #222;
+  margin-top: 15px;
 `;
 
+/* [3] 프로그램 (Programs) */
 export const ProgramLayout = styled.div`
   display: flex;
   gap: 40px;
@@ -92,7 +94,7 @@ export const ScheduleTable = styled.table`
   }
 `;
 
-/* [Booking] 내용물 중앙 정렬 추가 */
+/* [4] 예매 배너 (Booking) */
 export const BookingSection = styled.section`
   width: 100%;
   background: var(--accent-cyan);
@@ -103,11 +105,35 @@ export const BookingSection = styled.section`
   flex-direction: column;
   align-items: center;
   text-align: center;
+
+  h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  p {
+    margin-bottom: 30px;
+    font-weight: 500;
+    font-size: 18px;
+  }
+  button {
+    padding: 15px 50px;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    &:hover {
+      background: #333;
+    }
+  }
 `;
 
+/* [5] 커뮤니티 (Community) */
 export const CommunityGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
@@ -131,6 +157,21 @@ export const CommTitle = styled.h3`
     font-size: 14px;
     color: var(--text-gray);
     cursor: pointer;
+  }
+`;
+
+export const CommList = styled.ul`
+  li {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: var(--text-gray);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    &:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
   }
 `;
 
