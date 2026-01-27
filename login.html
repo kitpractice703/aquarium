@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모달 디자인 테스트</title>
+    <style>
+      /* [기본 테마 설정 - 기존 디자인 유지] */
+      :root {
+        --bg-dark: #0a0f1c;
+        --bg-card: #151e32;
+        --accent-cyan: #00f2ff;
+        --text-white: #ffffff;
+        --text-gray: #aab2c0;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-dark);
+        color: var(--text-white);
+        font-family: "Noto Sans KR", sans-serif;
+        height: 200vh; /* 스크롤 테스트용 */
+      }
+
+      /* [테스트용 메인 화면 디자인] */
+      .dummy-background {
+        padding: 50px;
+        text-align: center;
+        background:
+          linear-gradient(180deg, rgba(10, 15, 28, 0.8), #000),
+          url("https://placehold.co/1920x1080/051126/FFFFFF?text=Deep+Sea+Background")
+            center/cover;
+        height: 100vh;
+      }
+
+      h1 {
+        font-size: 40px;
+        margin-bottom: 20px;
+      }
+      p {
+        color: var(--text-gray);
+        margin-bottom: 40px;
+      }
+
+      /* 버튼 스타일 */
+      .btn-test {
+        padding: 15px 30px;
+        background: transparent;
+        border: 2px solid var(--accent-cyan);
+        color: var(--accent-cyan);
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+        margin: 10px;
+      }
+      .btn-test:hover {
+        background: var(--accent-cyan);
+        color: #000;
+        box-shadow: 0 0 20px var(--accent-cyan);
+      }
+
+      /* =========================================
+       [모달 핵심 CSS] - 리액트로 옮길 부분
+       ========================================= */
+
+      /* 1. 뒷배경 (Overlay) */
+      .modal-overlay {
+        display: none; /* 평소엔 숨김 */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* 어두운 반투명 */
+        backdrop-filter: blur(8px); /* 여기가 핵심: 뒤쪽 뿌옇게 */
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* 모달이 활성화(open) 되면 보임 */
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      /* 2. 모달 창 (Container) */
+      .modal-container {
+        background-color: var(--bg-card);
+        width: 90%;
+        max-width: 450px;
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+
+        /* 등장 애니메이션 */
+        transform: translateY(20px);
+        opacity: 0;
+        transition: all 0.3s ease-out;
+      }
+
+      /* 모달이 열리면 제자리로 슥 올라옴 */
+      .modal-overlay.open .modal-container {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* 3. 헤더 (제목 + 닫기버튼) */
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .modal-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .btn-close {
+        background: none;
+        border: none;
+        color: #aaa;
+        font-size: 28px;
+        cursor: pointer;
+        line-height: 1;
+      }
+      .btn-close:hover {
+        color: #fff;
+      }
+
+      /* 4. 내용 (Content) */
+      .modal-content {
+        padding: 30px 25px;
+      }
+
+      /* [테스트용] 로그인 폼 스타일 */
+      .input-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      .input-group label {
+        display: block;
+        color: var(--text-gray);
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+      .input-box {
+        width: 100%;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        color: #fff;
+        font-size: 16px;
+      }
+      .input-box:focus {
+        outline: none;
+        border-color: var(--accent-cyan);
+      }
+      .btn-action {
+        width: 100%;
+        padding: 15px;
+        background: var(--accent-cyan);
+        color: #000;
+        border: none;
+        font-weight: bold;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .google-btn {
+        width: 100%;
+        padding: 15px;
+        background: #fff;
+        color: #333;
+        border: none;
+        font-weight: bold;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dummy-background">
+      <h1>NAQUARIUM ARCHIVE</h1>
+      <p>아래 버튼을 눌러 모달 디자인을 확인하세요.</p>
+
+      <button class="btn-test" onclick="openModal('로그인')">
+        로그인 모달 열기
+      </button>
+      <button class="btn-test" onclick="openModal('회원가입')">
+        회원가입 모달 열기
+      </button>
+      <button class="btn-test" onclick="openModal('예매확인')">
+        예매확인 모달 열기
+      </button>
+
+      <br /><br />
+      <p>뒤 배경이 흐려지는(Blur) 효과를 확인해보세요.</p>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+      <div class="modal-container" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title" id="modalTitle">제목</div>
+          <button class="btn-close" onclick="closeModalForce()">&times;</button>
+        </div>
+
+        <div class="modal-content" id="modalContent"></div>
+      </div>
+    </div>
+
+    <script>
+      // [간단한 동작 스크립트]
+      const overlay = document.getElementById("modalOverlay");
+      const titleEl = document.getElementById("modalTitle");
+      const contentEl = document.getElementById("modalContent");
+
+      // 모달 내용 템플릿 (로그인 예시)
+      const loginFormHtml = `
+      <div class="input-group">
+        <label>이메일</label>
+        <input type="text" class="input-box" placeholder="example@email.com">
+      </div>
+      <div class="input-group">
+        <label>비밀번호</label>
+        <input type="password" class="input-box" placeholder="••••••••">
+      </div>
+      <button class="btn-action">로그인</button>
+      <button class="google-btn">
+        <span style="font-size:18px">G</span> Google 계정으로 로그인
+      </button>
+    `;
+
+      const signupFormHtml = `
+      <p style="color: var(--text-gray)">아쿠아리움의 새로운 다이버가 되어보세요.</p>
+      <br>
+      <button class="btn-action">이메일로 가입하기</button>
+    `;
+
+      // 모달 열기 함수
+      function openModal(type) {
+        titleEl.innerText = type; // 제목 변경
+
+        // 내용 변경 (예시)
+        if (type === "로그인") {
+          contentEl.innerHTML = loginFormHtml;
+        } else {
+          contentEl.innerHTML = signupFormHtml;
+        }
+
+        overlay.classList.add("open"); // 보이기
+        document.body.style.overflow = "hidden"; // 뒷배경 스크롤 막기
+      }
+
+      // 모달 닫기 (배경 클릭 시)
+      function closeModal(e) {
+        if (e.target === overlay) {
+          closeModalForce();
+        }
+      }
+
+      // 모달 닫기 (X버튼 등 강제 종료)
+      function closeModalForce() {
+        overlay.classList.remove("open");
+        document.body.style.overflow = "auto"; // 스크롤 풀기
+      }
+    </script>
+  </body>
+</html>

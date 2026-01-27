@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Naquarium Archive - 아쿠아리움</title>
+    <style>
+      /* [Global Reset & Variables] */
+      :root {
+        --bg-dark: #0a0f1c; /* 심해 같은 아주 어두운 남색 */
+        --bg-card: #151e32; /* 카드 배경 */
+        --accent-cyan: #00f2ff; /* 발광 생물 같은 네온 시안 */
+        --text-white: #ffffff;
+        --text-gray: #aab2c0;
+        --padding-section: 100px 20px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Noto Sans KR", sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-white);
+        line-height: 1.6;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      ul {
+        list-style: none;
+      }
+
+      /* [Header & GNB] */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(10, 15, 28, 0.9);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--accent-cyan);
+        letter-spacing: 1px;
+      }
+      .gnb {
+        display: flex;
+        gap: 30px;
+      }
+      .gnb a {
+        font-size: 16px;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+      .gnb a:hover {
+        color: var(--accent-cyan);
+      }
+      .user-menu {
+        display: flex;
+        gap: 15px;
+        font-size: 14px;
+        color: var(--text-gray);
+      }
+
+      /* [Common Utilities] */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .section-title {
+        font-size: 36px;
+        text-align: center;
+        margin-bottom: 60px;
+        color: var(--accent-cyan);
+      }
+      .section-desc {
+        text-align: center;
+        margin-top: -40px;
+        margin-bottom: 60px;
+        color: var(--text-gray);
+      }
+      section {
+        padding: var(--padding-section);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* [1. Hero Section] */
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background:
+          linear-gradient(rgba(0, 0, 0, 0.3), rgba(10, 15, 28, 1)),
+          url("https://placehold.co/1920x1080/051126/FFFFFF?text=Background+Video+Loop+(Deep+Sea)")
+            no-repeat center/cover;
+        text-align: center;
+      }
+      .hero h1 {
+        font-size: 60px;
+        margin-bottom: 20px;
+        text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+      }
+      .hero p {
+        font-size: 20px;
+        color: var(--text-gray);
+        margin-bottom: 40px;
+      }
+      .btn-main {
+        padding: 15px 40px;
+        background: transparent;
+        border: 2px solid var(--accent-cyan);
+        color: var(--accent-cyan);
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .btn-main:hover {
+        background: var(--accent-cyan);
+        color: #000;
+        box-shadow: 0 0 30px var(--accent-cyan);
+      }
+
+      /* [2. About Section] */
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+      }
+      .about-text h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #fff;
+      }
+      .info-box {
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 10px;
+      }
+      .map-area {
+        width: 100%;
+        height: 300px;
+        background: #222;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+      }
+
+      /* [3. Themes + Search] */
+      .search-container {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+      .search-bar {
+        width: 50%;
+        padding: 15px;
+        border-radius: 30px;
+        border: 1px solid var(--accent-cyan);
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-size: 16px;
+        outline: none;
+      }
+      .theme-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+      .theme-card {
+        background: var(--bg-card);
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
+      .theme-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+      }
+      .theme-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+      }
+      .theme-info {
+        padding: 20px;
+        text-align: center;
+      }
+      .theme-info h4 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      /* [4. Programs] */
+      .program-layout {
+        display: flex;
+        gap: 40px;
+      }
+      .program-col {
+        flex: 1;
+        background: var(--bg-card);
+        padding: 40px;
+        border-radius: 20px;
+      }
+      .program-col h3 {
+        margin-bottom: 30px;
+        color: var(--accent-cyan);
+        border-left: 4px solid var(--accent-cyan);
+        padding-left: 15px;
+      }
+      .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .schedule-table th,
+      .schedule-table td {
+        text-align: left;
+        padding: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .schedule-table th {
+        color: var(--text-gray);
+        font-weight: normal;
+      }
+
+      /* [5. Community Preview] */
+      .community-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 30px;
+      }
+      .comm-box {
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 15px;
+      }
+      .comm-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .comm-list li {
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: var(--text-gray);
+        cursor: pointer;
+      }
+      .comm-list li:hover {
+        color: #fff;
+        text-decoration: underline;
+      }
+      .faq-item {
+        margin-bottom: 15px;
+        cursor: pointer;
+      }
+      .faq-q {
+        color: #fff;
+        margin-bottom: 5px;
+      }
+      .faq-a {
+        color: var(--text-gray);
+        font-size: 13px;
+        display: none;
+        padding-left: 10px;
+        border-left: 2px solid var(--accent-cyan);
+      }
+      .faq-item.active .faq-a {
+        display: block;
+      }
+
+      /* Footer */
+      footer {
+        padding: 50px;
+        text-align: center;
+        background: #05080f;
+        color: #555;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">NAQUARIUM</div>
+      <nav class="gnb">
+        <a href="#about">소개</a>
+        <a href="#themes">테마 전시</a>
+        <a href="#programs">프로그램</a>
+        <a href="#store">기프트샵</a> <a href="#community">커뮤니티</a>
+      </nav>
+      <div class="user-menu">
+        <span>로그인</span>
+        <span>회원가입</span>
+        <span style="color: var(--accent-cyan); font-weight: bold"
+          >예매확인</span
+        >
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1>보이지 않던 바다, 그 너머의 기록</h1>
+      <p>
+        현실과 허구의 경계, 심해 3,000m의 아쿠아리움에 오신 것을 환영합니다.
+      </p>
+      <button class="btn-main" onclick="location.href = '#booking'">
+        관람 예매하기
+      </button>
+    </section>
+
+    <section id="about" class="container">
+      <h2 class="section-title">아쿠아리움 소개</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <h3>심해의 비밀을 간직한 연구소</h3>
+          <p style="color: var(--text-gray); margin-bottom: 30px">
+            Naquarium Archive는 단순한 수족관이 아닙니다. <br />
+            멸종 위기종을 디지털로 복원하고, 미지의 심해 생태계를 연구하는
+            <br />
+            가상의 해저 기지입니다.
+          </p>
+
+          <div class="info-box">
+            <h4 style="margin-bottom: 15px; color: #fff">
+              이용 요금 및 운영 시간
+            </h4>
+            <div class="info-item">
+              <span>성인 (19세 이상)</span> <span>35,000원</span>
+            </div>
+            <div class="info-item">
+              <span>청소년 (13세~18세)</span> <span>28,000원</span>
+            </div>
+            <div class="info-item">
+              <span>운영 시간</span> <span>10:00 - 22:00</span>
+            </div>
+            <div class="info-item" style="border: none; color: #ff6b6b">
+              <span>휴관일</span> <span>매월 첫째주 월요일</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 15px; color: #fff">찾아오시는 길</h4>
+          <div class="map-area">
+            <img
+              src="https://placehold.co/600x300/1a2639/FFFFFF?text=Interactive+Map+Area"
+              alt="지도"
+              style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 10px;
+              "
+            />
+          </div>
+          <p style="margin-top: 10px; font-size: 14px; color: var(--text-gray)">
+            인천광역시 계양구 아라뱃길 해저 2터미널 (가상 위치)
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="themes" class="container">
+      <h2 class="section-title">테마 전시</h2>
+
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-bar"
+          placeholder="관심있는 해양 생물이나 전시관을 검색해보세요. (예: 상어, 빛의 바다)"
+        />
+      </div>
+
+      <div class="theme-grid">
+        <div class="theme-card">
+          <img
+            src="https://placehold.co/400x300/003366/00f2ff?text=Light+Sea"
+            class="theme-img"
+            alt="빛의 바다"
+          />
+          <div class="theme-info">
+            <h4 style="color: #ffdd57">빛의 바다</h4>
+            <p style="font-size: 14px; color: var(--text-gray)">
+              얕은 바다의 산호초와 <br />공생하는 생명들의 화려한 춤
+            </p>
+          </div>
+        </div>
+        <div class="theme-card">
+          <img
+            src="https://placehold.co/400x300/004d40/64ffda?text=Balance+Sea"
+            class="theme-img"
+            alt="균형의 바다"
+          />
+          <div class="theme-info">
+            <h4 style="color: #64ffda">균형의 바다</h4>
+            <p style="font-size: 14px; color: var(--text-gray)">
+              먹이사슬의 정점과 저변,<br />생태계의 완벽한 조화
+            </p>
+          </div>
+        </div>
+        <div class="theme-card">
+          <img
+            src="https://placehold.co/400x300/1a1a2e/7b1fa2?text=Deep+Sea"
+            class="theme-img"
+            alt="깊은 바다"
+          />
+          <div class="theme-info">
+            <h4 style="color: #e040fb">깊은 바다</h4>
+            <p style="font-size: 14px; color: var(--text-gray)">
+              빛이 닿지 않는 곳,<br />발광 생물들의 신비로운 기록
+            </p>
+          </div>
+        </div>
+        <div class="theme-card">
+          <img
+            src="https://placehold.co/400x300/1b5e20/69f0ae?text=Protect+Sea"
+            class="theme-img"
+            alt="지켜야 할 바다"
+          />
+          <div class="theme-info">
+            <h4 style="color: #69f0ae">지켜야 할 바다</h4>
+            <p style="font-size: 14px; color: var(--text-gray)">
+              사라져가는 것들에 대한 기록<br />그리고 우리의 실천
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="programs" class="container">
+      <h2 class="section-title">프로그램 & 일정</h2>
+      <div class="program-layout">
+        <div class="program-col">
+          <h3>체험 프로그램</h3>
+          <img
+            src="https://placehold.co/500x200/222/FFF?text=Diving+Experience"
+            style="width: 100%; border-radius: 10px; margin-bottom: 20px"
+          />
+          <h4 style="margin-bottom: 10px">가상 심해 다이빙 (VR)</h4>
+          <p style="font-size: 14px; color: var(--text-gray)">
+            실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR 체험입니다.
+            거대한 대왕오징어와 향유고래의 전투를 눈앞에서 목격하세요.
+          </p>
+        </div>
+        <div class="program-col">
+          <h3>공연 시간표 (Today)</h3>
+          <table class="schedule-table">
+            <tr>
+              <th>시간</th>
+              <th>공연명</th>
+              <th>장소</th>
+              <th>상태</th>
+            </tr>
+            <tr>
+              <td>11:00</td>
+              <td>돌고래의 꿈 (디지털)</td>
+              <td>오션 아레나</td>
+              <td style="color: #ff6b6b">마감</td>
+            </tr>
+            <tr>
+              <td>14:00</td>
+              <td>심해의 빛 쇼</td>
+              <td>딥 블루 홀</td>
+              <td style="color: var(--accent-cyan)">예매가능</td>
+            </tr>
+            <tr>
+              <td>16:00</td>
+              <td>펭귄 생태 설명회</td>
+              <td>극지방 존</td>
+              <td style="color: var(--accent-cyan)">예매가능</td>
+            </tr>
+            <tr>
+              <td>19:00</td>
+              <td>나이트 라군 파티</td>
+              <td>중앙 광장</td>
+              <td style="color: var(--text-gray)">준비중</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="booking"
+      style="
+        background: var(--accent-cyan);
+        color: #000;
+        text-align: center;
+        padding: 60px 20px;
+      "
+    >
+      <h2 style="font-size: 32px; margin-bottom: 20px">
+        지금 바로, 미지의 바다를 예약하세요
+      </h2>
+      <p style="margin-bottom: 30px; font-weight: 500">
+        회원가입 시 1,000 포인트 즉시 지급!
+      </p>
+      <button
+        style="
+          padding: 15px 50px;
+          background: #000;
+          color: #fff;
+          border: none;
+          font-size: 18px;
+          cursor: pointer;
+          font-weight: bold;
+        "
+      >
+        예매 페이지로 이동 ➔
+      </button>
+    </section>
+    <section id="store" class="container">
+      <h2 class="section-title">기프트샵</h2>
+      <p class="section-desc">심해의 기억을 일상으로 가져가세요.</p>
+
+      <div
+        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px"
+      >
+        <div
+          style="
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 20px;
+          "
+        >
+          <img
+            src="https://placehold.co/300x300/111/fff?text=Deep+Sea+Plush"
+            style="width: 100%; height: 200px; object-fit: cover"
+          />
+          <h4 style="margin: 15px 0 5px; color: #fff">심해 아귀 인형</h4>
+          <p style="color: var(--accent-cyan); font-weight: bold">25,000원</p>
+        </div>
+        <div
+          style="
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 20px;
+          "
+        >
+          <img
+            src="https://placehold.co/300x300/222/fff?text=Eco+Tumbler"
+            style="width: 100%; height: 200px; object-fit: cover"
+          />
+          <h4 style="margin: 15px 0 5px; color: #fff">친환경 텀블러</h4>
+          <p style="color: var(--accent-cyan); font-weight: bold">18,000원</p>
+        </div>
+        <div
+          style="
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 20px;
+          "
+        >
+          <img
+            src="https://placehold.co/300x300/333/fff?text=Whale+Mood+Lamp"
+            style="width: 100%; height: 200px; object-fit: cover"
+          />
+          <h4 style="margin: 15px 0 5px; color: #fff">고래 무드등</h4>
+          <p style="color: var(--accent-cyan); font-weight: bold">32,000원</p>
+        </div>
+        <div
+          style="
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+          "
+        >
+          <div
+            style="
+              font-size: 40px;
+              color: var(--text-gray);
+              margin-bottom: 10px;
+            "
+          >
+            ➔
+          </div>
+          <h4 style="color: #fff">전체 상품 보기</h4>
+        </div>
+      </div>
+    </section>
+    <section id="community" class="container">
+      <h2 class="section-title">커뮤니티</h2>
+      <div class="community-grid">
+        <div class="comm-box">
+          <div class="comm-title">자주 묻는 질문 <span>+</span></div>
+          <div class="faq-item active">
+            <div class="faq-q">Q. 예매 취소는 언제까지 가능한가요?</div>
+            <div class="faq-a">관람일 전일 23:59까지 100% 환불 가능합니다.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Q. 주차장 이용 안내</div>
+            <div class="faq-a">
+              지하 2층부터 4층까지 무료로 이용 가능합니다.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Q. 음식물 반입이 되나요?</div>
+            <div class="faq-a">음료를 제외한 음식물 반입은 제한됩니다.</div>
+          </div>
+        </div>
+
+        <div class="comm-box">
+          <div class="comm-title">관람 후기 <span>more</span></div>
+          <ul class="comm-list">
+            <li>
+              [포토] 빛의 바다 너무 아름다워요!
+              <span style="float: right">★ 5.0</span>
+            </li>
+            <li>
+              아이들이 VR 체험을 너무 좋아하네요.
+              <span style="float: right">★ 4.5</span>
+            </li>
+            <li>
+              돌고래 공연 감동적입니다...
+              <span style="float: right">★ 5.0</span>
+            </li>
+            <li>
+              주말에는 사람이 좀 많네요 ㅠㅠ
+              <span style="float: right">★ 4.0</span>
+            </li>
+            <li>
+              재방문 의사 있습니다! <span style="float: right">★ 5.0</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="comm-box">
+          <div class="comm-title">자유 게시판 <span>more</span></div>
+          <ul class="comm-list">
+            <li>같이 가실 분 구해요 (인천 지역)</li>
+            <li>혹시 굿즈샵에 펭귄 인형 있나요?</li>
+            <li>이번 시즌 포토존 위치 공유합니다</li>
+            <li>홈페이지 디자인이 멋지네요 ㅎㅎ</li>
+            <li>심해 물고기 이름 알려주세요 (사진有)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Copyright © 2026 NAQUARIUM ARCHIVE. All Rights Reserved.</p>
+      <p>
+        인천광역시 부평구 가상의 주소 | 대표: 허담 | 사업자등록번호:
+        000-00-00000
+      </p>
+    </footer>
+
+    <script>
+      // [Simple Interactions]
+
+      // 1. FAQ Accordion Logic
+      const faqItems = document.querySelectorAll(".faq-item");
+      faqItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          // Close others (Optional)
+          // faqItems.forEach(i => i.classList.remove('active'));
+          item.classList.toggle("active");
+        });
+      });
+
+      // 2. Search Bar Placeholder Alert
+      const searchInput = document.querySelector(".search-bar");
+      searchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          alert(
+            `'${searchInput.value}'에 대한 검색 결과 페이지로 이동합니다. (구현 예정)`,
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
