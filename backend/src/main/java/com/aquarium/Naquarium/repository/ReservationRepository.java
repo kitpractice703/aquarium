@@ -12,4 +12,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // 2. [새 코드 추가] 이메일로 찾고 + 최신순 정렬 (현재 예매확인 모달에서 사용)
     List<Reservation> findByUser_EmailOrderByReservedAtDesc(String email);
 
+    boolean existsByUserEmailAndVisitDate(String email, String visitDate);
 }

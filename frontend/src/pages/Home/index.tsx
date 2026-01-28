@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { api } from "../../api/axios";
+import type { ScheduleData, ReviewData } from "../../types/api";
+
 import HeroSection from "../../components/HeroSection";
 import KakaoMap from "../../components/common/KakaoMap";
 import ThemeSection from "../../components/common/ThemeSection";
@@ -38,6 +41,7 @@ const Home = () => {
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
 
+  // any 타입 대신 명시적인 타입을 사용하는 것이 좋으나, 현재는 로직 유지를 위해 둡니다.
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
@@ -49,15 +53,16 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // (1) 공연 일정 데이터 가져오기
+        // [MODIFIED] api 호출 시 제네릭 타입 명시 (axios 설정에 따라 다를 수 있으나 명시 추천)
+        // api는 import 해온 axios 인스턴스입니다.
         const scheduleRes = await api.get<ScheduleData[]>("/schedules");
         setSchedules(scheduleRes.data);
 
-        // (2) 관람 후기 데이터 가져오기
         const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
         setReviews(reviewRes.data);
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
+        // [ADDED] 에러 발생 시 사용자에게 보여줄 UI 처리가 필요할 수 있습니다. (예: 빈 배열 유지)
       }
     };
 
@@ -76,7 +81,6 @@ const Home = () => {
   // 후기 클릭 핸들러 (기존 유지)
   const handleReviewClick = (reviewId: number) => {
     alert(`${reviewId}번 게시글 상세 페이지로 이동합니다.`);
-    // 추후 navigate(`/reviews/${reviewId}`) 로 변경 예정
   };
 
   return (
@@ -111,7 +115,7 @@ const Home = () => {
                   <span>성인 (19세 이상)</span> <span>35,000원</span>
                 </S.InfoItem>
                 <S.InfoItem>
-                  <span>청소년 (13세~18세)</span> <span>28,000원</span>
+                  <span>청소년 (13세~18세)</span> <span>31,000원</span>
                 </S.InfoItem>
                 <S.InfoItem>
                   <span>운영 시간</span> <span>10:00 - 22:00</span>
@@ -238,8 +242,7 @@ const Home = () => {
                       매월 첫째 주 월요일은 시설 점검을 위해 쉽니다.
                     </p>
                   </div>
-                ) : // [4] 실제 schedules 데이터로 렌더링
-                schedules.length > 0 ? (
+                ) : schedules.length > 0 ? (
                   schedules.map((item) => (
                     <S.ScheduleItem key={item.id}>
                       <div className="time">{item.time}</div>
@@ -314,7 +317,6 @@ const Home = () => {
               </S.CommTitle>
 
               <S.CommList>
-                {/* [5] 실제 reviews 데이터로 렌더링 (최신 5개만) */}
                 {reviews.length > 0 ? (
                   reviews.slice(0, 5).map((review) => (
                     <li

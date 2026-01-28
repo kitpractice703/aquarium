@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../../api/axios"; // [MODIFIED] axios 대신 우리가 만든 api 인스턴스 사용
 import * as S from "./style";
 
 const Signup = () => {
@@ -22,14 +22,14 @@ const Signup = () => {
     setErrorMsg("");
   };
 
-  // [NEW] 엔터키 누르면 가입 실행
+  // 엔터키 누르면 가입 실행
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSubmit();
     }
   };
 
-  // [NEW] 배경 클릭 시 메인으로 이동 (모달 닫기 효과)
+  // 배경 클릭 시 메인으로 이동 (모달 닫기 효과)
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       navigate("/");
@@ -56,7 +56,8 @@ const Signup = () => {
     }
 
     try {
-      await axios.post("/api/auth/signup", {
+      // [MODIFIED] api 인스턴스 사용 (BaseURL이 이미 설정되어 있으므로 '/api' 제외)
+      await api.post("/auth/signup", {
         username: formData.nickname,
         email: formData.email,
         password: formData.password,
@@ -67,7 +68,15 @@ const Signup = () => {
       navigate("/");
     } catch (err: any) {
       console.error(err);
-      if (err.response && err.response.data) {
+
+      // [MODIFIED] 409 Conflict (중복) 에러 처리 로직 추가
+      if (err.response && err.response.status === 409) {
+        // 이미 가입된 경우 경고창을 띄우고 처리
+        alert("이미 가입된 아이디(이메일)입니다. 로그인해주세요.");
+        navigate("/"); // (선택사항) 로그인 화면으로 이동
+      }
+      // 그 외 에러 처리
+      else if (err.response && err.response.data) {
         setErrorMsg(
           err.response.data.message || "회원가입 중 오류가 발생했습니다.",
         );
@@ -78,10 +87,8 @@ const Signup = () => {
   };
 
   return (
-    // 배경에 클릭 이벤트 추가
     <S.SignupContainer onClick={handleOverlayClick}>
       <S.FormCard>
-        {/* [NEW] 우측 상단 닫기(X) 버튼 */}
         <S.CloseBtn onClick={() => navigate("/")}>&times;</S.CloseBtn>
 
         <S.Title>회원가입</S.Title>
@@ -93,7 +100,7 @@ const Signup = () => {
             name="nickname"
             value={formData.nickname}
             onChange={handleChange}
-            onKeyDown={handleKeyDown} // 엔터키 연결
+            onKeyDown={handleKeyDown}
             placeholder="사용하실 닉네임을 입력하세요"
           />
         </S.InputGroup>
@@ -118,7 +125,7 @@ const Signup = () => {
             value={formData.password}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder="4자리 이상 입력하세요"
+            placeholder="8자리 이상 입력하세요"
           />
         </S.InputGroup>
 

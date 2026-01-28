@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
-import api from "../types/api"; // axios 대신 api 인스턴스 사용 권장
+import { api } from "../api/axios";
 
 interface LoginData {
   email: string;

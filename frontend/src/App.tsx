@@ -1,14 +1,13 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 import Home from "./pages/Home";
 import Program from "./pages/Program";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import MyPage from "./pages/MyPage"; // [추가] 마이페이지
+import MyPage from "./pages/MyPage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-// [레이아웃] 화면 전체를 감싸는 래퍼
 const LayoutWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -16,7 +15,6 @@ const LayoutWrapper = styled.div`
   width: 100%;
 `;
 
-// [본문] 헤더/푸터 사이 영역이 남은 공간을 모두 차지
 const MainContent = styled.main`
   flex: 1;
   width: 100%;
@@ -27,22 +25,21 @@ const MainContent = styled.main`
 
 function App() {
   return (
-    // [FIX] basename 속성을 제거했습니다. 이제 localhost에서 문제없이 작동합니다!
-    <Router>
-      <LayoutWrapper>
-        <Header />
-        <MainContent>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/programs" element={<Program />} /> {/* url 통일 */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/mypage" element={<MyPage />} />
-          </Routes>
-        </MainContent>
-        <Footer />
-      </LayoutWrapper>
-    </Router>
+    // [수정] <Router> 태그 삭제! (이미 main.tsx에 있음)
+    <LayoutWrapper>
+      <Header />
+      <MainContent>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/programs" element={<Program />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/mypage" element={<MyPage />} />
+        </Routes>
+      </MainContent>
+      <Footer />
+    </LayoutWrapper>
+    // [수정] </Router> 태그 삭제!
   );
 }
 

@@ -7,6 +7,7 @@ import com.aquarium.Naquarium.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,8 +29,14 @@ public class AuthController {
     // 1. 회원가입
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest request) {
+
+        // [MODIFIED] 중복 체크 로직 수정
+        // 기존: ResponseEntity.badRequest() -> 400 에러
+        // 변경: ResponseEntity.status(HttpStatus.CONFLICT) -> 409 에러 (중복/충돌 의미)
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("이미 가입된 이메일입니다.");
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("이미 가입된 아이디(이메일)입니다.");
         }
 
         User user = User.builder()

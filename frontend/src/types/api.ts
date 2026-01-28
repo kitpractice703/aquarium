@@ -1,16 +1,5 @@
-import axios from "axios";
-
-// 환경 변수 설정 (개발 vs 배포)
-const BASE_URL =
-  import.meta.env.MODE === "development" ? "/api" : "http://localhost:8080/api"; // 배포 시 실제 IP로 수정 필요
-
-const api = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// [MODIFIED] axios import 및 인스턴스 생성 코드 삭제
+// 순수하게 타입 정의만 남겨두어 역할 분리
 
 export interface ScheduleData {
   id: number;
@@ -36,4 +25,17 @@ export interface ReservationRequest {
   teenCount: number;
 }
 
-export default api;
+export interface SignupRequest {
+  username: string;
+  email: string;
+  password: string;
+  phone: string;
+}
+
+// [ADDED] 로그인용 데이터 타입
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+// [MODIFIED] export default api; 삭제 -> api는 src/api/axios.ts에서 가져다 씁니다.

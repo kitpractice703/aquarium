@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-// [1] 백엔드 통신을 위한 api 인스턴스 가져오기
-import api from "../../../types/api";
+import PaymentModal from "../PaymentModal";
+import { api } from "../../../api/axios";
 import * as S from "./style";
 
 interface Props {
@@ -38,6 +38,9 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [counts, setCounts] = useState({ adult: 0, teen: 0 });
 
+  // [ADDED] 결제창을 보여줄지 말지 결정하는 상태
+  const [showPayment, setShowPayment] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
       setCalendarData(getCalendarDays());
@@ -45,6 +48,7 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
       setSelectedDate(null);
       setSelectedTime(null);
       setCounts({ adult: 0, teen: 0 });
+      setShowPayment(false); // 초기화
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
@@ -54,16 +58,15 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
   if (!isOpen) return null;
 
   // 총 결제 금액 계산
-  const totalPrice = counts.adult * 35000 + counts.teen * 28000;
+  const totalPrice = counts.adult * 35000 + counts.teen * 31000;
 
-  // [2] 실제 결제 요청 함수 (백엔드 연동)
-  const handlePayment = async () => {
+  // [MODIFIED] 결제 성공 시 실행될 함수 (진짜 API 호출)
+  const handlePaymentSuccess = async () => {
     if (!selectedDate || !selectedTime) return;
 
     try {
       // 날짜 포맷팅 (YYYY-MM-DD)
       const year = calendarData.year;
-      // getCalendarDays에서 이미 +1을 했으므로 그대로 사용하되, 두 자리수 맞춤
       const month = String(calendarData.month).padStart(2, "0");
       const day = String(selectedDate).padStart(2, "0");
       const formattedDate = `${year}-${month}-${day}`;
@@ -76,14 +79,16 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
         teenCount: counts.teen,
       });
 
-      alert("예매가 완료되었습니다!");
-      onClose(); // 모달 닫기
+      setShowPayment(false); // 결제창 닫기
+      alert("예매가 완료되었습니다! (티켓이 발권되었습니다)");
+      onClose(); // 전체 예매 모달 닫기
     } catch (error: any) {
       console.error(error);
+      setShowPayment(false); // 에러 나면 결제창 닫기
       if (error.response && error.response.status === 401) {
         alert("로그인이 필요한 서비스입니다.");
       } else {
-        alert("예약 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        alert("결제는 성공했으나 예약 저장 중 오류가 발생했습니다.");
       }
     }
   };
@@ -94,176 +99,192 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
     else if (step === 2 && selectedTime) setStep(3);
     else if (step === 3 && totalPrice > 0) setStep(4);
     else if (step === 4) {
-      // [3] 마지막 단계에서 결제 함수 호출
-      handlePayment();
+      // [MODIFIED] 바로 API 쏘지 않고 결제창(PaymentModal)을 띄움
+      setShowPayment(true);
+      console.log("결제창 오픈 시도!"); // [테스트용] 로그 추가 추천
     }
   };
 
   return (
-    <S.Overlay onClick={onClose}>
-      <S.Container onClick={(e) => e.stopPropagation()}>
-        <S.Header>
-          <h2>
-            관람 예매 <span>Booking</span>
-          </h2>
-          <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
-        </S.Header>
+    <>
+      {/* 기본 예매 모달 */}
+      <S.Overlay onClick={onClose}>
+        <S.Container onClick={(e) => e.stopPropagation()}>
+          <S.Header>
+            <h2>
+              관람 예매 <span>Booking</span>
+            </h2>
+            <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
+          </S.Header>
 
-        <S.Content>
-          {/* ========== Step 1: 날짜 선택 ========== */}
-          {step === 1 && (
-            <>
-              <S.StepTitle>
-                {calendarData?.month}월, 언제 방문하시나요?
-              </S.StepTitle>
-              <S.CalendarGrid>
-                {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
-                  <S.DayHeader key={d}>{d}</S.DayHeader>
-                ))}
-                {calendarData?.days.map((day: number | null, idx: number) => (
-                  <S.DateBtn
-                    key={idx}
-                    $disabled={!day || day < new Date().getDate()} // 오늘 이전 날짜 비활성화
-                    $selected={selectedDate === day}
-                    onClick={() =>
-                      day && day >= new Date().getDate() && setSelectedDate(day)
-                    }
-                  >
-                    {day}
-                  </S.DateBtn>
-                ))}
-              </S.CalendarGrid>
-            </>
-          )}
+          <S.Content>
+            {/* ========== Step 1: 날짜 선택 ========== */}
+            {step === 1 && (
+              <>
+                <S.StepTitle>
+                  {calendarData?.month}월, 언제 방문하시나요?
+                </S.StepTitle>
+                <S.CalendarGrid>
+                  {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
+                    <S.DayHeader key={d}>{d}</S.DayHeader>
+                  ))}
+                  {calendarData?.days.map((day: number | null, idx: number) => (
+                    <S.DateBtn
+                      key={idx}
+                      $disabled={!day || day < new Date().getDate()}
+                      $selected={selectedDate === day}
+                      onClick={() =>
+                        day &&
+                        day >= new Date().getDate() &&
+                        setSelectedDate(day)
+                      }
+                    >
+                      {day}
+                    </S.DateBtn>
+                  ))}
+                </S.CalendarGrid>
+              </>
+            )}
 
-          {/* ========== Step 2: 시간 선택 ========== */}
-          {step === 2 && (
-            <>
-              <S.StepTitle>
-                {calendarData?.month}월 {selectedDate}일, 시간 선택
-              </S.StepTitle>
-              <S.TimeGrid>
-                {TIMES.map((time) => (
-                  <S.TimeBtn
-                    key={time}
-                    $selected={selectedTime === time}
-                    onClick={() => setSelectedTime(time)}
-                  >
-                    {time}
-                  </S.TimeBtn>
-                ))}
-              </S.TimeGrid>
-            </>
-          )}
+            {/* ========== Step 2: 시간 선택 ========== */}
+            {step === 2 && (
+              <>
+                <S.StepTitle>
+                  {calendarData?.month}월 {selectedDate}일, 시간 선택
+                </S.StepTitle>
+                <S.TimeGrid>
+                  {TIMES.map((time) => (
+                    <S.TimeBtn
+                      key={time}
+                      $selected={selectedTime === time}
+                      onClick={() => setSelectedTime(time)}
+                    >
+                      {time}
+                    </S.TimeBtn>
+                  ))}
+                </S.TimeGrid>
+              </>
+            )}
 
-          {/* ========== Step 3: 인원 선택 ========== */}
-          {step === 3 && (
-            <>
-              <S.StepTitle>누구와 함께 오시나요?</S.StepTitle>
+            {/* ========== Step 3: 인원 선택 ========== */}
+            {step === 3 && (
+              <>
+                <S.StepTitle>누구와 함께 오시나요?</S.StepTitle>
 
-              <S.CounterRow>
-                <div>
-                  <div className="label">성인</div>
-                  <div className="price">35,000원</div>
-                </div>
-                <div className="controls">
-                  <button
-                    onClick={() =>
-                      setCounts((p) => ({
-                        ...p,
-                        adult: Math.max(0, p.adult - 1),
-                      }))
-                    }
-                  >
-                    -
-                  </button>
-                  <span>{counts.adult}</span>
-                  <button
-                    onClick={() =>
-                      setCounts((p) => ({ ...p, adult: p.adult + 1 }))
-                    }
-                  >
-                    +
-                  </button>
-                </div>
-              </S.CounterRow>
+                <S.CounterRow>
+                  <div>
+                    <div className="label">성인</div>
+                    <div className="price">35,000원</div>
+                  </div>
+                  <div className="controls">
+                    <button
+                      onClick={() =>
+                        setCounts((p) => ({
+                          ...p,
+                          adult: Math.max(0, p.adult - 1),
+                        }))
+                      }
+                    >
+                      -
+                    </button>
+                    <span>{counts.adult}</span>
+                    <button
+                      onClick={() =>
+                        setCounts((p) => ({ ...p, adult: p.adult + 1 }))
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
+                </S.CounterRow>
 
-              <S.CounterRow>
-                <div>
-                  <div className="label">청소년</div>
-                  <div className="price">28,000원</div>
-                </div>
-                <div className="controls">
-                  <button
-                    onClick={() =>
-                      setCounts((p) => ({
-                        ...p,
-                        teen: Math.max(0, p.teen - 1),
-                      }))
-                    }
-                  >
-                    -
-                  </button>
-                  <span>{counts.teen}</span>
-                  <button
-                    onClick={() =>
-                      setCounts((p) => ({ ...p, teen: p.teen + 1 }))
-                    }
-                  >
-                    +
-                  </button>
-                </div>
-              </S.CounterRow>
-            </>
-          )}
+                <S.CounterRow>
+                  <div>
+                    <div className="label">청소년</div>
+                    <div className="price">31,000원</div>
+                  </div>
+                  <div className="controls">
+                    <button
+                      onClick={() =>
+                        setCounts((p) => ({
+                          ...p,
+                          teen: Math.max(0, p.teen - 1),
+                        }))
+                      }
+                    >
+                      -
+                    </button>
+                    <span>{counts.teen}</span>
+                    <button
+                      onClick={() =>
+                        setCounts((p) => ({ ...p, teen: p.teen + 1 }))
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
+                </S.CounterRow>
+              </>
+            )}
 
-          {/* ========== Step 4: 결제 및 확인 ========== */}
-          {step === 4 && (
-            <>
-              <S.StepTitle>예약 정보를 확인해주세요</S.StepTitle>
-              <S.SummaryBox>
-                <div>
-                  <span>날짜</span>{" "}
-                  <span>
-                    {calendarData?.month}월 {selectedDate}일
-                  </span>
-                </div>
-                <div>
-                  <span>시간</span> <span>{selectedTime}</span>
-                </div>
-                <div>
-                  <span>인원</span>{" "}
-                  <span>
-                    성인 {counts.adult}, 청소년 {counts.teen}
-                  </span>
-                </div>
-                <div className="total">
-                  <span>총 결제금액</span>
-                  <span>{totalPrice.toLocaleString()}원</span>
-                </div>
-              </S.SummaryBox>
-            </>
-          )}
-        </S.Content>
+            {/* ========== Step 4: 확인 및 결제 버튼 ========== */}
+            {step === 4 && (
+              <>
+                <S.StepTitle>예약 정보를 확인해주세요</S.StepTitle>
+                <S.SummaryBox>
+                  <div>
+                    <span>날짜</span>{" "}
+                    <span>
+                      {calendarData?.month}월 {selectedDate}일
+                    </span>
+                  </div>
+                  <div>
+                    <span>시간</span> <span>{selectedTime}</span>
+                  </div>
+                  <div>
+                    <span>인원</span>{" "}
+                    <span>
+                      성인 {counts.adult}, 청소년 {counts.teen}
+                    </span>
+                  </div>
+                  <div className="total">
+                    <span>총 결제금액</span>
+                    <span>{totalPrice.toLocaleString()}원</span>
+                  </div>
+                </S.SummaryBox>
+              </>
+            )}
+          </S.Content>
 
-        <S.Footer>
-          {step > 1 && (
-            <S.Button onClick={() => setStep(step - 1)}>이전</S.Button>
-          )}
-          <S.Button
-            $primary
-            onClick={handleNext}
-            disabled={
-              (step === 1 && !selectedDate) ||
-              (step === 2 && !selectedTime) ||
-              (step === 3 && totalPrice === 0)
-            }
-          >
-            {step === 4 ? "결제하기" : "다음"}
-          </S.Button>
-        </S.Footer>
-      </S.Container>
-    </S.Overlay>
+          <S.Footer>
+            {step > 1 && (
+              <S.Button onClick={() => setStep(step - 1)}>이전</S.Button>
+            )}
+            <S.Button
+              $primary
+              onClick={handleNext}
+              disabled={
+                (step === 1 && !selectedDate) ||
+                (step === 2 && !selectedTime) ||
+                (step === 3 && totalPrice === 0)
+              }
+            >
+              {step === 4 ? "결제하기" : "다음"}
+            </S.Button>
+          </S.Footer>
+        </S.Container>
+      </S.Overlay>
+
+      {/* [ADDED] 결제 모달 (showPayment가 true일 때만 뜸) */}
+      {showPayment && (
+        <PaymentModal
+          amount={totalPrice}
+          orderName={`입장권 (성인 ${counts.adult}, 청소년 ${counts.teen})`}
+          onSuccess={handlePaymentSuccess}
+          onClose={() => setShowPayment(false)}
+        />
+      )}
+    </>
   );
 };
 

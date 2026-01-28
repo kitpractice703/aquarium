@@ -1,5 +1,6 @@
 package com.aquarium.Naquarium.controller;
 
+import com.aquarium.Naquarium.dto.ProgramReservationRequest;
 import com.aquarium.Naquarium.dto.ReservationDto; // [IMPORT] DTO 추가
 import com.aquarium.Naquarium.dto.ReservationRequest;
 import com.aquarium.Naquarium.entity.Reservation;
@@ -7,6 +8,7 @@ import com.aquarium.Naquarium.entity.User;
 import com.aquarium.Naquarium.repository.ReservationRepository;
 import com.aquarium.Naquarium.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -69,5 +71,27 @@ public class ReservationController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtos);
+    }
+
+    @PostMapping("/programs") // 프로그램 예약 API
+    public ResponseEntity<?> reserveProgram(@RequestBody ProgramReservationRequest request,
+                                            Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+        String email = authentication.getName();
+
+        // [핵심] 1. 해당 날짜에 입장권(Reservation)이 있는지 확인
+        // (Repository에 existsByUserEmailAndVisitDate 메서드가 필요합니다.)
+        boolean hasAdmission = reservationRepository.existsByUserEmailAndVisitDate(email, request.getVisitDate());
+
+        if (!hasAdmission) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("해당 날짜의 입장권(관람권)이 없습니다. 입장권을 먼저 예매해주세요.");
+        }
+
+        // 2. 입장권이 있다면 프로그램 예약 진행 (여기서는 간단히 성공 처리)
+        // 실제로는 program_reservation 테이블에 저장해야 합니다.
+        return ResponseEntity.ok("프로그램 예약이 완료되었습니다!");
     }
 }

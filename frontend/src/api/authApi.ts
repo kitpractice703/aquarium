@@ -1,5 +1,5 @@
 import { api } from "./axios";
-import { SignupRequest, LoginRequest } from "../types/api"; // 기존에 정의된 타입 활용
+import type { SignupRequest, LoginRequest } from "../types/api"; // 기존에 정의된 타입 활용
 
 // 회원가입 요청
 export const signup = async (data: SignupRequest) => {

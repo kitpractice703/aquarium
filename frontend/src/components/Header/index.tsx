@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import * as S from "./style";
 import CommonModal from "../common/Modal";
+import BookingModal from "../common/BookingModal"; // [ADDED] 예매 모달
 import { useAuth } from "../../context/AuthContext";
+// import { api } from "../../api/axios"; // (헤더에선 api 호출을 안 하므로 굳이 필요 없음, 삭제)
 
 const Header = () => {
   const { isLoggedIn, username, login, logout } = useAuth();
   const [modalType, setModalType] = useState<"LOGIN" | null>(null);
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+
+  // [ADDED] 예매 모달 상태
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,22 +44,18 @@ const Header = () => {
   };
 
   const handleGoogleLogin = () => {
-    alert("구글 로그인은 현재 준비 중입니다. (백엔드 OAuth 설정 필요)");
+    alert("구글 로그인은 현재 준비 중입니다.");
   };
 
-  // [수정 1] 예매 확인(마이페이지) 버튼 클릭 핸들러
   const handleTicketCheck = () => {
     if (isLoggedIn) {
-      // 로그인 상태면 마이페이지로 이동!
       navigate("/mypage");
     } else {
-      // 비로그인 상태면 로그인 모달 띄우기
       alert("로그인이 필요한 서비스입니다.");
       setModalType("LOGIN");
     }
   };
 
-  // [기존 유지] 스크롤 네비게이션 핸들러
   const handleNavClick = (id: string) => {
     if (location.pathname !== "/") {
       navigate("/");
@@ -81,6 +82,10 @@ const Header = () => {
             <a onClick={() => handleNavClick("themes")}>테마전시</a>
             <a onClick={() => handleNavClick("programs")}>프로그램</a>
             <a onClick={() => handleNavClick("community")}>커뮤니티</a>
+            {/* [ADDED] 예매하기 버튼 */}
+            <S.BookingButton onClick={() => setIsBookingOpen(true)}>
+              예매하기
+            </S.BookingButton>
           </S.Gnb>
 
           <S.UserMenu>
@@ -98,7 +103,6 @@ const Header = () => {
               </>
             )}
 
-            {/* [수정 2] 버튼 이름 변경: 로그인 여부에 따라 '마이페이지' 또는 '예매확인' */}
             <span
               onClick={handleTicketCheck}
               style={{
@@ -114,7 +118,13 @@ const Header = () => {
         </S.HeaderContent>
       </S.HeaderWrapper>
 
-      {/* [기존 유지] 로그인 모달 */}
+      {/* [ADDED] 예매 모달 연결 */}
+      <BookingModal
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+      />
+
+      {/* 로그인 모달 */}
       <CommonModal
         isOpen={modalType === "LOGIN"}
         onClose={closeModal}

@@ -1,8 +1,6 @@
 import * as S from "./style";
-
+import mainVideo from "../../assets/videos/main_video.mp4";
 // [FIX] 로컬 파일 import 대신 온라인 URL 사용 (에러 원천 차단!)
-const mainVideo =
-  "https://cdn.pixabay.com/video/2024/02/09/199958-911694865_large.mp4";
 
 const HeroSection = () => {
   return (

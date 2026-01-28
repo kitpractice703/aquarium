@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/aquarium/", // 이 부분이 추가되어야 합니다. (리포지토리 이름 앞뒤로 슬래시)
+  // base: "/aquarium/",  <-- [수정] 이 줄을 주석 처리하거나 삭제하세요! (로컬 실행 시)
   server: {
     proxy: {
       "/api": {

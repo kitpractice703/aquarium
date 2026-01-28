@@ -133,3 +133,22 @@ export const GoogleBtn = styled.button`
     background: #f1f1f1;
   }
 `;
+
+export const BookingButton = styled.button`
+  background: var(--accent-cyan);
+  color: #000;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-left: 10px;
+
+  &:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 219, 230, 0.3);
+  }
+`;

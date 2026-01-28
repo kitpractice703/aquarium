@@ -1,17 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../types/api"; // api 인스턴스 가져오기
+import { api } from "../../api/axios";
 import * as S from "./style";
-
-// 예약 내역 타입 정의 (백엔드 ReservationDto와 매칭)
-interface ReservationDto {
-  id: number;
-  programTitle: string; // 프로그램 제목 (없으면 null일 수 있음)
-  startTime: string; // 스케줄 시작 시간 (nullable)
-  location: string;
-  status: string;
-  imageUrl: string;
-  // 추가된 필드 대응 (백엔드 ReservationDto에 아직 없다면 무시될 수 있음)
-}
 
 const MyPage = () => {
   const [reservations, setReservations] = useState<any[]>([]);

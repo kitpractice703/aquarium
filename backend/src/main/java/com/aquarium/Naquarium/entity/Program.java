@@ -29,6 +29,9 @@ public class Program {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(nullable = false)
+    private int price;
+
     // 내부 Enum 정의 (공연 vs 체험)
     public enum ProgramType {
         PERFORMANCE, EXPERIENCE

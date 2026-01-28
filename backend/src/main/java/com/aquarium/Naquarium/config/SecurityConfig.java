@@ -6,13 +6,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer; // lambda DSL용
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
@@ -21,59 +21,51 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    // [1] 비밀번호 암호화 도구 등록 (필수!)
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // [CORS] 프론트엔드(5173)의 요청을 허용합니다.
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
+                // [CSRF] 개발 단계에서는 끄는 게 편합니다 (나중에 켤 수 있음)
+                .csrf(AbstractHttpConfigurer::disable)
+                // [HTTP Basic] 팝업창 뜨는 기본 로그인 방식 끄기
+                .httpBasic(AbstractHttpConfigurer::disable)
+                // [Form Login] 기본 로그인 페이지 끄기 (React로 만드니까요)
+                .formLogin(AbstractHttpConfigurer::disable)
+                // [권한 설정]
                 .authorizeHttpRequests(auth -> auth
-                        // 1. 정적 자원 및 메인 페이지 허용
-                        .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/error").permitAll()
-
-                        // 2. 인증/로그인 관련 API 허용
-                        .requestMatchers("/api/auth/**").permitAll()
-
-                        // [수정] 3. "GET"으로 요청하는 "모든" API는 누구나 볼 수 있게 허용!
-                        // 이렇게 하면 api/exhibitions, api/posts 등에서 로그인 창으로 튕기지 않습니다.
-                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-
-                        // 4. 그 외(글쓰기, 예약하기 등 POST/PUT/DELETE)는 로그인 필요
+                        // 로그인, 회원가입, 공개 API는 누구나 접근 가능
+                        .requestMatchers("/api/auth/**", "/api/public/**", "/error").permitAll()
+                        // 그 외 모든 요청은 로그인해야 접근 가능
                         .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("http://localhost:5173", true)
                 );
 
         return http.build();
     }
 
-    // CORS 허용 규칙 정의
+    // [CORS 설정 상세] "누구를 문지기가 통과시켜 줄 것인가?"
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+        CorsConfiguration config = new CorsConfiguration();
 
-        // 프론트엔드 주소 허용
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-        // 모든 HTTP 메서드 허용 (GET, POST, PUT, DELETE...)
-        configuration.setAllowedMethods(List.of("*"));
-        // 모든 헤더 허용
-        configuration.setAllowedHeaders(List.of("*"));
-        // 쿠키나 인증 정보를 주고받을 수 있게 허용
-        configuration.setAllowCredentials(true);
+        // 1. 허용할 프론트엔드 주소 (필수!)
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+
+        // 2. 허용할 HTTP 메서드 (GET, POST 등 다 열어줍니다)
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // 3. 허용할 헤더 (Authorization 등)
+        config.setAllowedHeaders(List.of("*"));
+
+        // 4. 쿠키/세션 정보 허용 (로그인 유지에 필수)
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
-    
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 }
