@@ -1,48 +1,106 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HeroSection from "../../components/HeroSection";
-import KakaoMap from "../../components/common/KakaoMap"; // KakaoMap 경로 확인 필요
+import KakaoMap from "../../components/common/KakaoMap";
 import ThemeSection from "../../components/common/ThemeSection";
+import FaqModal from "../../components/common/FaqModal";
+import ReviewModal from "../../components/common/ReviewModal";
+import BookingModal from "../../components/common/BookingModal";
 import * as S from "./style";
 
-const Home = () => {
-  const [activeFaq, setActiveFaq] = useState<number | null>(0);
+const getDaysArray = () => {
+  const days = [];
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - diffToMonday);
+  const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
 
-  const toggleFaq = (idx: number) => {
-    setActiveFaq(activeFaq === idx ? null : idx);
-  };
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    days.push({
+      fullDate: d.toISOString().split("T")[0],
+      date: d.getDate(),
+      day: weekDays[d.getDay()],
+      isMonday: d.getDay() === 1,
+    });
+  }
+  return days;
+};
+
+const SCHEDULE_DATA = [
+  {
+    time: "11:00",
+    title: "돌고래의 꿈 (Digital)",
+    place: "오션 아레나",
+    status: "closed",
+  },
+  {
+    time: "13:00",
+    title: "바다사자 식사시간",
+    place: "해변 공원",
+    status: "open",
+  },
+  { time: "14:00", title: "심해의 빛 쇼", place: "딥 블루 홀", status: "open" },
+  {
+    time: "16:00",
+    title: "펭귄 생태 설명회",
+    place: "극지방 존",
+    status: "open",
+  },
+  {
+    time: "19:00",
+    title: "나이트 라군 파티",
+    place: "중앙 광장",
+    status: "ready",
+  },
+];
+
+const Home = () => {
+  const [dates, setDates] = useState<any[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>("");
+
+  const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
+  useEffect(() => {
+    const dayList = getDaysArray();
+    setDates(dayList);
+    const todayStr = new Date().toISOString().split("T")[0];
+    const hasToday = dayList.find((d) => d.fullDate === todayStr);
+    setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
+  }, []);
 
   return (
     <>
-      {/* 1. 메인 히어로 섹션 */}
       <HeroSection />
 
-      {/* 2. 소개 & 오시는 길 섹션 */}
       <S.Section id="about">
         <S.Container>
           <S.SectionTitle>아쿠아리움 소개</S.SectionTitle>
+          <S.IntroDesc>
+            Naquarium Archive는 사라져가는 바다의 기억을 영원히 보존하는{" "}
+            <span>디지털 해저 기지</span>입니다.
+            <br />
+            수심 3,000m 아래 숨겨진 미지의 생태계와 멸종 위기종을
+            <br />
+            가장 생생한 기술로 복원하여 여러분께 선보입니다.
+          </S.IntroDesc>
+
           <S.AboutGrid>
-            {/* 왼쪽: 텍스트 정보 */}
             <div>
-              <h3
+              <h4
                 style={{
-                  fontSize: "24px",
-                  marginBottom: "20px",
+                  marginBottom: "15px",
                   color: "#fff",
+                  paddingLeft: "5px",
                 }}
               >
-                심해의 비밀을 간직한 연구소
-              </h3>
-              <p style={{ color: "var(--text-gray)", marginBottom: "30px" }}>
-                Naquarium Archive는 단순한 수족관이 아닙니다. <br />
-                멸종 위기종을 디지털로 복원하고, 미지의 심해 생태계를 연구하는
-                <br />
-                가상의 해저 기지입니다.
-              </p>
-
+                이용 안내
+              </h4>
               <S.InfoBox>
-                <h4 style={{ marginBottom: "15px", color: "#fff" }}>
-                  이용 요금 및 운영 시간
-                </h4>
                 <S.InfoItem>
                   <span>성인 (19세 이상)</span> <span>35,000원</span>
                 </S.InfoItem>
@@ -57,33 +115,42 @@ const Home = () => {
                 </S.InfoItem>
               </S.InfoBox>
             </div>
-
-            {/* 오른쪽: 지도 (KakaoMap) */}
             <div>
-              <h4 style={{ marginBottom: "15px", color: "#fff" }}>
+              <h4
+                style={{
+                  marginBottom: "15px",
+                  color: "#fff",
+                  paddingLeft: "5px",
+                }}
+              >
                 찾아오시는 길
               </h4>
               <S.MapWrapper>
                 <KakaoMap />
               </S.MapWrapper>
-              <p
-                style={{
-                  marginTop: "10px",
-                  fontSize: "14px",
-                  color: "var(--text-gray)",
-                }}
-              >
-                인천광역시 계양구 아라뱃길 해저 2터미널 (가상 위치)
-              </p>
+              <S.DescArea>
+                <p
+                  style={{
+                    marginTop: "10px",
+                    fontSize: "15px",
+                    color: "var(--text-gray)",
+                  }}
+                >
+                  📍 인천광역시 계양구 아라뱃길 해저 2터미널
+                </p>
+                <p
+                  style={{ marginTop: "5px", fontSize: "14px", color: "#555" }}
+                >
+                  (주차: 지하 2층 ~ 4층 무료 이용 가능)
+                </p>
+              </S.DescArea>
             </div>
           </S.AboutGrid>
         </S.Container>
       </S.Section>
 
-      {/* 3. 테마 전시 섹션 */}
       <ThemeSection />
 
-      {/* 4. 프로그램 & 일정 섹션 */}
       <S.Section id="programs">
         <S.Container>
           <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
@@ -99,122 +166,139 @@ const Home = () => {
               >
                 체험 프로그램
               </h3>
-              <img
-                src="https://placehold.co/500x200/222/FFF?text=Diving+Experience"
-                alt="VR체험"
-                style={{
-                  width: "100%",
-                  borderRadius: "10px",
-                  marginBottom: "20px",
-                }}
-              />
-              <h4 style={{ marginBottom: "10px", color: "#fff" }}>
-                가상 심해 다이빙 (VR)
-              </h4>
-              <p style={{ fontSize: "14px", color: "var(--text-gray)" }}>
-                실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR 체험입니다.
-                거대한 대왕오징어와 향유고래의 전투를 눈앞에서 목격하세요.
-              </p>
+              <S.ExperienceList>
+                <S.ExperienceItem>
+                  <img
+                    src="https://placehold.co/500x200/222/FFF?text=VR+Diving"
+                    alt="VR"
+                  />
+                  <h4>가상 심해 다이빙 (VR)</h4>
+                  <p>
+                    실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR
+                    체험입니다. 대왕오징어와의 조우를 경험하세요.
+                  </p>
+                </S.ExperienceItem>
+                <S.ExperienceItem>
+                  <img
+                    src="https://placehold.co/500x200/333/FFF?text=Feeding"
+                    alt="Feeding"
+                  />
+                  <h4>아쿠아리스트 먹이 주기</h4>
+                  <p>
+                    전문 아쿠아리스트와 함께 메인 수조의 물고기들에게 직접
+                    먹이를 주며 교감할 수 있는 특별한 시간입니다.
+                  </p>
+                </S.ExperienceItem>
+              </S.ExperienceList>
             </S.ProgramCol>
 
             <S.ProgramCol>
               <h3
                 style={{
-                  marginBottom: "30px",
+                  marginBottom: "20px",
                   color: "var(--accent-cyan)",
                   borderLeft: "4px solid var(--accent-cyan)",
                   paddingLeft: "15px",
                 }}
               >
-                공연 시간표 (Today)
+                공연 시간표
               </h3>
-              <S.ScheduleTable>
-                <thead>
-                  <tr>
-                    <th>시간</th>
-                    <th>공연명</th>
-                    <th>장소</th>
-                    <th>상태</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>11:00</td>
-                    <td>돌고래의 꿈 (디지털)</td>
-                    <td>오션 아레나</td>
-                    <td style={{ color: "#ff6b6b" }}>마감</td>
-                  </tr>
-                  <tr>
-                    <td>14:00</td>
-                    <td>심해의 빛 쇼</td>
-                    <td>딥 블루 홀</td>
-                    <td style={{ color: "var(--accent-cyan)" }}>예매가능</td>
-                  </tr>
-                  <tr>
-                    <td>16:00</td>
-                    <td>펭귄 생태 설명회</td>
-                    <td>극지방 존</td>
-                    <td style={{ color: "var(--accent-cyan)" }}>예매가능</td>
-                  </tr>
-                  <tr>
-                    <td>19:00</td>
-                    <td>나이트 라군 파티</td>
-                    <td>중앙 광장</td>
-                    <td style={{ color: "var(--text-gray)" }}>준비중</td>
-                  </tr>
-                </tbody>
-              </S.ScheduleTable>
+              <S.DateSlider>
+                {dates.map((d) => (
+                  <S.DateItem
+                    key={d.fullDate}
+                    $active={selectedDate === d.fullDate}
+                    $isMonday={d.isMonday}
+                    onClick={() => setSelectedDate(d.fullDate)}
+                  >
+                    <div className="day">{d.day}</div>
+                    <div className="date">{d.date}</div>
+                  </S.DateItem>
+                ))}
+              </S.DateSlider>
+              <div>
+                {dates.find((d) => d.fullDate === selectedDate)?.isMonday ? (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      padding: "50px 0",
+                      color: "#ff6b6b",
+                    }}
+                  >
+                    <h3>오늘은 정기 휴관일입니다.</h3>
+                    <p
+                      style={{
+                        marginTop: "10px",
+                        fontSize: "14px",
+                        color: "#888",
+                      }}
+                    >
+                      매월 첫째 주 월요일은 시설 점검을 위해 쉽니다.
+                    </p>
+                  </div>
+                ) : (
+                  SCHEDULE_DATA.map((item, idx) => (
+                    <S.ScheduleItem key={idx}>
+                      <div className="time">{item.time}</div>
+                      <div className="info">
+                        <div className="title">{item.title}</div>
+                        <div className="place">{item.place}</div>
+                      </div>
+                      <div
+                        className={`status ${item.status}`}
+                        // [추가] 예매가능(open)일 때만 클릭 이벤트 연결
+                        onClick={() => {
+                          if (item.status === "open")
+                            setIsBookingModalOpen(true);
+                        }}
+                      >
+                        {item.status === "closed"
+                          ? "마감"
+                          : item.status === "open"
+                            ? "예매가능"
+                            : "준비중"}
+                      </div>
+                    </S.ScheduleItem>
+                  ))
+                )}
+              </div>
             </S.ProgramCol>
           </S.ProgramLayout>
         </S.Container>
       </S.Section>
 
-      {/* 5. 예매 배너 섹션 */}
-      <S.BookingSection id="booking">
-        <h2>지금 바로, 미지의 바다를 예약하세요</h2>
-        <p>회원가입 시 1,000 포인트 즉시 지급!</p>
-        <button onClick={() => alert("준비중입니다.")}>
-          예매 페이지로 이동 ➔
-        </button>
-      </S.BookingSection>
+      {/* [삭제됨] BookingSection 제거 */}
 
-      {/* 6. 커뮤니티 섹션 */}
       <S.Section id="community">
         <S.Container>
           <S.SectionTitle>커뮤니티</S.SectionTitle>
           <S.CommunityGrid>
-            {/* FAQ */}
-            <S.CommBox>
+            <S.CommBox
+              onClick={() => setIsFaqModalOpen(true)}
+              style={{ cursor: "pointer" }}
+            >
               <S.CommTitle>
                 자주 묻는 질문 <span>+</span>
               </S.CommTitle>
               {[
-                {
-                  q: "예매 취소는 언제까지 가능한가요?",
-                  a: "관람일 전일 23:59까지 100% 환불 가능합니다.",
-                },
-                {
-                  q: "주차장 이용 안내",
-                  a: "지하 2층부터 4층까지 무료로 이용 가능합니다.",
-                },
-                {
-                  q: "음식물 반입이 되나요?",
-                  a: "음료를 제외한 음식물 반입은 제한됩니다.",
-                },
-              ].map((item, idx) => (
+                "예매 취소는 언제까지 가능한가요?",
+                "주차장 이용 안내",
+                "음식물 반입이 되나요?",
+              ].map((text, idx) => (
                 <S.FaqItem
                   key={idx}
-                  $active={activeFaq === idx}
-                  onClick={() => toggleFaq(idx)}
+                  $active={false}
+                  style={{ pointerEvents: "none" }}
                 >
-                  <div className="question">Q. {item.q}</div>
-                  <div className="answer">{item.a}</div>
+                  <div className="question">Q. {text}</div>
                 </S.FaqItem>
               ))}
             </S.CommBox>
 
-            {/* 후기 */}
-            <S.CommBox>
+            <S.CommBox
+              onClick={() => setIsReviewModalOpen(true)}
+              style={{ cursor: "pointer" }}
+            >
               <S.CommTitle>
                 관람 후기 <span>more</span>
               </S.CommTitle>
@@ -241,33 +325,22 @@ const Home = () => {
                 </li>
               </S.CommList>
             </S.CommBox>
-
-            {/* 자유게시판 */}
-            <S.CommBox>
-              <S.CommTitle>
-                자유 게시판 <span>more</span>
-              </S.CommTitle>
-              <S.CommList>
-                <li>
-                  <span>같이 가실 분 구해요 (인천)</span>
-                </li>
-                <li>
-                  <span>굿즈샵에 펭귄 인형 있나요?</span>
-                </li>
-                <li>
-                  <span>이번 시즌 포토존 위치 공유</span>
-                </li>
-                <li>
-                  <span>홈페이지 디자인 멋지네요</span>
-                </li>
-                <li>
-                  <span>심해 물고기 이름 뭔가요?</span>
-                </li>
-              </S.CommList>
-            </S.CommBox>
           </S.CommunityGrid>
         </S.Container>
       </S.Section>
+
+      <FaqModal
+        isOpen={isFaqModalOpen}
+        onClose={() => setIsFaqModalOpen(false)}
+      />
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+      />
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+      />
     </>
   );
 };

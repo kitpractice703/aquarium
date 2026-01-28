@@ -1,12 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import * as S from "./style";
 import CommonModal from "../common/Modal";
 import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
   const { isLoggedIn, username, login, logout } = useAuth();
-  const [modalType, setModalType] = useState<"LOGIN" | "SIGNUP" | null>(null);
+  // [수정] SIGNUP 모달 상태 제거 (페이지로 이동하므로 불필요)
+  const [modalType, setModalType] = useState<"LOGIN" | null>(null);
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const closeModal = () => {
     setModalType(null);
@@ -47,19 +52,32 @@ const Header = () => {
     }
   };
 
+  const handleNavClick = (id: string) => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) element.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <>
       <S.HeaderWrapper>
         <S.HeaderContent>
-          <S.Logo onClick={() => (window.location.href = "/")}>
-            NAQUARIUM
-          </S.Logo>
+          <S.Logo onClick={() => navigate("/")}>NAQUARIUM</S.Logo>
 
           <S.Gnb>
-            <a href="/#about">소개</a>
-            <a href="/#themes">테마전시</a>
-            <a href="/#programs">프로그램</a>
-            <a href="/#community">커뮤니티</a>
+            <a onClick={() => handleNavClick("about")}>소개</a>
+            <a onClick={() => handleNavClick("themes")}>테마전시</a>
+            <a onClick={() => handleNavClick("programs")}>프로그램</a>
+            <a onClick={() => handleNavClick("community")}>커뮤니티</a>
           </S.Gnb>
 
           <S.UserMenu>
@@ -73,7 +91,8 @@ const Header = () => {
             ) : (
               <>
                 <span onClick={() => setModalType("LOGIN")}>로그인</span>
-                <span onClick={() => setModalType("SIGNUP")}>회원가입</span>
+                {/* [수정] 회원가입 클릭 시 페이지 이동 */}
+                <span onClick={() => navigate("/signup")}>회원가입</span>
               </>
             )}
             <span
@@ -142,17 +161,6 @@ const Header = () => {
           </svg>
           Google로 시작하기
         </S.GoogleBtn>
-      </CommonModal>
-
-      {/* 회원가입 모달 */}
-      <CommonModal
-        isOpen={modalType === "SIGNUP"}
-        onClose={closeModal}
-        title="회원가입"
-      >
-        <S.BtnAction onClick={() => alert("회원가입 API 연결 필요")}>
-          가입하기
-        </S.BtnAction>
       </CommonModal>
     </>
   );

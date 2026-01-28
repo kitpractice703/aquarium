@@ -12,7 +12,11 @@ export const GlobalStyle = createGlobalStyle`
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
-  html { scroll-behavior: smooth; }
+  html { 
+    scroll-behavior: smooth; 
+    /* [핵심] 헤더 높이(70px) + 여유(10px) 만큼 덜 올라가게 설정 */
+    scroll-padding-top: 80px; 
+  }
 
   body {
     font-family: "Noto Sans KR", sans-serif;
@@ -22,7 +26,6 @@ export const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
   }
   
-  /* [핵심] 리액트 앱이 화면 전체 높이를 가지도록 강제 */
   #root {
     min-height: 100vh;
     display: flex;

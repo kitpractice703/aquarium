@@ -115,9 +115,11 @@ export const Desc = styled.p`
   white-space: pre-line;
 `;
 
+/* [핵심 수정] 높이(height) 고정을 풀고, 16:9 비율(aspect-ratio)을 적용했습니다. */
 export const VideoArea = styled.div<{ $color: string }>`
   flex: 1.2;
-  height: 400px;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* 영상 비율 16:9 고정 */
   background: #000;
   border-radius: 15px;
   overflow: hidden;
@@ -126,7 +128,6 @@ export const VideoArea = styled.div<{ $color: string }>`
   border: 1px solid ${(props) => props.$color};
   animation: ${fadeIn} 0.5s ease;
 
-  /* 비디오 태그가 영역을 꽉 채우도록 설정 */
   video {
     width: 100%;
     height: 100%;
@@ -136,7 +137,6 @@ export const VideoArea = styled.div<{ $color: string }>`
 
   @media (max-width: 900px) {
     width: 100%;
-    height: 250px;
     flex: none;
   }
 `;
