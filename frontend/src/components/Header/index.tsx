@@ -6,7 +6,6 @@ import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
   const { isLoggedIn, username, login, logout } = useAuth();
-  // [수정] SIGNUP 모달 상태 제거 (페이지로 이동하므로 불필요)
   const [modalType, setModalType] = useState<"LOGIN" | null>(null);
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
 
@@ -43,15 +42,19 @@ const Header = () => {
     alert("구글 로그인은 현재 준비 중입니다. (백엔드 OAuth 설정 필요)");
   };
 
+  // [수정 1] 예매 확인(마이페이지) 버튼 클릭 핸들러
   const handleTicketCheck = () => {
     if (isLoggedIn) {
-      alert(`${username}님의 예매 내역 페이지로 이동합니다. (구현 예정)`);
+      // 로그인 상태면 마이페이지로 이동!
+      navigate("/mypage");
     } else {
+      // 비로그인 상태면 로그인 모달 띄우기
       alert("로그인이 필요한 서비스입니다.");
       setModalType("LOGIN");
     }
   };
 
+  // [기존 유지] 스크롤 네비게이션 핸들러
   const handleNavClick = (id: string) => {
     if (location.pathname !== "/") {
       navigate("/");
@@ -91,25 +94,27 @@ const Header = () => {
             ) : (
               <>
                 <span onClick={() => setModalType("LOGIN")}>로그인</span>
-                {/* [수정] 회원가입 클릭 시 페이지 이동 */}
                 <span onClick={() => navigate("/signup")}>회원가입</span>
               </>
             )}
+
+            {/* [수정 2] 버튼 이름 변경: 로그인 여부에 따라 '마이페이지' 또는 '예매확인' */}
             <span
               onClick={handleTicketCheck}
               style={{
                 color: "var(--accent-cyan)",
                 fontWeight: "bold",
                 marginLeft: "10px",
+                cursor: "pointer",
               }}
             >
-              예매확인
+              {isLoggedIn ? "마이페이지" : "예매확인"}
             </span>
           </S.UserMenu>
         </S.HeaderContent>
       </S.HeaderWrapper>
 
-      {/* 로그인 모달 */}
+      {/* [기존 유지] 로그인 모달 */}
       <CommonModal
         isOpen={modalType === "LOGIN"}
         onClose={closeModal}

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+// [1] 백엔드 통신을 위한 api 인스턴스 가져오기
+import api from "../../../types/api";
 import * as S from "./style";
 
 interface Props {
@@ -10,7 +12,7 @@ interface Props {
 const getCalendarDays = () => {
   const date = new Date();
   const year = date.getFullYear();
-  const month = date.getMonth(); // 0부터 시작
+  const month = date.getMonth(); // 0부터 시작 (0: 1월)
 
   const firstDay = new Date(year, month, 1).getDay(); // 이번 달 1일의 요일
   const lastDate = new Date(year, month + 1, 0).getDate(); // 이번 달 마지막 날짜
@@ -21,6 +23,7 @@ const getCalendarDays = () => {
   // 날짜 채우기
   for (let i = 1; i <= lastDate; i++) days.push(i);
 
+  // month + 1을 해서 1월~12월 표현으로 맞춤
   return { year, month: month + 1, days };
 };
 
@@ -53,14 +56,46 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
   // 총 결제 금액 계산
   const totalPrice = counts.adult * 35000 + counts.teen * 28000;
 
+  // [2] 실제 결제 요청 함수 (백엔드 연동)
+  const handlePayment = async () => {
+    if (!selectedDate || !selectedTime) return;
+
+    try {
+      // 날짜 포맷팅 (YYYY-MM-DD)
+      const year = calendarData.year;
+      // getCalendarDays에서 이미 +1을 했으므로 그대로 사용하되, 두 자리수 맞춤
+      const month = String(calendarData.month).padStart(2, "0");
+      const day = String(selectedDate).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+
+      // POST 요청 전송
+      await api.post("/reservations", {
+        visitDate: formattedDate,
+        visitTime: selectedTime,
+        adultCount: counts.adult,
+        teenCount: counts.teen,
+      });
+
+      alert("예매가 완료되었습니다!");
+      onClose(); // 모달 닫기
+    } catch (error: any) {
+      console.error(error);
+      if (error.response && error.response.status === 401) {
+        alert("로그인이 필요한 서비스입니다.");
+      } else {
+        alert("예약 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
+    }
+  };
+
   // 다음 단계로 이동
   const handleNext = () => {
     if (step === 1 && selectedDate) setStep(2);
     else if (step === 2 && selectedTime) setStep(3);
     else if (step === 3 && totalPrice > 0) setStep(4);
     else if (step === 4) {
-      alert("예매가 완료되었습니다! (추후 예매 확인 페이지에서 확인 가능)");
-      onClose();
+      // [3] 마지막 단계에서 결제 함수 호출
+      handlePayment();
     }
   };
 

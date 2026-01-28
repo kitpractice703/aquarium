@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+// [1] API 통신을 위한 axios 인스턴스와 타입 가져오기
+import api, { type ScheduleData, type ReviewData } from "../../types/api";
+
 import HeroSection from "../../components/HeroSection";
 import KakaoMap from "../../components/common/KakaoMap";
 import ThemeSection from "../../components/common/ThemeSection";
@@ -10,6 +13,7 @@ import feedingImage from "../../../src/assets/images/feeding.jpg";
 
 import * as S from "./style";
 
+// 날짜 계산 유틸리티 함수 (기존 유지)
 const getDaysArray = () => {
   const days = [];
   const today = new Date();
@@ -32,44 +36,11 @@ const getDaysArray = () => {
   return days;
 };
 
-const SCHEDULE_DATA = [
-  {
-    time: "11:00",
-    title: "돌고래의 꿈 (Digital)",
-    place: "오션 아레나",
-    status: "closed",
-  },
-  {
-    time: "13:00",
-    title: "바다사자 식사시간",
-    place: "해변 공원",
-    status: "open",
-  },
-  { time: "14:00", title: "심해의 빛 쇼", place: "딥 블루 홀", status: "open" },
-  {
-    time: "16:00",
-    title: "펭귄 생태 설명회",
-    place: "극지방 존",
-    status: "open",
-  },
-  {
-    time: "19:00",
-    title: "나이트 라군 파티",
-    place: "중앙 광장",
-    status: "ready",
-  },
-];
-
-// [ADDED] 후기 데이터를 배열로 관리 (개별 클릭 처리를 위해 ID 부여)
-const REVIEW_DATA = [
-  { id: 101, title: "[포토] 빛의 바다 아름다워요!", rating: 5.0 },
-  { id: 102, title: "아이들이 VR 좋아하네요.", rating: 4.5 },
-  { id: 103, title: "돌고래 공연 감동적...", rating: 5.0 },
-  { id: 104, title: "주말엔 사람이 많네요.", rating: 4.0 },
-  { id: 105, title: "재방문 의사 있습니다!", rating: 5.0 },
-];
-
 const Home = () => {
+  // [2] 백엔드 데이터를 담을 State 생성
+  const [schedules, setSchedules] = useState<ScheduleData[]>([]);
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
+
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
@@ -77,6 +48,26 @@ const Home = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
+  // [3] 페이지가 열릴 때 백엔드에서 데이터 가져오기 (Fetch)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // (1) 공연 일정 데이터 가져오기
+        const scheduleRes = await api.get<ScheduleData[]>("/schedules");
+        setSchedules(scheduleRes.data);
+
+        // (2) 관람 후기 데이터 가져오기
+        const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
+        setReviews(reviewRes.data);
+      } catch (error) {
+        console.error("데이터 로딩 실패:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // 날짜 초기화 로직 (기존 유지)
   useEffect(() => {
     const dayList = getDaysArray();
     setDates(dayList);
@@ -85,12 +76,10 @@ const Home = () => {
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
-  // [ADDED] 후기 상세 페이지로 이동하는 핸들러
+  // 후기 클릭 핸들러 (기존 유지)
   const handleReviewClick = (reviewId: number) => {
-    // 실제로는 '/reviews/101' 같은 경로가 App.tsx에 정의되어 있어야 합니다.
-    // 현재는 페이지가 없으므로 알림창으로 대체하거나, 추후 라우터를 연결하세요.
-    // navigate(`/reviews/${reviewId}`);
     alert(`${reviewId}번 게시글 상세 페이지로 이동합니다.`);
+    // 추후 navigate(`/reviews/${reviewId}`) 로 변경 예정
   };
 
   return (
@@ -252,9 +241,10 @@ const Home = () => {
                       매월 첫째 주 월요일은 시설 점검을 위해 쉽니다.
                     </p>
                   </div>
-                ) : (
-                  SCHEDULE_DATA.map((item, idx) => (
-                    <S.ScheduleItem key={idx}>
+                ) : // [4] 실제 schedules 데이터로 렌더링
+                schedules.length > 0 ? (
+                  schedules.map((item) => (
+                    <S.ScheduleItem key={item.id}>
                       <div className="time">{item.time}</div>
                       <div className="info">
                         <div className="title">{item.title}</div>
@@ -275,6 +265,16 @@ const Home = () => {
                       </div>
                     </S.ScheduleItem>
                   ))
+                ) : (
+                  <div
+                    style={{
+                      padding: "30px",
+                      textAlign: "center",
+                      color: "#888",
+                    }}
+                  >
+                    등록된 공연 일정이 없습니다.
+                  </div>
                 )}
               </div>
             </S.ProgramCol>
@@ -308,29 +308,34 @@ const Home = () => {
               ))}
             </S.CommBox>
 
-            {/* [MODIFIED] CommBox 자체의 onClick은 제거하고, 내부 요소에 이벤트를 분리합니다. */}
             <S.CommBox>
               <S.CommTitle
-                onClick={() => setIsReviewModalOpen(true)} // 'more' 누르면 모달 오픈
+                onClick={() => setIsReviewModalOpen(true)}
                 style={{ cursor: "pointer" }}
               >
                 관람 후기 <span>more</span>
               </S.CommTitle>
 
               <S.CommList>
-                {/* [MODIFIED] 데이터 매핑 방식으로 변경하여 개별 클릭 이벤트 적용 */}
-                {REVIEW_DATA.map((review) => (
-                  <li
-                    key={review.id}
-                    onClick={() => handleReviewClick(review.id)} // [ADDED] 개별 글 클릭 시 상세 이동
-                    style={{ cursor: "pointer" }} // 클릭 가능하다는 시각적 피드백
-                  >
-                    <span>{review.title}</span>{" "}
-                    <span style={{ color: "#ffdd57" }}>
-                      ★ {review.rating.toFixed(1)}
-                    </span>
+                {/* [5] 실제 reviews 데이터로 렌더링 (최신 5개만) */}
+                {reviews.length > 0 ? (
+                  reviews.slice(0, 5).map((review) => (
+                    <li
+                      key={review.id}
+                      onClick={() => handleReviewClick(review.id)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <span>{review.title}</span>{" "}
+                      <span style={{ color: "#ffdd57" }}>
+                        ★ {review.rating.toFixed(1)}
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <li style={{ color: "#888", textAlign: "center" }}>
+                    아직 등록된 후기가 없습니다.
                   </li>
-                ))}
+                )}
               </S.CommList>
             </S.CommBox>
           </S.CommunityGrid>
