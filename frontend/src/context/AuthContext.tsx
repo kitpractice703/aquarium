@@ -1,8 +1,6 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
-// ✅ 1. 로그인 데이터 타입 정의 (any 에러 해결)
 interface LoginData {
   email: string;
   password?: string;
@@ -21,13 +19,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
 
-  // ✅ 2. 함수 위치 변경 (useEffect보다 위로! 에러 해결)
   const checkLoginStatus = async () => {
     try {
       const response = await axios.get("/api/auth/me");
       if (response.status === 200) {
         setIsLoggedIn(true);
-        setUsername(response.data); // 백엔드에서 이름 줌
+
+        // [FIX] 여기서 에러가 났을 겁니다! 객체인지 확인하고 이름만 꺼냅니다.
+        const data = response.data;
+        if (typeof data === "string") {
+          setUsername(data);
+        } else if (typeof data === "object" && data !== null) {
+          // 백엔드에서 주는 필드명에 맞춰 수정 (예: username, name, email 등)
+          setUsername(data.username || data.name || data.email || "사용자");
+        } else {
+          setUsername("알 수 없음");
+        }
       }
     } catch (e) {
       setIsLoggedIn(false);
@@ -35,7 +42,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // 3. 이제 함수가 정의된 후에 호출하므로 에러 없음
   useEffect(() => {
     checkLoginStatus();
   }, []);

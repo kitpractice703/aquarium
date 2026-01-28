@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
-// [1] API 통신을 위한 axios 인스턴스와 타입 가져오기
-import api, { type ScheduleData, type ReviewData } from "../../types/api";
-
 import HeroSection from "../../components/HeroSection";
 import KakaoMap from "../../components/common/KakaoMap";
 import ThemeSection from "../../components/common/ThemeSection";
 import FaqModal from "../../components/common/FaqModal";
 import ReviewModal from "../../components/common/ReviewModal";
 import BookingModal from "../../components/common/BookingModal";
-import vrImage from "../../../src/assets/images/vr_driving.jpeg";
-import feedingImage from "../../../src/assets/images/feeding.jpg";
+import vrImage from "../../assets/images/vr_driving.jpeg";
+import feedingImage from "../../assets/images/feeding.jpg";
 
 import * as S from "./style";
 
