@@ -6,6 +6,9 @@ const fadeIn = keyframes`
 `;
 
 export const Hero = styled.section`
+  /* [ADDED] 부모(MainContent)의 중앙 정렬을 무시하고 가로를 꽉 채우기 위해 추가 */
+  width: 100%;
+
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -14,21 +17,23 @@ export const Hero = styled.section`
   position: relative;
   text-align: center;
   overflow: hidden;
+  background-color: #000;
 `;
 
 export const VideoBg = styled.video`
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* [핵심] 영상 비율이 깨지지 않고 꽉 차게 만듦 */
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-  filter: brightness(0.6);
+  z-index: 0;
+  opacity: 0.6;
 `;
 
 export const Content = styled.div`
-  z-index: 10;
+  z-index: 1;
+  position: relative;
   animation: ${fadeIn} 1s ease-out;
   padding: 0 20px;
 `;

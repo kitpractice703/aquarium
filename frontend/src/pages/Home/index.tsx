@@ -5,6 +5,9 @@ import ThemeSection from "../../components/common/ThemeSection";
 import FaqModal from "../../components/common/FaqModal";
 import ReviewModal from "../../components/common/ReviewModal";
 import BookingModal from "../../components/common/BookingModal";
+import vrImage from "../../../src/assets/images/vr_driving.jpeg";
+import feedingImage from "../../../src/assets/images/feeding.jpg";
+
 import * as S from "./style";
 
 const getDaysArray = () => {
@@ -57,6 +60,15 @@ const SCHEDULE_DATA = [
   },
 ];
 
+// [ADDED] 후기 데이터를 배열로 관리 (개별 클릭 처리를 위해 ID 부여)
+const REVIEW_DATA = [
+  { id: 101, title: "[포토] 빛의 바다 아름다워요!", rating: 5.0 },
+  { id: 102, title: "아이들이 VR 좋아하네요.", rating: 4.5 },
+  { id: 103, title: "돌고래 공연 감동적...", rating: 5.0 },
+  { id: 104, title: "주말엔 사람이 많네요.", rating: 4.0 },
+  { id: 105, title: "재방문 의사 있습니다!", rating: 5.0 },
+];
+
 const Home = () => {
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -72,6 +84,14 @@ const Home = () => {
     const hasToday = dayList.find((d) => d.fullDate === todayStr);
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
+
+  // [ADDED] 후기 상세 페이지로 이동하는 핸들러
+  const handleReviewClick = (reviewId: number) => {
+    // 실제로는 '/reviews/101' 같은 경로가 App.tsx에 정의되어 있어야 합니다.
+    // 현재는 페이지가 없으므로 알림창으로 대체하거나, 추후 라우터를 연결하세요.
+    // navigate(`/reviews/${reviewId}`);
+    alert(`${reviewId}번 게시글 상세 페이지로 이동합니다.`);
+  };
 
   return (
     <>
@@ -168,10 +188,7 @@ const Home = () => {
               </h3>
               <S.ExperienceList>
                 <S.ExperienceItem>
-                  <img
-                    src="https://placehold.co/500x200/222/FFF?text=VR+Diving"
-                    alt="VR"
-                  />
+                  <img src={vrImage} alt="VR" />
                   <h4>가상 심해 다이빙 (VR)</h4>
                   <p>
                     실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR
@@ -179,10 +196,7 @@ const Home = () => {
                   </p>
                 </S.ExperienceItem>
                 <S.ExperienceItem>
-                  <img
-                    src="https://placehold.co/500x200/333/FFF?text=Feeding"
-                    alt="Feeding"
-                  />
+                  <img src={feedingImage} alt="Feeding" />
                   <h4>아쿠아리스트 먹이 주기</h4>
                   <p>
                     전문 아쿠아리스트와 함께 메인 수조의 물고기들에게 직접
@@ -194,11 +208,13 @@ const Home = () => {
 
             <S.ProgramCol>
               <h3
+                id="schedule-start"
                 style={{
                   marginBottom: "20px",
                   color: "var(--accent-cyan)",
                   borderLeft: "4px solid var(--accent-cyan)",
                   paddingLeft: "15px",
+                  scrollMarginTop: "100px",
                 }}
               >
                 공연 시간표
@@ -246,7 +262,6 @@ const Home = () => {
                       </div>
                       <div
                         className={`status ${item.status}`}
-                        // [추가] 예매가능(open)일 때만 클릭 이벤트 연결
                         onClick={() => {
                           if (item.status === "open")
                             setIsBookingModalOpen(true);
@@ -266,8 +281,6 @@ const Home = () => {
           </S.ProgramLayout>
         </S.Container>
       </S.Section>
-
-      {/* [삭제됨] BookingSection 제거 */}
 
       <S.Section id="community">
         <S.Container>
@@ -295,34 +308,29 @@ const Home = () => {
               ))}
             </S.CommBox>
 
-            <S.CommBox
-              onClick={() => setIsReviewModalOpen(true)}
-              style={{ cursor: "pointer" }}
-            >
-              <S.CommTitle>
+            {/* [MODIFIED] CommBox 자체의 onClick은 제거하고, 내부 요소에 이벤트를 분리합니다. */}
+            <S.CommBox>
+              <S.CommTitle
+                onClick={() => setIsReviewModalOpen(true)} // 'more' 누르면 모달 오픈
+                style={{ cursor: "pointer" }}
+              >
                 관람 후기 <span>more</span>
               </S.CommTitle>
+
               <S.CommList>
-                <li>
-                  <span>[포토] 빛의 바다 아름다워요!</span>{" "}
-                  <span style={{ color: "#ffdd57" }}>★ 5.0</span>
-                </li>
-                <li>
-                  <span>아이들이 VR 좋아하네요.</span>{" "}
-                  <span style={{ color: "#ffdd57" }}>★ 4.5</span>
-                </li>
-                <li>
-                  <span>돌고래 공연 감동적...</span>{" "}
-                  <span style={{ color: "#ffdd57" }}>★ 5.0</span>
-                </li>
-                <li>
-                  <span>주말엔 사람이 많네요.</span>{" "}
-                  <span style={{ color: "#ffdd57" }}>★ 4.0</span>
-                </li>
-                <li>
-                  <span>재방문 의사 있습니다!</span>{" "}
-                  <span style={{ color: "#ffdd57" }}>★ 5.0</span>
-                </li>
+                {/* [MODIFIED] 데이터 매핑 방식으로 변경하여 개별 클릭 이벤트 적용 */}
+                {REVIEW_DATA.map((review) => (
+                  <li
+                    key={review.id}
+                    onClick={() => handleReviewClick(review.id)} // [ADDED] 개별 글 클릭 시 상세 이동
+                    style={{ cursor: "pointer" }} // 클릭 가능하다는 시각적 피드백
+                  >
+                    <span>{review.title}</span>{" "}
+                    <span style={{ color: "#ffdd57" }}>
+                      ★ {review.rating.toFixed(1)}
+                    </span>
+                  </li>
+                ))}
               </S.CommList>
             </S.CommBox>
           </S.CommunityGrid>

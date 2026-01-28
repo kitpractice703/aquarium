@@ -21,18 +21,18 @@ export const Overlay = styled.div`
 `;
 
 export const Container = styled.div`
-  /* [수정] 변수 대신 직접 색상 코드를 넣어 흰색 배경 문제 방지 */
   background-color: #151e32;
   width: 90%;
-  max-width: 500px;
-  min-height: 600px;
+  max-width: 600px;
+  height: auto;
+  max-height: 85vh;
+  overflow-y: auto;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 50px rgba(0, 242, 255, 0.15);
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
   color: #fff; /* 글자색 강제 화이트 */
 `;
 
@@ -169,13 +169,18 @@ export const CounterRow = styled.div`
     gap: 15px;
 
     button {
-      width: 30px;
+      width: 32px;
       height: 30px;
       border-radius: 50%;
       border: 1px solid #555;
       background: #333;
       color: #fff;
       cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+
       &:hover {
         border-color: var(--accent-cyan);
         color: var(--accent-cyan);

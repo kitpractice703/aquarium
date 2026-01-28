@@ -1,15 +1,10 @@
 import * as S from "./style";
+import mainVideo from "../../assets/videos/main_video.mp4";
 
 const HeroSection = () => {
   return (
     <S.Hero>
-      <S.VideoBg autoPlay loop muted playsInline>
-        <source
-          src="https://cdn.pixabay.com/video/2022/10/05/133649-757575647_large.mp4"
-          type="video/mp4"
-        />
-      </S.VideoBg>
-
+      <S.VideoBg autoPlay loop muted playsInline src={mainVideo} />
       <S.Content>
         <S.Title>
           보이지 않던 바다,
@@ -23,7 +18,7 @@ const HeroSection = () => {
         <S.BtnMain
           onClick={() =>
             document
-              .getElementById("booking")
+              .getElementById("schedule-start") // [MODIFIED] programs -> schedule-start 로 변경
               ?.scrollIntoView({ behavior: "smooth" })
           }
         >
