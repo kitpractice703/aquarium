@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import api from "../types/api"; // axios 대신 api 인스턴스 사용 권장
 
 interface LoginData {
   email: string;
@@ -21,19 +22,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const checkLoginStatus = async () => {
     try {
-      const response = await axios.get("/api/auth/me");
+      const response = await api.get("/auth/me"); // api 인스턴스 사용
       if (response.status === 200) {
         setIsLoggedIn(true);
-
-        // [FIX] 여기서 에러가 났을 겁니다! 객체인지 확인하고 이름만 꺼냅니다.
+        // [FIX] 안전하게 이름만 꺼내오기
         const data = response.data;
         if (typeof data === "string") {
           setUsername(data);
         } else if (typeof data === "object" && data !== null) {
-          // 백엔드에서 주는 필드명에 맞춰 수정 (예: username, name, email 등)
-          setUsername(data.username || data.name || data.email || "사용자");
-        } else {
-          setUsername("알 수 없음");
+          // 백엔드가 { email: "...", name: "..." } 형태로 줄 경우 대비
+          setUsername(data.username || data.name || data.email || "회원");
         }
       }
     } catch (e) {
@@ -48,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (loginData: LoginData) => {
     try {
-      await axios.post("/api/auth/login", loginData);
+      await api.post("/auth/login", loginData); // api 인스턴스 사용
       await checkLoginStatus();
       alert("로그인되었습니다!");
     } catch (error) {
@@ -59,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      await axios.post("/api/auth/logout");
+      await api.post("/auth/logout"); // api 인스턴스 사용
       setIsLoggedIn(false);
       setUsername(null);
       alert("로그아웃 되었습니다.");

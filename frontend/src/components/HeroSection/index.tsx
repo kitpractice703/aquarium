@@ -1,5 +1,8 @@
 import * as S from "./style";
-import mainVideo from "../../assets/videos/main_video.mp4";
+
+// [FIX] 로컬 파일 import 대신 온라인 URL 사용 (에러 원천 차단!)
+const mainVideo =
+  "https://cdn.pixabay.com/video/2024/02/09/199958-911694865_large.mp4";
 
 const HeroSection = () => {
   return (
@@ -13,12 +16,12 @@ const HeroSection = () => {
         <S.Desc>
           빛, 균형, 깊이, 그리고 공존...
           <br />
-          신비로운 테마로 펼쳐지는 신비로운 해양 탐험에 여러분을 초대합니다.
+          신비로운 테마로 펼쳐지는 심해 탐험에 여러분을 초대합니다.
         </S.Desc>
         <S.BtnMain
           onClick={() =>
             document
-              .getElementById("schedule-start") // [MODIFIED] programs -> schedule-start 로 변경
+              .getElementById("schedule-start")
               ?.scrollIntoView({ behavior: "smooth" })
           }
         >

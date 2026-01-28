@@ -1,10 +1,10 @@
-import { Routes, Route } from "react-router-dom"; // [수정] Router, BrowserRouter 제거
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 import Home from "./pages/Home";
 import Program from "./pages/Program";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import MyPage from "./pages/MyPage"; // [추가] 마이페이지 컴포넌트 임포트
+import MyPage from "./pages/MyPage"; // [추가] 마이페이지
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -27,22 +27,22 @@ const MainContent = styled.main`
 
 function App() {
   return (
-    // [중요] 여기에 <Router>가 있으면 안 됩니다! (main.tsx에 이미 있음)
-    <LayoutWrapper>
-      <Header />
-      <MainContent>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/programs" element={<Program />} />{" "}
-          {/* url 경로 'programs'로 통일 권장 */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/mypage" element={<MyPage />} />{" "}
-          {/* 마이페이지 경로 추가 */}
-        </Routes>
-      </MainContent>
-      <Footer />
-    </LayoutWrapper>
+    // [FIX] basename 속성을 제거했습니다. 이제 localhost에서 문제없이 작동합니다!
+    <Router>
+      <LayoutWrapper>
+        <Header />
+        <MainContent>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/programs" element={<Program />} /> {/* url 통일 */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/mypage" element={<MyPage />} />
+          </Routes>
+        </MainContent>
+        <Footer />
+      </LayoutWrapper>
+    </Router>
   );
 }
 
