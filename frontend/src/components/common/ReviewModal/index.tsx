@@ -1,8 +1,13 @@
+// frontend/src/components/common/ReviewModal/index.tsx
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+// [수정] 설정이 적용된 axios 인스턴스 사용
 import { api } from "../../../api/axios";
 import { useAuth } from "../../../context/AuthContext";
+// [수정] 스타일 컴포넌트 전체를 S로 가져오기
 import * as S from "./style";
+// [추가] 로그인 유도 모달
 import LoginRequestModal from "../LoginRequestModal";
 
 interface Props {
@@ -23,7 +28,8 @@ const ITEMS_PER_PAGE = 5;
 
 const ReviewModal = ({ isOpen, onClose }: Props) => {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth(); // [1] 로그인 상태 가져오기
+  // [1] AuthContext에서 로그인 상태 가져오기
+  const { isLoggedIn } = useAuth();
 
   const [view, setView] = useState<"LIST" | "DETAIL" | "WRITE">("LIST");
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +37,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [selectedReview, setSelectedReview] = useState<ReviewData | null>(null);
 
-  // [2] 로그인 안내 모달 상태 추가
+  // [2] 로그인 안내 모달 표시 여부 상태
   const [isLoginNoticeOpen, setIsLoginNoticeOpen] = useState(false);
 
   const [writeForm, setWriteForm] = useState({
@@ -42,6 +48,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
 
   const fetchReviews = async () => {
     try {
+      // [수정] api 인스턴스 사용
       const response = await api.get("/posts/reviews");
       setReviews(response.data);
     } catch (error) {
@@ -63,9 +70,11 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
   // [3] 글쓰기 버튼 클릭 핸들러 (핵심 로직)
   const handleWriteClick = () => {
     if (isLoggedIn) {
-      setView("WRITE"); // 로그인 상태면 글쓰기 화면으로
+      // 로그인 상태라면 글쓰기 화면으로 전환
+      setView("WRITE");
     } else {
-      setIsLoginNoticeOpen(true); // 아니면 안내 모달 띄우기
+      // 비로그인 상태라면 로그인 요청 모달 띄우기
+      setIsLoginNoticeOpen(true);
     }
   };
 
@@ -76,6 +85,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
     }
 
     try {
+      // [수정] api 인스턴스로 POST 요청
       await api.post("/posts/reviews", {
         title: writeForm.title,
         content: writeForm.content,
@@ -86,11 +96,11 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
 
       setWriteForm({ title: "", content: "", rating: 5 });
       setView("LIST");
-      fetchReviews();
+      fetchReviews(); // 목록 갱신
     } catch (error: any) {
       console.error(error);
       if (error.response?.status === 401) {
-        setIsLoginNoticeOpen(true); // 401 에러 시에도 안내 모달 띄우기
+        setIsLoginNoticeOpen(true); // 401 에러(토큰 만료 등) 시에도 안내 모달
       } else {
         alert("후기 등록 중 오류가 발생했습니다.");
       }
@@ -184,7 +194,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                   </S.Pagination>
                 )}
 
-                {/* [4] 버튼에 핸들러 연결 (기존: onClick={() => setView("WRITE")}) */}
+                {/* [4] 글쓰기 버튼에 핸들러 연결 */}
                 <S.WriteBtn onClick={handleWriteClick}>✎ 글쓰기</S.WriteBtn>
               </>
             )}
@@ -267,14 +277,14 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
         </S.Container>
       </S.Overlay>
 
-      {/* [5] 로그인 안내 모달 컴포넌트 추가 */}
+      {/* [5] 비로그인 시 표시될 로그인 요청 모달 */}
       <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}
         onConfirm={() => {
-          setIsLoginNoticeOpen(false);
-          onClose();
-          navigate("/login");
+          setIsLoginNoticeOpen(false); // 요청 모달 닫기
+          onClose(); // 리뷰 모달도 닫기 (선택 사항: 원하시면 이 줄 삭제)
+          navigate("/login"); // 로그인 페이지로 이동
         }}
       />
     </>
