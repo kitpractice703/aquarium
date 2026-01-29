@@ -1,5 +1,7 @@
 package com.aquarium.Naquarium.config;
 
+import com.aquarium.Naquarium.service.CustomOAuth2UserService; // [필수]
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,17 +18,19 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor // [추가] 생성자 주입을 위해 필요
 public class SecurityConfig {
+
+    private final CustomOAuth2UserService customOAuth2UserService; // [핵심] 서비스 주입
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable) // CSRF 끄기 (필수)
+                .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // [중요] 회원가입(signup)과 로그인 관련 주소 모두 허용
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/public/**",
@@ -40,7 +44,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        // 로그인 성공 시 메인으로 이동
+                        // [핵심] 여기가 빠져있었습니다! 로그인 성공 시 이 서비스가 실행되어야 DB에 저장됩니다.
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .defaultSuccessUrl("https://aquarium-sand.vercel.app", true)
                 );
 
@@ -51,7 +56,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // 허용할 주소 목록 (본인의 Vercel 주소 정확히 확인!)
+        // 프론트엔드 주소 (로컬 및 배포 주소)
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "https://aquarium-sand.vercel.app"
@@ -59,7 +64,7 @@ public class SecurityConfig {
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true); // 쿠키/세션 허용
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
