@@ -42,6 +42,8 @@ export const Logo = styled.div`
 export const Gnb = styled.nav`
   display: flex;
   gap: 30px;
+  align-items: center;
+
   a {
     font-size: 16px;
     font-weight: 500;
@@ -50,9 +52,11 @@ export const Gnb = styled.nav`
     text-decoration: none;
     transition: color 0.3s;
   }
+
   a:hover {
     color: var(--accent-cyan);
   }
+
   @media (max-width: 768px) {
     display: none;
   }

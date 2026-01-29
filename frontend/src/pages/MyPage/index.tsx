@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 import * as S from "./style";
 
 const MyPage = () => {
+  const { username } = useAuth();
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // [MODIFIED] '현재 비밀번호' 필드 추가
+  const [form, setForm] = useState({
+    currentPassword: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+  });
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -21,6 +31,25 @@ const MyPage = () => {
     fetchReservations();
   }, []);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleUpdateInfo = () => {
+    // [ADDED] 현재 비밀번호 확인 로직 추가
+    if (!form.currentPassword) {
+      alert("본인 확인을 위해 현재 비밀번호를 입력해주세요.");
+      return;
+    }
+    if (form.password && form.password !== form.confirmPassword) {
+      alert("새 비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    // 실제로는 여기서 백엔드로 currentPassword와 함께 수정 요청을 보냅니다.
+    alert("회원정보 수정 기능은 준비 중입니다. (UI 데모)");
+  };
+
   if (loading)
     return (
       <div style={{ paddingTop: "100px", textAlign: "center", color: "white" }}>
@@ -31,36 +60,110 @@ const MyPage = () => {
   return (
     <S.Container>
       <S.Inner>
-        <S.Title>
-          MY <span>TICKET</span>
-        </S.Title>
+        <S.PageHeader>
+          <S.Title>MY PAGE</S.Title>
+        </S.PageHeader>
 
-        <S.TicketList>
-          {reservations.length === 0 ? (
-            <S.EmptyMsg>예매 내역이 없습니다.</S.EmptyMsg>
-          ) : (
-            reservations.map((ticket) => (
-              <S.TicketCard key={ticket.id}>
-                <S.TicketInfo>
-                  {/* DTO에 visitDate가 아직 없으므로 reservedAt이나 startTime 활용 */}
-                  <div className="date">예약번호 #{ticket.id}</div>
-                  <div className="title">
-                    {ticket.programTitle
-                      ? ticket.programTitle
-                      : "Naquarium 입장권"}
-                  </div>
-                  <div className="details">
-                    {/* 백엔드 DTO에 visitDate, visitTime 필드가 추가되면 여기 수정 필요 */}
-                    장소: {ticket.location || "Naquarium 본관"}
-                  </div>
-                </S.TicketInfo>
-                <S.TicketStatus $status={ticket.status}>
-                  {ticket.status === "CONFIRMED" ? "예매 완료" : "취소됨"}
-                </S.TicketStatus>
-              </S.TicketCard>
-            ))
-          )}
-        </S.TicketList>
+        <S.ContentGrid>
+          {/* [SECTION 1] 내 정보 관리 */}
+          <S.Section>
+            <S.SectionTitle>내 정보 관리</S.SectionTitle>
+            <S.InfoForm>
+              <S.InputGroup>
+                <label>아이디 (이메일)</label>
+                <input type="text" value={username || ""} disabled readOnly />
+              </S.InputGroup>
+
+              {/* [ADDED] 현재 비밀번호 입력란 (사용자 인증) */}
+              <S.InputGroup>
+                <label>현재 비밀번호</label>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  placeholder="현재 비밀번호 입력"
+                  value={form.currentPassword}
+                  onChange={handleChange}
+                />
+              </S.InputGroup>
+
+              <S.InputGroup>
+                <label>새 비밀번호</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="변경할 비밀번호 (선택)"
+                  value={form.password}
+                  onChange={handleChange}
+                />
+              </S.InputGroup>
+              <S.InputGroup>
+                <label>새 비밀번호 확인</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="비밀번호 재입력"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                />
+              </S.InputGroup>
+              <S.InputGroup>
+                <label>전화번호</label>
+                <input
+                  type="text"
+                  name="phone"
+                  placeholder="010-0000-0000"
+                  value={form.phone}
+                  onChange={handleChange}
+                />
+              </S.InputGroup>
+
+              {/* 버튼을 하단 끝으로 밀어주기 위해 margin-top auto 사용 가능 */}
+              <div style={{ marginTop: "auto" }}>
+                <S.UpdateButton onClick={handleUpdateInfo}>
+                  정보 수정 저장
+                </S.UpdateButton>
+              </div>
+            </S.InfoForm>
+          </S.Section>
+
+          {/* [SECTION 2] 예매 확인 */}
+          <S.Section>
+            <S.SectionTitle>
+              예매 내역 <span>({reservations.length}건)</span>
+            </S.SectionTitle>
+
+            <S.TicketList>
+              {reservations.length === 0 ? (
+                <S.EmptyMsg>예매 내역이 없습니다.</S.EmptyMsg>
+              ) : (
+                reservations.map((ticket) => (
+                  <S.TicketCard key={ticket.id}>
+                    <S.TicketInfo>
+                      <div className="res-number">No. {ticket.id}</div>
+                      <div className="title">
+                        {ticket.programTitle || "Naquarium 입장권"}
+                      </div>
+                      <div className="details">
+                        <span className="location">
+                          {ticket.location || "Naquarium 본관"}
+                        </span>
+                        <span className="date-time">
+                          {ticket.startTime
+                            ? new Date(ticket.startTime).toLocaleDateString()
+                            : "날짜 정보 없음"}
+                        </span>
+                      </div>
+                    </S.TicketInfo>
+
+                    <S.TicketStatus $status={ticket.status}>
+                      {ticket.status === "CONFIRMED" ? "예매 완료" : "취소됨"}
+                    </S.TicketStatus>
+                  </S.TicketCard>
+                ))
+              )}
+            </S.TicketList>
+          </S.Section>
+        </S.ContentGrid>
       </S.Inner>
     </S.Container>
   );

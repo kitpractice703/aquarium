@@ -44,7 +44,9 @@ const Header = () => {
   };
 
   const handleGoogleLogin = () => {
-    alert("구글 로그인은 현재 준비 중입니다.");
+    // 백엔드 서버(8080)의 구글 로그인 엔드포인트로 이동
+    // (Spring Security OAuth2가 이 주소를 감지해서 구글 로그인 창을 띄워줍니다)
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   const handleTicketCheck = () => {
@@ -174,7 +176,7 @@ const Header = () => {
               fill="#EA4335"
             />
           </svg>
-          Google로 시작하기
+          Google로 로그인하기
         </S.GoogleBtn>
       </CommonModal>
     </>

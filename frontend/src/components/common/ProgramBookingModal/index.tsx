@@ -11,6 +11,9 @@ interface Props {
   price: number;
 }
 
+// [KEY POINT] 요청하신 2시간 간격 시간표
+const PROGRAM_TIMES = ["10:00", "12:00", "14:00", "16:00", "18:00"];
+
 const ProgramBookingModal = ({
   isOpen,
   onClose,
@@ -29,27 +32,20 @@ const ProgramBookingModal = ({
 
   const handlePaymentSuccess = async () => {
     try {
-      await api.post("/programs", {
-        // [Backend] ReservationController 수정 필요
-        programId: programId,
+      await api.post("/reservations/programs", {
+        // 백엔드 엔드포인트 확인 필요
+        programId,
         visitDate: date,
         visitTime: time,
-        count: count,
+        count,
       });
-
-      setShowPayment(false);
       alert("프로그램 예약이 완료되었습니다!");
       onClose();
     } catch (error: any) {
-      console.error(error);
-      setShowPayment(false);
-      if (error.response?.status === 400) {
-        alert(error.response.data); // "입장권을 먼저 예매해주세요" 메시지 출력
-      } else if (error.response?.status === 401) {
-        alert("로그인이 필요합니다.");
-      } else {
-        alert("예약 중 오류가 발생했습니다.");
-      }
+      if (error.response?.status === 400)
+        alert(error.response.data); // "입장권 먼저 구매하세요" 등
+      else if (error.response?.status === 401) alert("로그인이 필요합니다.");
+      else alert("예약 중 오류가 발생했습니다.");
     }
   };
 
@@ -62,25 +58,29 @@ const ProgramBookingModal = ({
             <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
           </S.Header>
           <S.Content>
+            {/* 날짜 선택 */}
             <S.InputGroup>
-              <S.Label>방문 날짜 (입장권 날짜와 동일해야 함)</S.Label>
+              <S.Label>날짜 선택 (입장권 날짜와 맞춰주세요)</S.Label>
               <S.Input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
               />
             </S.InputGroup>
+
+            {/* 시간 선택 (2시간 간격) */}
             <S.InputGroup>
               <S.Label>시간 선택</S.Label>
               <S.Select value={time} onChange={(e) => setTime(e.target.value)}>
-                <option value="10:00">10:00</option>
-                <option value="11:00">11:00</option>
-                <option value="13:00">13:00</option>
-                <option value="14:00">14:00</option>
-                <option value="15:00">15:00</option>
-                <option value="16:00">16:00</option>
+                {PROGRAM_TIMES.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
               </S.Select>
             </S.InputGroup>
+
+            {/* 인원 선택 */}
             <S.InputGroup>
               <S.Label>인원</S.Label>
               <S.Select
@@ -101,7 +101,7 @@ const ProgramBookingModal = ({
                 <span>{programTitle}</span>
               </div>
               <div>
-                <span>단가</span>
+                <span>1인 가격</span>
                 <span>{price.toLocaleString()}원</span>
               </div>
               <div className="total">

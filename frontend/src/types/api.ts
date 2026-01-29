@@ -32,10 +32,17 @@ export interface SignupRequest {
   phone: string;
 }
 
-// [ADDED] 로그인용 데이터 타입
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
+export interface ScheduleData {
+  id: number;
+  date: string; // [ADDED] 백엔드 DTO와 맞춤
+  time: string;
+  title: string;
+  place: string;
+  status: "open" | "closed" | "ready";
+}
 // [MODIFIED] export default api; 삭제 -> api는 src/api/axios.ts에서 가져다 씁니다.

@@ -8,26 +8,43 @@ import ThemeSection from "../../components/common/ThemeSection";
 import FaqModal from "../../components/common/FaqModal";
 import ReviewModal from "../../components/common/ReviewModal";
 import BookingModal from "../../components/common/BookingModal";
+import ProgramBookingModal from "../../components/common/ProgramBookingModal";
+
 import vrImage from "../../assets/images/vr_driving.jpeg";
 import feedingImage from "../../assets/images/feeding.jpg";
 
 import * as S from "./style";
 
-// 날짜 계산 유틸리티 함수 (기존 유지)
+// [수정 1] UTC가 아닌 '내 컴퓨터(한국) 시간' 기준으로 YYYY-MM-DD 문자열을 만드는 함수
+// 이게 없으면 새벽 시간에 날짜가 하루 전으로 밀리는 문제가 발생합니다.
+const getLocalYMD = (d: Date) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+// [수정 2] 이번 주 월요일 ~ 일요일 계산 로직 (한국 시간 기준)
 const getDaysArray = () => {
   const days = [];
-  const today = new Date();
-  const dayOfWeek = today.getDay();
+  const today = new Date(); // 현재 시스템 시간
+  const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
+
+  // 오늘이 일요일(0)이면 6일 전이 월요일, 아니면 (요일-1)일 전이 월요일
+  // 예: 목요일(4) -> 3일 전이 월요일
   const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
   const monday = new Date(today);
   monday.setDate(today.getDate() - diffToMonday);
+
   const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
 
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
+
     days.push({
-      fullDate: d.toISOString().split("T")[0],
+      fullDate: getLocalYMD(d), // YYYY-MM-DD (한국 시간)
       date: d.getDate(),
       day: weekDays[d.getDay()],
       isMonday: d.getDay() === 1,
@@ -37,55 +54,74 @@ const getDaysArray = () => {
 };
 
 const Home = () => {
-  // [2] 백엔드 데이터를 담을 State 생성
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
 
-  // any 타입 대신 명시적인 타입을 사용하는 것이 좋으나, 현재는 로직 유지를 위해 둡니다.
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
 
-  // [3] 페이지가 열릴 때 백엔드에서 데이터 가져오기 (Fetch)
+  const [selectedProgram, setSelectedProgram] = useState<{
+    id: number;
+    title: string;
+    price: number;
+  } | null>(null);
+
+  // 1. 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // [MODIFIED] api 호출 시 제네릭 타입 명시 (axios 설정에 따라 다를 수 있으나 명시 추천)
-        // api는 import 해온 axios 인스턴스입니다.
         const scheduleRes = await api.get<ScheduleData[]>("/schedules");
         setSchedules(scheduleRes.data);
-
         const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
         setReviews(reviewRes.data);
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
-        // [ADDED] 에러 발생 시 사용자에게 보여줄 UI 처리가 필요할 수 있습니다. (예: 빈 배열 유지)
       }
     };
-
     fetchData();
   }, []);
 
-  // 날짜 초기화 로직 (기존 유지)
+  // 2. 날짜 초기화 (오늘 날짜가 이번 주에 포함되어 있으면 오늘을 선택)
   useEffect(() => {
     const dayList = getDaysArray();
     setDates(dayList);
-    const todayStr = new Date().toISOString().split("T")[0];
+
+    const todayStr = getLocalYMD(new Date());
+    // 이번 주 목록 중에 오늘 날짜가 있는지 확인
     const hasToday = dayList.find((d) => d.fullDate === todayStr);
+
+    // 있으면 오늘, 없으면(혹시 모를 상황) 월요일을 기본 선택
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
-  // 후기 클릭 핸들러 (기존 유지)
   const handleReviewClick = (reviewId: number) => {
     alert(`${reviewId}번 게시글 상세 페이지로 이동합니다.`);
   };
 
+  const handleProgramClick = (
+    status: string,
+    program: { id: number; title: string; price: number },
+  ) => {
+    if (status === "open") {
+      setSelectedProgram(program);
+    } else {
+      alert("현재 예매 가능한 상태가 아닙니다.");
+    }
+  };
+
+  // [수정 3] 선택된 날짜와 일치하는 스케줄만 필터링
+  // 백엔드에서 받은 date 문자열과 프론트에서 만든 selectedDate 문자열을 비교합니다.
+  const filteredSchedules = schedules.filter(
+    (item) => item.date === selectedDate,
+  );
+
   return (
     <>
-      <HeroSection />
+      <HeroSection onBookClick={() => setIsAdmissionModalOpen(true)} />
 
       <S.Section id="about">
         <S.Container>
@@ -97,6 +133,9 @@ const Home = () => {
             수심 3,000m 아래 숨겨진 미지의 생태계와 멸종 위기종을
             <br />
             가장 생생한 기술로 복원하여 여러분께 선보입니다.
+            <br />
+            <br />
+            현실과 환상이 공존하는 이곳에서, 잊혀진 바다의 이야기를 들어보세요.
           </S.IntroDesc>
 
           <S.AboutGrid>
@@ -141,15 +180,20 @@ const Home = () => {
               <S.DescArea>
                 <p
                   style={{
-                    marginTop: "10px",
-                    fontSize: "15px",
-                    color: "var(--text-gray)",
+                    marginTop: "15px",
+                    fontSize: "16px",
+                    color: "#fff",
+                    fontWeight: "bold",
                   }}
                 >
-                  📍 인천광역시 계양구 아라뱃길 해저 2터미널
+                  📍 인천광역시 부평구 가상의 주소
                 </p>
                 <p
-                  style={{ marginTop: "5px", fontSize: "14px", color: "#555" }}
+                  style={{
+                    marginTop: "5px",
+                    fontSize: "14px",
+                    color: "var(--text-gray)",
+                  }}
                 >
                   (주차: 지하 2층 ~ 4층 무료 이용 가능)
                 </p>
@@ -166,49 +210,69 @@ const Home = () => {
           <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
           <S.ProgramLayout>
             <S.ProgramCol>
-              <h3
-                style={{
-                  marginBottom: "30px",
-                  color: "var(--accent-cyan)",
-                  borderLeft: "4px solid var(--accent-cyan)",
-                  paddingLeft: "15px",
-                }}
-              >
-                체험 프로그램
-              </h3>
+              <h3>체험 프로그램</h3>
               <S.ExperienceList>
                 <S.ExperienceItem>
                   <img src={vrImage} alt="VR" />
                   <h4>가상 심해 다이빙 (VR)</h4>
                   <p>
                     실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR
-                    체험입니다. 대왕오징어와의 조우를 경험하세요.
+                    체험입니다.
                   </p>
+                  <button
+                    onClick={() =>
+                      handleProgramClick("open", {
+                        id: 101,
+                        title: "가상 심해 다이빙",
+                        price: 15000,
+                      })
+                    }
+                    style={{
+                      marginTop: "10px",
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      background: "var(--accent-cyan)",
+                      border: "none",
+                      borderRadius: "5px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    예약하기
+                  </button>
                 </S.ExperienceItem>
                 <S.ExperienceItem>
                   <img src={feedingImage} alt="Feeding" />
                   <h4>아쿠아리스트 먹이 주기</h4>
                   <p>
                     전문 아쿠아리스트와 함께 메인 수조의 물고기들에게 직접
-                    먹이를 주며 교감할 수 있는 특별한 시간입니다.
+                    먹이를 줍니다.
                   </p>
+                  <button
+                    onClick={() =>
+                      handleProgramClick("open", {
+                        id: 102,
+                        title: "먹이주기 체험",
+                        price: 20000,
+                      })
+                    }
+                    style={{
+                      marginTop: "10px",
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      background: "var(--accent-cyan)",
+                      border: "none",
+                      borderRadius: "5px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    예약하기
+                  </button>
                 </S.ExperienceItem>
               </S.ExperienceList>
             </S.ProgramCol>
 
             <S.ProgramCol>
-              <h3
-                id="schedule-start"
-                style={{
-                  marginBottom: "20px",
-                  color: "var(--accent-cyan)",
-                  borderLeft: "4px solid var(--accent-cyan)",
-                  paddingLeft: "15px",
-                  scrollMarginTop: "100px",
-                }}
-              >
-                공연 시간표
-              </h3>
+              <h3 id="schedule-start">공연 시간표</h3>
               <S.DateSlider>
                 {dates.map((d) => (
                   <S.DateItem
@@ -222,7 +286,9 @@ const Home = () => {
                   </S.DateItem>
                 ))}
               </S.DateSlider>
+
               <div>
+                {/* 월요일인 경우 휴관 안내 */}
                 {dates.find((d) => d.fullDate === selectedDate)?.isMonday ? (
                   <div
                     style={{
@@ -242,8 +308,9 @@ const Home = () => {
                       매월 첫째 주 월요일은 시설 점검을 위해 쉽니다.
                     </p>
                   </div>
-                ) : schedules.length > 0 ? (
-                  schedules.map((item) => (
+                ) : filteredSchedules.length > 0 ? (
+                  // 스케줄이 있는 경우
+                  filteredSchedules.map((item) => (
                     <S.ScheduleItem key={item.id}>
                       <div className="time">{item.time}</div>
                       <div className="info">
@@ -266,6 +333,7 @@ const Home = () => {
                     </S.ScheduleItem>
                   ))
                 ) : (
+                  // 스케줄이 없는 경우
                   <div
                     style={{
                       padding: "30px",
@@ -273,7 +341,7 @@ const Home = () => {
                       color: "#888",
                     }}
                   >
-                    등록된 공연 일정이 없습니다.
+                    해당 날짜에는 예정된 공연 일정이 없습니다.
                   </div>
                 )}
               </div>
@@ -315,14 +383,13 @@ const Home = () => {
               >
                 관람 후기 <span>more</span>
               </S.CommTitle>
-
               <S.CommList>
                 {reviews.length > 0 ? (
                   reviews.slice(0, 5).map((review) => (
                     <li
                       key={review.id}
-                      onClick={() => handleReviewClick(review.id)}
                       style={{ cursor: "pointer" }}
+                      onClick={() => handleReviewClick(review.id)}
                     >
                       <span>{review.title}</span>{" "}
                       <span style={{ color: "#ffdd57" }}>
@@ -350,9 +417,19 @@ const Home = () => {
         onClose={() => setIsReviewModalOpen(false)}
       />
       <BookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
+        isOpen={isAdmissionModalOpen}
+        onClose={() => setIsAdmissionModalOpen(false)}
       />
+
+      {selectedProgram && (
+        <ProgramBookingModal
+          isOpen={!!selectedProgram}
+          onClose={() => setSelectedProgram(null)}
+          programTitle={selectedProgram.title}
+          programId={selectedProgram.id}
+          price={selectedProgram.price}
+        />
+      )}
     </>
   );
 };

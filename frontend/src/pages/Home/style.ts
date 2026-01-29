@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-/* [1] 공통 레이아웃 */
 export const Section = styled.section`
   width: 100%;
   padding: 100px 20px;
@@ -35,7 +34,7 @@ export const IntroDesc = styled.p`
   }
 `;
 
-/* [2] 소개 (About) */
+/* [About Grid] */
 export const AboutGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -50,7 +49,9 @@ export const InfoBox = styled.div`
   background: var(--bg-card);
   padding: 30px;
   border-radius: 10px;
-  height: 320px;
+  /* [수정] 고정 높이를 최소 높이로 변경하여 내용이 많아져도 잘리지 않음 */
+  min-height: 320px;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -63,7 +64,7 @@ export const InfoItem = styled.div`
   margin-bottom: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 10px;
-  font-size: 15px;
+  font-size: 16px; /* 폰트 크기 약간 증가 */
   &:last-child {
     border-bottom: none;
     margin-bottom: 0;
@@ -80,7 +81,7 @@ export const InfoItem = styled.div`
 
 export const MapWrapper = styled.div`
   width: 100%;
-  height: 320px;
+  height: 320px; /* 지도는 높이 고정 유지 */
   border-radius: 10px;
   overflow: hidden;
   background: #222;
@@ -96,7 +97,7 @@ export const DescArea = styled.div`
   padding: 0 5px;
 `;
 
-/* [3] 프로그램 (Programs) */
+/* [Programs] */
 export const ProgramLayout = styled.div`
   display: flex;
   gap: 40px;
@@ -232,7 +233,6 @@ export const ScheduleItem = styled.div`
     min-width: 70px;
     text-align: center;
 
-    /* [수정] 예매가능 상태일 때 마우스 포인터 추가 */
     &.open {
       background: rgba(0, 242, 255, 0.1);
       color: var(--accent-cyan);
@@ -259,9 +259,7 @@ export const ScheduleItem = styled.div`
   }
 `;
 
-/* [삭제됨] BookingSection 제거 */
-
-/* [4] 커뮤니티 (Community) */
+/* [Community] */
 export const CommunityGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
