@@ -1,9 +1,7 @@
-// frontend/src/pages/Home/index.tsx
-
 import { useState, useEffect } from "react";
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
-import type { ScheduleData, ReviewData } from "../../types/api";
+import type { ScheduleData, ReviewData, ReservationDto } from "../../types/api";
 
 import HeroSection from "../../components/HeroSection";
 import KakaoMap from "../../components/common/KakaoMap";
@@ -73,6 +71,7 @@ const Home = () => {
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [recentReviews, setRecentReviews] = useState<ReviewData[]>([]);
+  const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
 
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -91,6 +90,8 @@ const Home = () => {
     id: number;
     title: string;
     price: number;
+    fixedDate?: string;
+    fixedTime?: string;
   } | null>(null);
 
   const checkLogin = () => {
@@ -109,12 +110,20 @@ const Home = () => {
 
         const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
         setRecentReviews(reviewRes.data);
+        if (isLoggedIn) {
+          try {
+            const myRes = await api.get<ReservationDto[]>("/reservations/me");
+            setMyReservations(myRes.data);
+          } catch (e) {
+            console.error("예약 목록 로드 실패", e);
+          }
+        }
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
       }
     };
     fetchData();
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const dayList = getDaysArray();
@@ -148,12 +157,34 @@ const Home = () => {
     }
   };
 
-  const handleScheduleClick = (status: string) => {
-    if (status === "open") {
-      if (checkLogin()) {
-        setIsAdmissionModalOpen(true);
-      }
+  const handleScheduleClick = (item: ScheduleData) => {
+    if (item.status !== "open") return;
+
+    if (!checkLogin()) return;
+
+    // 1. 해당 날짜(item.date)에 유효한 입장권이 있는지 확인
+    // (예: visitDate가 일치하고, status가 CONFIRMED인 티켓)
+    const hasTicket = myReservations.some(
+      (res) => res.visitDate === item.date && res.status === "CONFIRMED",
+    );
+
+    if (!hasTicket) {
+      alert(
+        "해당 날짜의 입장권(관람권)이 없습니다.\n관람권을 먼저 예매해주세요.",
+      );
+      // 원한다면 여기서 입장권 예매 모달을 띄워줄 수도 있습니다.
+      // setIsAdmissionModalOpen(true);
+      return;
     }
+
+    // 2. 입장권이 있다면 바로 결제(예약) 모달 띄우기 (날짜/시간 고정)
+    setSelectedProgram({
+      id: item.programId,
+      title: item.title,
+      price: item.price,
+      fixedDate: item.date,
+      fixedTime: item.time,
+    });
   };
 
   const filteredSchedules = schedules.filter(
@@ -358,7 +389,7 @@ const Home = () => {
                       </div>
                       <div
                         className={`status ${item.status}`}
-                        onClick={() => handleScheduleClick(item.status)}
+                        onClick={() => handleScheduleClick(item)}
                       >
                         {item.status === "closed"
                           ? "마감"
@@ -483,6 +514,8 @@ const Home = () => {
           programTitle={selectedProgram.title}
           programId={selectedProgram.id}
           price={selectedProgram.price}
+          fixedDate={selectedProgram.fixedDate}
+          fixedTime={selectedProgram.fixedTime}
         />
       )}
 

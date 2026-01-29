@@ -1,6 +1,8 @@
 export interface ScheduleData {
   id: number;
-  date: string; // [ADDED] 백엔드 DTO와 맞춤
+  programId: number;
+  price: number;
+  date: string;
   time: string;
   title: string;
   place: string;
@@ -33,4 +35,11 @@ export interface SignupRequest {
 export interface LoginRequest {
   email: string;
   password: string;
+}
+
+export interface ReservationDto {
+  id: number;
+  visitDate: string;
+  programTitle: string;
+  status: string;
 }
