@@ -1,10 +1,11 @@
 // frontend/src/pages/Home/index.tsx
 
 import { useState, useEffect } from "react";
-// [수정] react-router-dom import 라인 전체 삭제 (useNavigate 안 쓰임)
+// [수정] react-router-dom import 라인 전체 삭제 (useNavigate 안 쓰임) -> 지난번 수정 사항 유지
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
-import type { ScheduleData } from "../../types/api";
+// [수정] ReviewData 타입 다시 추가 (최신 후기 목록용)
+import type { ScheduleData, ReviewData } from "../../types/api";
 
 import HeroSection from "../../components/HeroSection";
 import KakaoMap from "../../components/common/KakaoMap";
@@ -54,10 +55,12 @@ const getDaysArray = () => {
 };
 
 const Home = () => {
-  // [수정] navigate 선언 삭제 (더 이상 사용하지 않음)
   const { isLoggedIn } = useAuth();
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
+  // [추가] 최신 후기를 담을 상태 복구
+  const [recentReviews, setRecentReviews] = useState<ReviewData[]>([]);
+
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
@@ -87,6 +90,10 @@ const Home = () => {
       try {
         const scheduleRes = await api.get<ScheduleData[]>("/schedules");
         setSchedules(scheduleRes.data);
+
+        // [추가] 실제 DB에서 후기 목록 가져오기
+        const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
+        setRecentReviews(reviewRes.data);
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
       }
@@ -399,21 +406,37 @@ const Home = () => {
                   <span onClick={() => setIsReviewModalOpen(true)}>more</span>
                 </S.CommTitle>
                 <S.CommList>
-                  <li onClick={() => setIsReviewModalOpen(true)}>
-                    [포토] 빛의 바다 너무 아름다워요!
-                  </li>
-                  <li onClick={() => setIsReviewModalOpen(true)}>
-                    아이들이 VR 체험을 너무 좋아하네요.
-                  </li>
-                  <li onClick={() => setIsReviewModalOpen(true)}>
-                    돌고래 공연 감동적입니다...
-                  </li>
-                  <li onClick={() => setIsReviewModalOpen(true)}>
-                    주말에는 사람이 좀 많네요 ㅠㅠ
-                  </li>
-                  <li onClick={() => setIsReviewModalOpen(true)}>
-                    재방문 의사 있습니다!
-                  </li>
+                  {/* [변경] 가짜 데이터 제거 후 실제 DB 데이터(recentReviews) 연동 */}
+                  {recentReviews.length === 0 ? (
+                    <li
+                      style={{
+                        color: "#888",
+                        cursor: "default",
+                        textAlign: "center",
+                        padding: "20px 0",
+                      }}
+                    >
+                      아직 등록된 후기가 없습니다.
+                    </li>
+                  ) : (
+                    recentReviews.slice(0, 5).map((review) => (
+                      <li
+                        key={review.id}
+                        onClick={() => setIsReviewModalOpen(true)}
+                      >
+                        <div
+                          style={{
+                            width: "100%",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {review.title}
+                        </div>
+                      </li>
+                    ))
+                  )}
                 </S.CommList>
               </S.CommBox>
             </S.CommunityGrid>
