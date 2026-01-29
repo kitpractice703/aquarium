@@ -1,8 +1,9 @@
+// frontend/src/pages/Home/index.tsx
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
-// [수정] ReviewData 타입은 Home에서 쓰이지 않으므로 제거해도 됩니다 (ScheduleData만 남김)
 import type { ScheduleData } from "../../types/api";
 
 import HeroSection from "../../components/HeroSection";
@@ -53,18 +54,18 @@ const getDaysArray = () => {
 
 const Home = () => {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth(); // 로그인 상태 가져오기
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
-  // [삭제] reviews 상태는 Home에서 사용하지 않으므로 삭제 (ReviewModal에서 처리함)
-  // const [reviews, setReviews] = useState<ReviewData[]>([]);
-
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
+  // 모달 상태 관리
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
+
+  // [핵심] 로그인 유도 모달 상태
   const [isLoginNoticeOpen, setIsLoginNoticeOpen] = useState(false);
 
   const [selectedProgram, setSelectedProgram] = useState<{
@@ -73,12 +74,13 @@ const Home = () => {
     price: number;
   } | null>(null);
 
+  // [공통 함수] 로그인 체크 로직
   const checkLogin = () => {
     if (!isLoggedIn) {
-      setIsLoginNoticeOpen(true);
-      return false;
+      setIsLoginNoticeOpen(true); // 비로그인 시 모달 Open
+      return false; // 로직 중단 신호
     }
-    return true;
+    return true; // 통과 신호
   };
 
   useEffect(() => {
@@ -86,9 +88,6 @@ const Home = () => {
       try {
         const scheduleRes = await api.get<ScheduleData[]>("/schedules");
         setSchedules(scheduleRes.data);
-        // [삭제] Home에서는 리뷰 데이터를 불러올 필요가 없습니다.
-        // const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
-        // setReviews(reviewRes.data);
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
       }
@@ -104,12 +103,7 @@ const Home = () => {
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
-  // [삭제] 사용하지 않는 함수 삭제
-  // const handleReviewClick = (reviewId: number) => {
-  //   console.log("Review Clicked:", reviewId);
-  //   setIsReviewModalOpen(true);
-  // };
-
+  // 1. [체험 프로그램] 예약하기 버튼 핸들러
   const handleProgramClick = (
     status: string,
     program: { id: number; title: string; price: number },
@@ -118,19 +112,24 @@ const Home = () => {
       alert("현재 예매 가능한 상태가 아닙니다.");
       return;
     }
+    // 로그인 체크 후 통과하면 프로그램 예약 모달 열기
     if (checkLogin()) {
       setSelectedProgram(program);
     }
   };
 
+  // 2. [Hero 섹션] 관람 예매하기 버튼 핸들러
   const handleHeroBooking = () => {
+    // 로그인 체크 후 통과하면 입장권 예매 모달 열기
     if (checkLogin()) {
       setIsAdmissionModalOpen(true);
     }
   };
 
+  // 3. [공연 시간표] 예매가능 버튼 핸들러
   const handleScheduleClick = (status: string) => {
     if (status === "open") {
+      // 로그인 체크 후 통과하면 입장권 예매 모달 열기
       if (checkLogin()) {
         setIsAdmissionModalOpen(true);
       }
@@ -143,6 +142,7 @@ const Home = () => {
 
   return (
     <>
+      {/* 1. Hero 섹션 (메인 배너) */}
       <HeroSection onBookClick={handleHeroBooking} />
 
       <S.Section id="about">
@@ -231,6 +231,7 @@ const Home = () => {
         <S.Container>
           <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
           <S.ProgramLayout>
+            {/* 2. 체험 프로그램 섹션 */}
             <S.ProgramCol>
               <h3>체험 프로그램</h3>
               <S.ExperienceList>
@@ -293,6 +294,7 @@ const Home = () => {
               </S.ExperienceList>
             </S.ProgramCol>
 
+            {/* 3. 공연 시간표 섹션 */}
             <S.ProgramCol>
               <h3 id="schedule-start">공연 시간표</h3>
               <S.DateSlider>
@@ -407,7 +409,6 @@ const Home = () => {
                   <span onClick={() => setIsReviewModalOpen(true)}>more</span>
                 </S.CommTitle>
                 <S.CommList>
-                  {/* 리뷰 목록은 ReviewModal에서 보여주므로 여기서는 최신글 미리보기 or 고정 텍스트 */}
                   <li onClick={() => setIsReviewModalOpen(true)}>
                     [포토] 빛의 바다 너무 아름다워요!
                   </li>
@@ -430,6 +431,7 @@ const Home = () => {
         </S.Section>
       </div>
 
+      {/* 모달 컴포넌트들 */}
       <FaqModal
         isOpen={isFaqModalOpen}
         onClose={() => setIsFaqModalOpen(false)}
@@ -443,6 +445,7 @@ const Home = () => {
         onClose={() => setIsAdmissionModalOpen(false)}
       />
 
+      {/* 프로그램 선택 시에만 렌더링 */}
       {selectedProgram && (
         <ProgramBookingModal
           isOpen={!!selectedProgram}
@@ -453,13 +456,13 @@ const Home = () => {
         />
       )}
 
-      {/* [변경] 인라인 스타일 대신 깔끔한 컴포넌트 사용 */}
+      {/* [4] 로그인 요청 모달 (Home 컴포넌트 최하단) */}
       <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}
         onConfirm={() => {
-          setIsLoginNoticeOpen(false);
-          navigate("/login");
+          setIsLoginNoticeOpen(false); // 모달 닫고
+          navigate("/login"); // 로그인 페이지로 이동
         }}
       />
     </>
