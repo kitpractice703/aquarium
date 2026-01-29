@@ -321,7 +321,7 @@ const Home = () => {
                         className={`status ${item.status}`}
                         onClick={() => {
                           if (item.status === "open")
-                            setIsBookingModalOpen(true);
+                            setIsAdmissionModalOpen(true);
                         }}
                       >
                         {item.status === "closed"
