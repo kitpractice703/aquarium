@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+// frontend/src/components/Header/index.tsx
+
+import { useState } from "react"; // [수정] 'React' 제거
 import { useNavigate, useLocation } from "react-router-dom";
 import * as S from "./style";
 import BookingModal from "../common/BookingModal";
 import LoginRequestModal from "../common/LoginRequestModal";
-// [추가] 새로 만든 로그인 모달 import
 import LoginModal from "../common/LoginModal";
 import { useAuth } from "../../context/AuthContext";
 
@@ -77,7 +78,6 @@ const Header = () => {
               </>
             ) : (
               <>
-                {/* [변경] 로그인 버튼 클릭 시 LOGIN 모달 타입 설정 */}
                 <span onClick={() => setModalType("LOGIN")}>로그인</span>
                 <span onClick={() => navigate("/signup")}>회원가입</span>
               </>
@@ -103,10 +103,8 @@ const Header = () => {
         onClose={() => setIsBookingOpen(false)}
       />
 
-      {/* [변경] 기존 인라인 코드를 제거하고 LoginModal 컴포넌트 사용 */}
       <LoginModal isOpen={modalType === "LOGIN"} onClose={closeModal} />
 
-      {/* [변경] 경고 모달 확인 시 -> 로그인 모달로 전환 */}
       <LoginRequestModal
         isOpen={modalType === "NOTICE"}
         onClose={() => setModalType(null)}

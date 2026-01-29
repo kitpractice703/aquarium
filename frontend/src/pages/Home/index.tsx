@@ -1,5 +1,7 @@
+// frontend/src/pages/Home/index.tsx
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+// [수정] react-router-dom import 라인 전체 삭제 (useNavigate 안 쓰임)
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import type { ScheduleData } from "../../types/api";
@@ -11,9 +13,7 @@ import FaqModal from "../../components/common/FaqModal";
 import ReviewModal from "../../components/common/ReviewModal";
 import BookingModal from "../../components/common/BookingModal";
 import ProgramBookingModal from "../../components/common/ProgramBookingModal";
-// [중요] 비로그인 안내 모달
 import LoginRequestModal from "../../components/common/LoginRequestModal";
-// [중요] 실제 로그인 입력 모달 (새로 만든 컴포넌트)
 import LoginModal from "../../components/common/LoginModal";
 
 import vrImage from "../../assets/images/vr_driving.jpeg";
@@ -54,21 +54,18 @@ const getDaysArray = () => {
 };
 
 const Home = () => {
-  const navigate = useNavigate();
-  const { isLoggedIn } = useAuth(); // 로그인 상태 가져오기
+  // [수정] navigate 선언 삭제 (더 이상 사용하지 않음)
+  const { isLoggedIn } = useAuth();
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
-  // 모달 상태 관리
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
 
-  // [1] 로그인 안내(경고) 모달 상태
   const [isLoginNoticeOpen, setIsLoginNoticeOpen] = useState(false);
-  // [2] 실제 로그인(입력) 모달 상태 (새로 추가됨)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const [selectedProgram, setSelectedProgram] = useState<{
@@ -77,13 +74,12 @@ const Home = () => {
     price: number;
   } | null>(null);
 
-  // [공통 함수] 로그인 체크 로직
   const checkLogin = () => {
     if (!isLoggedIn) {
-      setIsLoginNoticeOpen(true); // 비로그인 시 경고 모달 Open
-      return false; // 로직 중단 신호
+      setIsLoginNoticeOpen(true);
+      return false;
     }
-    return true; // 통과 신호
+    return true;
   };
 
   useEffect(() => {
@@ -106,7 +102,6 @@ const Home = () => {
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
-  // 1. [체험 프로그램] 예약하기 버튼 핸들러
   const handleProgramClick = (
     status: string,
     program: { id: number; title: string; price: number },
@@ -115,24 +110,19 @@ const Home = () => {
       alert("현재 예매 가능한 상태가 아닙니다.");
       return;
     }
-    // 로그인 체크 후 통과하면 프로그램 예약 모달 열기
     if (checkLogin()) {
       setSelectedProgram(program);
     }
   };
 
-  // 2. [Hero 섹션] 관람 예매하기 버튼 핸들러
   const handleHeroBooking = () => {
-    // 로그인 체크 후 통과하면 입장권 예매 모달 열기
     if (checkLogin()) {
       setIsAdmissionModalOpen(true);
     }
   };
 
-  // 3. [공연 시간표] 예매가능 버튼 핸들러
   const handleScheduleClick = (status: string) => {
     if (status === "open") {
-      // 로그인 체크 후 통과하면 입장권 예매 모달 열기
       if (checkLogin()) {
         setIsAdmissionModalOpen(true);
       }
@@ -145,7 +135,6 @@ const Home = () => {
 
   return (
     <>
-      {/* 1. Hero 섹션 (메인 배너) */}
       <HeroSection onBookClick={handleHeroBooking} />
 
       <S.Section id="about">
@@ -234,7 +223,6 @@ const Home = () => {
         <S.Container>
           <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
           <S.ProgramLayout>
-            {/* 2. 체험 프로그램 섹션 */}
             <S.ProgramCol>
               <h3>체험 프로그램</h3>
               <S.ExperienceList>
@@ -297,7 +285,6 @@ const Home = () => {
               </S.ExperienceList>
             </S.ProgramCol>
 
-            {/* 3. 공연 시간표 섹션 */}
             <S.ProgramCol>
               <h3 id="schedule-start">공연 시간표</h3>
               <S.DateSlider>
@@ -434,7 +421,6 @@ const Home = () => {
         </S.Section>
       </div>
 
-      {/* 모달 컴포넌트들 */}
       <FaqModal
         isOpen={isFaqModalOpen}
         onClose={() => setIsFaqModalOpen(false)}
@@ -458,17 +444,15 @@ const Home = () => {
         />
       )}
 
-      {/* [4] 로그인 요청 모달 -> 확인 시 로그인 입력 모달 열기 */}
       <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}
         onConfirm={() => {
-          setIsLoginNoticeOpen(false); // 경고창 닫고
-          setIsLoginModalOpen(true); // [핵심] 로그인 입력 모달 열기
+          setIsLoginNoticeOpen(false);
+          setIsLoginModalOpen(true);
         }}
       />
 
-      {/* [5] 실제 로그인 입력 모달 */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
