@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../api/axios";
-import { useAuth } from "../../../context/AuthContext"; // [필수] 로그인 상태 확인
+import { useAuth } from "../../../context/AuthContext";
 import * as S from "./style";
-import LoginRequestModal from "../LoginRequestModal"; // [필수] 안내 모달
+import LoginRequestModal from "../LoginRequestModal";
 
 interface Props {
   isOpen: boolean;
@@ -273,8 +273,8 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
         onClose={() => setIsLoginNoticeOpen(false)}
         onConfirm={() => {
           setIsLoginNoticeOpen(false);
-          onClose(); // 리뷰 모달도 함께 닫아주는 것이 자연스러움
-          navigate("/login"); // 로그인 페이지로 이동
+          onClose();
+          navigate("/login");
         }}
       />
     </>
