@@ -142,18 +142,6 @@ const Signup = () => {
           />
         </S.InputGroup>
 
-        <S.InputGroup>
-          <S.Label>전화번호</S.Label>
-          <S.Input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            placeholder="010-0000-0000"
-          />
-        </S.InputGroup>
-
         {errorMsg && <S.ErrorMsg>{errorMsg}</S.ErrorMsg>}
 
         <S.SubmitBtn onClick={handleSubmit}>가입하기</S.SubmitBtn>
