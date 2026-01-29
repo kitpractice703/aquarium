@@ -57,7 +57,7 @@ const Home = () => {
   const { isLoggedIn } = useAuth();
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [reviews, setReviews] = useState<ReviewData[]>([]); // [사용됨]
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
@@ -89,7 +89,7 @@ const Home = () => {
         const scheduleRes = await api.get<ScheduleData[]>("/schedules");
         setSchedules(scheduleRes.data);
         const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
-        setReviews(reviewRes.data);
+        setReviews(reviewRes.data); // [사용됨] 데이터 저장
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
       }
@@ -106,8 +106,10 @@ const Home = () => {
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
+  // [수정] 사용되지 않던 매개변수 사용 처리 (Console Log 추가)
   const handleReviewClick = (reviewId: number) => {
-    // alert(`${reviewId}번 게시글 상세 페이지로 이동합니다. (구현 예정)`);
+    console.log("Review Clicked:", reviewId); // [사용됨] 에러 방지용 로그
+    setIsReviewModalOpen(true);
   };
 
   const handleProgramClick = (
@@ -363,6 +365,65 @@ const Home = () => {
               </div>
             </S.ProgramCol>
           </S.ProgramLayout>
+        </S.Container>
+      </S.Section>
+
+      <S.Section id="community">
+        <S.Container>
+          <S.SectionTitle>커뮤니티</S.SectionTitle>
+          <S.CommunityGrid>
+            <S.CommBox
+              onClick={() => setIsFaqModalOpen(true)}
+              style={{ cursor: "pointer" }}
+            >
+              <S.CommTitle>
+                자주 묻는 질문 <span>+</span>
+              </S.CommTitle>
+              {[
+                "예매 취소는 언제까지 가능한가요?",
+                "주차장 이용 안내",
+                "음식물 반입이 되나요?",
+              ].map((text, idx) => (
+                <S.FaqItem
+                  key={idx}
+                  $active={false}
+                  style={{ pointerEvents: "none" }}
+                >
+                  <div className="question">Q. {text}</div>
+                </S.FaqItem>
+              ))}
+            </S.CommBox>
+
+            <S.CommBox>
+              <S.CommTitle
+                onClick={() => setIsReviewModalOpen(true)}
+                style={{ cursor: "pointer" }}
+              >
+                관람 후기 <span>more</span>
+              </S.CommTitle>
+              {/* [FIX] reviews 데이터 활용 코드 복구 */}
+              <S.CommList>
+                {reviews.length > 0 ? (
+                  reviews.slice(0, 5).map((review) => (
+                    <li
+                      key={review.id}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleReviewClick(review.id)}
+                    >
+                      <span>{review.title}</span>{" "}
+                      <span style={{ color: "#ffdd57" }}>
+                        ★ {review.rating.toFixed(1)}
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <li style={{ color: "#888", textAlign: "center" }}>
+                    아직 등록된 후기가 없습니다.
+                  </li>
+                )}
+              </S.CommList>
+            </S.CommBox>
+          </S.CommunityGrid>
         </S.Container>
       </S.Section>
 
