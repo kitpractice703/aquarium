@@ -5,6 +5,14 @@
       "destination": "http://3.36.166.105:8080/api/:path*"
     },
     {
+      "source": "/oauth2/:path*",
+      "destination": "http://3.36.166.105:8080/oauth2/:path*"
+    },
+    {
+      "source": "/login/oauth2/:path*",
+      "destination": "http://3.36.166.105:8080/login/oauth2/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

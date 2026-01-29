@@ -67,12 +67,22 @@ export const UserMenu = styled.div`
   gap: 15px;
   font-size: 14px;
   color: var(--text-gray);
+
+  /* [추가] 텍스트 줄바꿈 방지 */
+  white-space: nowrap;
+
   span {
     cursor: pointer;
     transition: 0.3s;
   }
   span:hover {
     color: #fff;
+  }
+
+  /* [추가] 모바일 화면(좁은 화면)일 때 간격과 글자 크기 살짝 줄이기 */
+  @media (max-width: 480px) {
+    gap: 10px;
+    font-size: 13px;
   }
 `;
 

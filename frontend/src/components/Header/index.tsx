@@ -46,7 +46,7 @@ const Header = () => {
   const handleGoogleLogin = () => {
     // 백엔드 서버(8080)의 구글 로그인 엔드포인트로 이동
     // (Spring Security OAuth2가 이 주소를 감지해서 구글 로그인 창을 띄워줍니다)
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = "/oauth2/authorization/google";
   };
 
   const handleTicketCheck = () => {
