@@ -1,10 +1,9 @@
 // frontend/src/pages/Home/index.tsx
 
 import { useState, useEffect } from "react";
-// [수정] react-router-dom import 라인 전체 삭제 (useNavigate 안 쓰임) -> 지난번 수정 사항 유지
+// [수정] 사용하지 않는 useNavigate 제거
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
-// [수정] ReviewData 타입 다시 추가 (최신 후기 목록용)
 import type { ScheduleData, ReviewData } from "../../types/api";
 
 import HeroSection from "../../components/HeroSection";
@@ -58,7 +57,6 @@ const Home = () => {
   const { isLoggedIn } = useAuth();
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
-  // [추가] 최신 후기를 담을 상태 복구
   const [recentReviews, setRecentReviews] = useState<ReviewData[]>([]);
 
   const [dates, setDates] = useState<any[]>([]);
@@ -91,7 +89,6 @@ const Home = () => {
         const scheduleRes = await api.get<ScheduleData[]>("/schedules");
         setSchedules(scheduleRes.data);
 
-        // [추가] 실제 DB에서 후기 목록 가져오기
         const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
         setRecentReviews(reviewRes.data);
       } catch (error) {
@@ -406,7 +403,6 @@ const Home = () => {
                   <span onClick={() => setIsReviewModalOpen(true)}>more</span>
                 </S.CommTitle>
                 <S.CommList>
-                  {/* [변경] 가짜 데이터 제거 후 실제 DB 데이터(recentReviews) 연동 */}
                   {recentReviews.length === 0 ? (
                     <li
                       style={{
@@ -426,25 +422,26 @@ const Home = () => {
                       >
                         <div
                           style={{
-                            flex: 1, // 제목이 길어지면 공간 차지
+                            flex: 1,
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             whiteSpace: "nowrap",
-                            textAlign: "left", // 제목 왼쪽 정렬
+                            textAlign: "left",
                           }}
                         >
                           {review.title}
                         </div>
-                        {/* [추가] 별점 표시 (노란색) */}
+                        {/* [수정] 숫자가 아닌 별의 개수로 표현 */}
                         <span
                           style={{
                             color: "#ffdd57",
                             fontWeight: "bold",
                             marginLeft: "10px",
-                            flexShrink: 0, // 줄어들지 않도록 고정
+                            flexShrink: 0,
+                            letterSpacing: "-2px", // 별 간격 조절
                           }}
                         >
-                          ★ {review.rating}
+                          {"★".repeat(review.rating)}
                         </span>
                       </li>
                     ))
