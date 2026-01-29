@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
-import type { ScheduleData, ReviewData } from "../../types/api";
+// [수정] ReviewData 타입은 Home에서 쓰이지 않으므로 제거해도 됩니다 (ScheduleData만 남김)
+import type { ScheduleData } from "../../types/api";
 
 import HeroSection from "../../components/HeroSection";
 import KakaoMap from "../../components/common/KakaoMap";
@@ -11,7 +12,6 @@ import FaqModal from "../../components/common/FaqModal";
 import ReviewModal from "../../components/common/ReviewModal";
 import BookingModal from "../../components/common/BookingModal";
 import ProgramBookingModal from "../../components/common/ProgramBookingModal";
-// [변경] CommonModal 직접 사용 대신 LoginRequestModal 사용
 import LoginRequestModal from "../../components/common/LoginRequestModal";
 
 import vrImage from "../../assets/images/vr_driving.jpeg";
@@ -56,7 +56,9 @@ const Home = () => {
   const { isLoggedIn } = useAuth();
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  // [삭제] reviews 상태는 Home에서 사용하지 않으므로 삭제 (ReviewModal에서 처리함)
+  // const [reviews, setReviews] = useState<ReviewData[]>([]);
+
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
@@ -84,8 +86,9 @@ const Home = () => {
       try {
         const scheduleRes = await api.get<ScheduleData[]>("/schedules");
         setSchedules(scheduleRes.data);
-        const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
-        setReviews(reviewRes.data);
+        // [삭제] Home에서는 리뷰 데이터를 불러올 필요가 없습니다.
+        // const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
+        // setReviews(reviewRes.data);
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
       }
@@ -101,10 +104,11 @@ const Home = () => {
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
-  const handleReviewClick = (reviewId: number) => {
-    console.log("Review Clicked:", reviewId);
-    setIsReviewModalOpen(true);
-  };
+  // [삭제] 사용하지 않는 함수 삭제
+  // const handleReviewClick = (reviewId: number) => {
+  //   console.log("Review Clicked:", reviewId);
+  //   setIsReviewModalOpen(true);
+  // };
 
   const handleProgramClick = (
     status: string,
@@ -361,6 +365,70 @@ const Home = () => {
           </S.ProgramLayout>
         </S.Container>
       </S.Section>
+
+      <div id="community" style={{ width: "100%" }}>
+        <S.Section>
+          <S.Container>
+            <S.SectionTitle>커뮤니티</S.SectionTitle>
+            <S.CommunityGrid>
+              <S.CommBox>
+                <S.CommTitle>
+                  자주 묻는 질문{" "}
+                  <span onClick={() => setIsFaqModalOpen(true)}>+</span>
+                </S.CommTitle>
+                <S.FaqItem
+                  $active={true}
+                  onClick={() => setIsFaqModalOpen(true)}
+                >
+                  <div className="question">
+                    Q. 예매 취소는 언제까지 가능한가요?
+                  </div>
+                  <div className="answer">
+                    관람일 전일 23:59까지 100% 환불 가능합니다.
+                  </div>
+                </S.FaqItem>
+                <S.FaqItem
+                  $active={false}
+                  onClick={() => setIsFaqModalOpen(true)}
+                >
+                  <div className="question">Q. 주차장 이용 안내</div>
+                </S.FaqItem>
+                <S.FaqItem
+                  $active={false}
+                  onClick={() => setIsFaqModalOpen(true)}
+                >
+                  <div className="question">Q. 음식물 반입이 되나요?</div>
+                </S.FaqItem>
+              </S.CommBox>
+
+              <S.CommBox>
+                <S.CommTitle>
+                  관람 후기{" "}
+                  <span onClick={() => setIsReviewModalOpen(true)}>more</span>
+                </S.CommTitle>
+                <S.CommList>
+                  {/* 리뷰 목록은 ReviewModal에서 보여주므로 여기서는 최신글 미리보기 or 고정 텍스트 */}
+                  <li onClick={() => setIsReviewModalOpen(true)}>
+                    [포토] 빛의 바다 너무 아름다워요!
+                  </li>
+                  <li onClick={() => setIsReviewModalOpen(true)}>
+                    아이들이 VR 체험을 너무 좋아하네요.
+                  </li>
+                  <li onClick={() => setIsReviewModalOpen(true)}>
+                    돌고래 공연 감동적입니다...
+                  </li>
+                  <li onClick={() => setIsReviewModalOpen(true)}>
+                    주말에는 사람이 좀 많네요 ㅠㅠ
+                  </li>
+                  <li onClick={() => setIsReviewModalOpen(true)}>
+                    재방문 의사 있습니다!
+                  </li>
+                </S.CommList>
+              </S.CommBox>
+            </S.CommunityGrid>
+          </S.Container>
+        </S.Section>
+      </div>
 
       <FaqModal
         isOpen={isFaqModalOpen}
