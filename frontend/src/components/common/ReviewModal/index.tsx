@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { api } from "../../../api/axios";
 import { useAuth } from "../../../context/AuthContext";
 import * as S from "./style";
 import LoginRequestModal from "../LoginRequestModal";
-// [추가] 로그인 입력 모달 import
 import LoginModal from "../LoginModal";
 
 interface Props {
@@ -24,7 +22,6 @@ interface ReviewData {
 const ITEMS_PER_PAGE = 5;
 
 const ReviewModal = ({ isOpen, onClose }: Props) => {
-  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
 
   const [view, setView] = useState<"LIST" | "DETAIL" | "WRITE">("LIST");
