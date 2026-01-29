@@ -426,14 +426,26 @@ const Home = () => {
                       >
                         <div
                           style={{
-                            width: "100%",
+                            flex: 1, // 제목이 길어지면 공간 차지
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             whiteSpace: "nowrap",
+                            textAlign: "left", // 제목 왼쪽 정렬
                           }}
                         >
                           {review.title}
                         </div>
+                        {/* [추가] 별점 표시 (노란색) */}
+                        <span
+                          style={{
+                            color: "#ffdd57",
+                            fontWeight: "bold",
+                            marginLeft: "10px",
+                            flexShrink: 0, // 줄어들지 않도록 고정
+                          }}
+                        >
+                          ★ {review.rating}
+                        </span>
                       </li>
                     ))
                   )}
