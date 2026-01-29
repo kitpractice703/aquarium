@@ -46,6 +46,12 @@ const Signup = () => {
       setErrorMsg("모든 필드를 입력해주세요.");
       return;
     }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(formData.email)) {
+      setErrorMsg("올바른 이메일 형식이 아닙니다.");
+      return;
+    }
     if (formData.password !== formData.passwordConfirm) {
       setErrorMsg("비밀번호가 일치하지 않습니다.");
       return;
