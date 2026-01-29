@@ -1,6 +1,3 @@
-// [MODIFIED] axios import 및 인스턴스 생성 코드 삭제
-// 순수하게 타입 정의만 남겨두어 역할 분리
-
 export interface ScheduleData {
   id: number;
   date: string; // [ADDED] 백엔드 DTO와 맞춤
@@ -37,5 +34,3 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
-
-// [MODIFIED] export default api; 삭제 -> api는 src/api/axios.ts에서 가져다 씁니다.

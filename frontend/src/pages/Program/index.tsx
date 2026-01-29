@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; // [MODIFIED] React 기본 훅 임포트
-import axios from "axios"; // [ADDED] 서버 통신용
+import { api } from "../../api/axios"; // [ADDED] 서버 통신용
 import * as S from "./style"; // [ADDED] style.ts의 모든 컴포넌트를 S라는 이름으로 가져옴 (깔끔한 코드 관리)
 
 // [ADDED] TypeScript Interface 정의: 서버에서 받아올 데이터의 형태를 미리 약속합니다.
@@ -22,9 +22,7 @@ const Programs: React.FC = () => {
     const fetchPrograms = async () => {
       try {
         // [Fact Check] 로컬 개발 환경 주소입니다. 추후 배포 시 환경변수로 변경 필요
-        const response = await axios.get<ProgramData[]>(
-          "http://localhost:8080/api/programs",
-        );
+        const response = await api.get<ProgramData[]>("/programs");
         setPrograms(response.data);
       } catch (error) {
         console.error("프로그램 목록을 불러오지 못했습니다.", error);
