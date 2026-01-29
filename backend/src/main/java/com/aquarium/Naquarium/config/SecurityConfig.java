@@ -37,7 +37,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/api/public/**", "/error").permitAll()
                         // 그 외 모든 요청은 로그인해야 접근 가능
                         .anyRequest().authenticated()
-                );
+                )
+                .oauth2Login(oauth2 -> oauth2
+                // 로그인 성공 시 프론트엔드(5173) 홈으로 리다이렉트
+                .defaultSuccessUrl("http://localhost:5173", true)
+                 );
 
         return http.build();
     }

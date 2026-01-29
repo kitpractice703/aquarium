@@ -1,6 +1,6 @@
-package com.aquarium.Naquarium.controller; // 패키지명 확인 (Controller 소문자 주의)
+package com.aquarium.Naquarium.controller;
 
-import com.aquarium.Naquarium.dto.LoginRequest; // [필수] LoginRequest import 확인
+import com.aquarium.Naquarium.dto.LoginRequest;
 import com.aquarium.Naquarium.dto.SignupRequest;
 import com.aquarium.Naquarium.entity.User;
 import com.aquarium.Naquarium.repository.UserRepository;
@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+// [ADDED] 구글 로그인 정보 처리를 위한 import 추가
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,21 +26,14 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager; // 로그인 담당관
-
-    // 1. 회원가입
+    private final AuthenticationManager authenticationManager;
+    
+    // 1. 회원가입 (생략 - 기존 코드 유지)
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest request) {
-
-        // [MODIFIED] 중복 체크 로직 수정
-        // 기존: ResponseEntity.badRequest() -> 400 에러
-        // 변경: ResponseEntity.status(HttpStatus.CONFLICT) -> 409 에러 (중복/충돌 의미)
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body("이미 가입된 아이디(이메일)입니다.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 가입된 아이디(이메일)입니다.");
         }
-
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
@@ -46,57 +41,56 @@ public class AuthController {
                 .role(User.Role.USER)
                 .provider("local")
                 .build();
-
         userRepository.save(user);
         return ResponseEntity.ok("회원가입이 완료되었습니다!");
     }
 
-    // 2. [추가됨] 로그인 (이게 없어서 안 되셨던 겁니다!)
+    // 2. 로그인 (생략 - 기존 코드 유지)
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         try {
-            System.out.println("--- 컨트롤러 로그인 요청 진입 ---");
-            System.out.println("입력 이메일: " + loginRequest.getEmail());
-            System.out.println("입력 비번: " + loginRequest.getPassword());
-
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
-
-            // 2. 세션에 저장 (로그인 유지)
             SecurityContext securityContext = SecurityContextHolder.getContext();
             securityContext.setAuthentication(authentication);
             HttpSession session = request.getSession(true);
             session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-
-            System.out.println("=== 로그인 성공 및 세션 생성 완료 ===");
             return ResponseEntity.ok("로그인 성공");
-
         } catch (Exception e) {
-            // [핵심] 여기서 에러의 정체를 밝힙니다.
-            System.out.println("!!! 로그인 실패 원인(Exception) !!!");
-            e.printStackTrace(); // 빨간 에러 메시지를 콘솔에 출력
+            e.printStackTrace();
             return ResponseEntity.status(401).body("로그인 실패: " + e.getMessage());
         }
     }
 
-    // 3. 내 정보 확인
+    // 3. [MODIFIED] 내 정보 확인 (구글 로그인 대응)
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("상태 체크 요청: " + auth);
 
+        // 1. 로그인 안 된 상태 체크
         if (auth == null || auth.getName().equals("anonymousUser")) {
             return ResponseEntity.status(401).body("로그인되지 않음");
         }
+
+        // 2. [핵심] 구글(OAuth2) 로그인인 경우 -> 이메일 속성을 직접 꺼냄
+        if (auth instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
+            // 구글은 "email", 네이버는 "response" 등 제공자마다 다르지만 구글은 "email"로 꺼냅니다.
+            String email = oauth2.getPrincipal().getAttribute("email");
+            return ResponseEntity.ok(email);
+        }
+
+        // 3. 일반 로그인인 경우 -> getName()이 곧 이메일(아이디)
         return ResponseEntity.ok(auth.getName());
     }
 
+    // 4. 로그아웃 (기존 유지)
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            session.invalidate(); // 세션 날리기
+            session.invalidate();
         }
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
