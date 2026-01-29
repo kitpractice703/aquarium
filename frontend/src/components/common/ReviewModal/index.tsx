@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // [추가] 로그인 페이지 이동용
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../api/axios";
-import { useAuth } from "../../../context/AuthContext"; // [추가] 로그인 상태 확인용
+import { useAuth } from "../../../context/AuthContext"; // [필수] 로그인 상태 확인
 import * as S from "./style";
-import LoginRequestModal from "../LoginRequestModal"; // [추가] 안내 모달
+import LoginRequestModal from "../LoginRequestModal"; // [필수] 안내 모달
 
 interface Props {
   isOpen: boolean;
@@ -22,8 +22,8 @@ interface ReviewData {
 const ITEMS_PER_PAGE = 5;
 
 const ReviewModal = ({ isOpen, onClose }: Props) => {
-  const navigate = useNavigate(); // [추가]
-  const { isLoggedIn } = useAuth(); // [추가] 로그인 상태 가져오기
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth(); // [1] 로그인 상태 가져오기
 
   const [view, setView] = useState<"LIST" | "DETAIL" | "WRITE">("LIST");
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +31,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [selectedReview, setSelectedReview] = useState<ReviewData | null>(null);
 
-  // [추가] 로그인 안내 모달 상태
+  // [2] 로그인 안내 모달 상태 추가
   const [isLoginNoticeOpen, setIsLoginNoticeOpen] = useState(false);
 
   const [writeForm, setWriteForm] = useState({
@@ -60,7 +60,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
     }
   }, [isOpen]);
 
-  // [수정] 글쓰기 버튼 클릭 핸들러 (로그인 체크)
+  // [3] 글쓰기 버튼 클릭 핸들러 (핵심 로직)
   const handleWriteClick = () => {
     if (isLoggedIn) {
       setView("WRITE"); // 로그인 상태면 글쓰기 화면으로
@@ -90,8 +90,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
     } catch (error: any) {
       console.error(error);
       if (error.response?.status === 401) {
-        // 혹시라도 여기서 401이 나면 안내 모달 띄우기
-        setIsLoginNoticeOpen(true);
+        setIsLoginNoticeOpen(true); // 401 에러 시에도 안내 모달 띄우기
       } else {
         alert("후기 등록 중 오류가 발생했습니다.");
       }
@@ -185,7 +184,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                   </S.Pagination>
                 )}
 
-                {/* [수정] 핸들러 교체 */}
+                {/* [4] 버튼에 핸들러 연결 (기존: onClick={() => setView("WRITE")}) */}
                 <S.WriteBtn onClick={handleWriteClick}>✎ 글쓰기</S.WriteBtn>
               </>
             )}
@@ -268,13 +267,13 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
         </S.Container>
       </S.Overlay>
 
-      {/* [추가] 로그인 안내 모달 */}
+      {/* [5] 로그인 안내 모달 컴포넌트 추가 */}
       <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}
         onConfirm={() => {
           setIsLoginNoticeOpen(false);
-          onClose(); // 리뷰 모달도 닫아주는 게 자연스러움
+          onClose(); // 리뷰 모달도 함께 닫아주는 것이 자연스러움
           navigate("/login"); // 로그인 페이지로 이동
         }}
       />
