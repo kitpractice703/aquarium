@@ -11,14 +11,14 @@ import FaqModal from "../../components/common/FaqModal";
 import ReviewModal from "../../components/common/ReviewModal";
 import BookingModal from "../../components/common/BookingModal";
 import ProgramBookingModal from "../../components/common/ProgramBookingModal";
-import CommonModal from "../../components/common/Modal";
+// [변경] CommonModal 직접 사용 대신 LoginRequestModal 사용
+import LoginRequestModal from "../../components/common/LoginRequestModal";
 
 import vrImage from "../../assets/images/vr_driving.jpeg";
 import feedingImage from "../../assets/images/feeding.jpg";
 
 import * as S from "./style";
 
-// [상수 함수 1] 한국 시간 기준 YYYY-MM-DD 변환
 const getLocalYMD = (d: Date) => {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -26,11 +26,10 @@ const getLocalYMD = (d: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-// [상수 함수 2] 이번 주 월~일 날짜 배열 생성
 const getDaysArray = () => {
   const days = [];
   const today = new Date();
-  const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
+  const dayOfWeek = today.getDay();
 
   const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   const monday = new Date(today);
@@ -57,11 +56,10 @@ const Home = () => {
   const { isLoggedIn } = useAuth();
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
-  const [reviews, setReviews] = useState<ReviewData[]>([]); // [사용됨]
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
-  // 모달 상태들
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
@@ -73,7 +71,6 @@ const Home = () => {
     price: number;
   } | null>(null);
 
-  // 로그인 체크 가드 함수
   const checkLogin = () => {
     if (!isLoggedIn) {
       setIsLoginNoticeOpen(true);
@@ -82,14 +79,13 @@ const Home = () => {
     return true;
   };
 
-  // 데이터 로딩
   useEffect(() => {
     const fetchData = async () => {
       try {
         const scheduleRes = await api.get<ScheduleData[]>("/schedules");
         setSchedules(scheduleRes.data);
         const reviewRes = await api.get<ReviewData[]>("/posts/reviews");
-        setReviews(reviewRes.data); // [사용됨] 데이터 저장
+        setReviews(reviewRes.data);
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
       }
@@ -97,7 +93,6 @@ const Home = () => {
     fetchData();
   }, []);
 
-  // 날짜 초기화
   useEffect(() => {
     const dayList = getDaysArray();
     setDates(dayList);
@@ -106,9 +101,8 @@ const Home = () => {
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
-  // [수정] 사용되지 않던 매개변수 사용 처리 (Console Log 추가)
   const handleReviewClick = (reviewId: number) => {
-    console.log("Review Clicked:", reviewId); // [사용됨] 에러 방지용 로그
+    console.log("Review Clicked:", reviewId);
     setIsReviewModalOpen(true);
   };
 
@@ -368,65 +362,6 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
-      <S.Section id="community">
-        <S.Container>
-          <S.SectionTitle>커뮤니티</S.SectionTitle>
-          <S.CommunityGrid>
-            <S.CommBox
-              onClick={() => setIsFaqModalOpen(true)}
-              style={{ cursor: "pointer" }}
-            >
-              <S.CommTitle>
-                자주 묻는 질문 <span>+</span>
-              </S.CommTitle>
-              {[
-                "예매 취소는 언제까지 가능한가요?",
-                "주차장 이용 안내",
-                "음식물 반입이 되나요?",
-              ].map((text, idx) => (
-                <S.FaqItem
-                  key={idx}
-                  $active={false}
-                  style={{ pointerEvents: "none" }}
-                >
-                  <div className="question">Q. {text}</div>
-                </S.FaqItem>
-              ))}
-            </S.CommBox>
-
-            <S.CommBox>
-              <S.CommTitle
-                onClick={() => setIsReviewModalOpen(true)}
-                style={{ cursor: "pointer" }}
-              >
-                관람 후기 <span>more</span>
-              </S.CommTitle>
-              {/* [FIX] reviews 데이터 활용 코드 복구 */}
-              <S.CommList>
-                {reviews.length > 0 ? (
-                  reviews.slice(0, 5).map((review) => (
-                    <li
-                      key={review.id}
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleReviewClick(review.id)}
-                    >
-                      <span>{review.title}</span>{" "}
-                      <span style={{ color: "#ffdd57" }}>
-                        ★ {review.rating.toFixed(1)}
-                      </span>
-                    </li>
-                  ))
-                ) : (
-                  <li style={{ color: "#888", textAlign: "center" }}>
-                    아직 등록된 후기가 없습니다.
-                  </li>
-                )}
-              </S.CommList>
-            </S.CommBox>
-          </S.CommunityGrid>
-        </S.Container>
-      </S.Section>
-
       <FaqModal
         isOpen={isFaqModalOpen}
         onClose={() => setIsFaqModalOpen(false)}
@@ -450,35 +385,15 @@ const Home = () => {
         />
       )}
 
-      <CommonModal
+      {/* [변경] 인라인 스타일 대신 깔끔한 컴포넌트 사용 */}
+      <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}
-        title="알림"
-      >
-        <div style={{ textAlign: "center", padding: "20px 0" }}>
-          <p style={{ fontSize: "18px", color: "#fff", marginBottom: "30px" }}>
-            로그인 후 이용 가능합니다.
-          </p>
-          <button
-            onClick={() => {
-              setIsLoginNoticeOpen(false);
-              navigate("/login");
-            }}
-            style={{
-              padding: "12px 30px",
-              background: "var(--accent-cyan)",
-              border: "none",
-              borderRadius: "5px",
-              fontWeight: "bold",
-              fontSize: "16px",
-              cursor: "pointer",
-              color: "#000",
-            }}
-          >
-            로그인 하러가기
-          </button>
-        </div>
-      </CommonModal>
+        onConfirm={() => {
+          setIsLoginNoticeOpen(false);
+          navigate("/login");
+        }}
+      />
     </>
   );
 };

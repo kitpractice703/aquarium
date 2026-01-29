@@ -3,12 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import * as S from "./style";
 import CommonModal from "../common/Modal";
 import BookingModal from "../common/BookingModal";
+import LoginRequestModal from "../common/LoginRequestModal"; // [추가]
 import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
   const { isLoggedIn, username, login, logout } = useAuth();
 
-  // [수정] 모달 타입을 "LOGIN" 뿐만 아니라 "NOTICE"(알림)도 가능하게 변경
   const [modalType, setModalType] = useState<"LOGIN" | "NOTICE" | null>(null);
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
 
@@ -47,21 +47,19 @@ const Header = () => {
     window.location.href = "/oauth2/authorization/google";
   };
 
-  // [수정] 예매하기 버튼: alert 대신 NOTICE 모달 띄우기
   const handleBookingClick = () => {
     if (isLoggedIn) {
       setIsBookingOpen(true);
     } else {
-      setModalType("NOTICE"); // "로그인 후 이용 가능" 모달 호출
+      setModalType("NOTICE");
     }
   };
 
-  // [수정] 예매확인/마이페이지 버튼: alert 대신 NOTICE 모달 띄우기
   const handleTicketCheck = () => {
     if (isLoggedIn) {
       navigate("/mypage");
     } else {
-      setModalType("NOTICE"); // "로그인 후 이용 가능" 모달 호출
+      setModalType("NOTICE");
     }
   };
 
@@ -126,13 +124,11 @@ const Header = () => {
         </S.HeaderContent>
       </S.HeaderWrapper>
 
-      {/* 예매 모달 */}
       <BookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
       />
 
-      {/* [1] 로그인 모달 */}
       <CommonModal
         isOpen={modalType === "LOGIN"}
         onClose={closeModal}
@@ -186,33 +182,12 @@ const Header = () => {
         </S.GoogleBtn>
       </CommonModal>
 
-      {/* [2] 알림 모달 (추가됨) */}
-      <CommonModal
+      {/* [변경] 인라인 모달 대신 컴포넌트 사용 */}
+      <LoginRequestModal
         isOpen={modalType === "NOTICE"}
         onClose={() => setModalType(null)}
-        title="알림"
-      >
-        <div style={{ textAlign: "center", padding: "20px 0" }}>
-          <p style={{ fontSize: "18px", color: "#fff", marginBottom: "30px" }}>
-            로그인 후 이용 가능합니다.
-          </p>
-          <button
-            onClick={() => setModalType("LOGIN")} // 알림 확인 시 로그인 모달로 전환
-            style={{
-              padding: "12px 30px",
-              background: "var(--accent-cyan)",
-              border: "none",
-              borderRadius: "5px",
-              fontWeight: "bold",
-              fontSize: "16px",
-              cursor: "pointer",
-              color: "#000",
-            }}
-          >
-            로그인 하러가기
-          </button>
-        </div>
-      </CommonModal>
+        onConfirm={() => setModalType("LOGIN")}
+      />
     </>
   );
 };
