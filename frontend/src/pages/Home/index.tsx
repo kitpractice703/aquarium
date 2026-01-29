@@ -1,7 +1,6 @@
 // frontend/src/pages/Home/index.tsx
 
 import { useState, useEffect } from "react";
-// [수정] 사용하지 않는 useNavigate 제거
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import type { ScheduleData, ReviewData } from "../../types/api";
@@ -20,6 +19,22 @@ import vrImage from "../../assets/images/vr_driving.jpeg";
 import feedingImage from "../../assets/images/feeding.jpg";
 
 import * as S from "./style";
+
+// [추가] 홈 화면에 보여줄 FAQ 데이터 (3개)
+const HOME_FAQ_DATA = [
+  {
+    q: "Q. 예매 취소는 언제까지 가능한가요?",
+    a: "관람일 전일 23:59까지 100% 환불 가능합니다.",
+  },
+  {
+    q: "Q. 주차장 이용 안내",
+    a: "지하 2층 ~ 4층 주차장을 최대 4시간까지 무료로 이용하실 수 있습니다.",
+  },
+  {
+    q: "Q. 음식물 반입이 되나요?",
+    a: "쾌적한 관람 환경을 위해 생수를 제외한 음식물 반입은 제한됩니다.",
+  },
+];
 
 const getLocalYMD = (d: Date) => {
   const year = d.getFullYear();
@@ -61,6 +76,9 @@ const Home = () => {
 
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
+
+  // [추가] 홈 화면 FAQ 아코디언 상태 (null = 모두 닫힘)
+  const [faqIndex, setFaqIndex] = useState<number | null>(null);
 
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -105,6 +123,11 @@ const Home = () => {
     const hasToday = dayList.find((d) => d.fullDate === todayStr);
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
+
+  // [추가] FAQ 토글 함수
+  const toggleFaq = (idx: number) => {
+    setFaqIndex(faqIndex === idx ? null : idx);
+  };
 
   const handleProgramClick = (
     status: string,
@@ -372,29 +395,18 @@ const Home = () => {
                   자주 묻는 질문{" "}
                   <span onClick={() => setIsFaqModalOpen(true)}>+</span>
                 </S.CommTitle>
-                <S.FaqItem
-                  $active={true}
-                  onClick={() => setIsFaqModalOpen(true)}
-                >
-                  <div className="question">
-                    Q. 예매 취소는 언제까지 가능한가요?
-                  </div>
-                  <div className="answer">
-                    관람일 전일 23:59까지 100% 환불 가능합니다.
-                  </div>
-                </S.FaqItem>
-                <S.FaqItem
-                  $active={false}
-                  onClick={() => setIsFaqModalOpen(true)}
-                >
-                  <div className="question">Q. 주차장 이용 안내</div>
-                </S.FaqItem>
-                <S.FaqItem
-                  $active={false}
-                  onClick={() => setIsFaqModalOpen(true)}
-                >
-                  <div className="question">Q. 음식물 반입이 되나요?</div>
-                </S.FaqItem>
+
+                {/* [수정] HOME_FAQ_DATA를 이용하여 렌더링하고, 아코디언 기능 적용 */}
+                {HOME_FAQ_DATA.map((item, idx) => (
+                  <S.FaqItem
+                    key={idx}
+                    $active={faqIndex === idx} // 선택된 항목만 active
+                    onClick={() => toggleFaq(idx)} // 클릭 시 토글
+                  >
+                    <div className="question">{item.q}</div>
+                    <div className="answer">{item.a}</div>
+                  </S.FaqItem>
+                ))}
               </S.CommBox>
 
               <S.CommBox>
@@ -431,14 +443,12 @@ const Home = () => {
                         >
                           {review.title}
                         </div>
-                        {/* [수정] 숫자가 아닌 별의 개수로 표현 */}
                         <span
                           style={{
                             color: "#ffdd57",
                             fontWeight: "bold",
                             marginLeft: "10px",
                             flexShrink: 0,
-                            letterSpacing: "-2px", // 별 간격 조절
                           }}
                         >
                           {"★".repeat(review.rating)}
