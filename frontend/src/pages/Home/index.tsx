@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // [추가] 페이지 이동 훅
 import { api } from "../../api/axios";
+import { useAuth } from "../../context/AuthContext"; // [추가] 로그인 상태 훅
 import type { ScheduleData, ReviewData } from "../../types/api";
 
 import HeroSection from "../../components/HeroSection";
@@ -9,14 +11,14 @@ import FaqModal from "../../components/common/FaqModal";
 import ReviewModal from "../../components/common/ReviewModal";
 import BookingModal from "../../components/common/BookingModal";
 import ProgramBookingModal from "../../components/common/ProgramBookingModal";
+import CommonModal from "../../components/common/Modal"; // [추가] 안내 모달용
 
 import vrImage from "../../assets/images/vr_driving.jpeg";
 import feedingImage from "../../assets/images/feeding.jpg";
 
 import * as S from "./style";
 
-// [수정 1] UTC가 아닌 '내 컴퓨터(한국) 시간' 기준으로 YYYY-MM-DD 문자열을 만드는 함수
-// 이게 없으면 새벽 시간에 날짜가 하루 전으로 밀리는 문제가 발생합니다.
+// [상수 함수 1] 한국 시간 기준 YYYY-MM-DD 변환
 const getLocalYMD = (d: Date) => {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -24,14 +26,13 @@ const getLocalYMD = (d: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-// [수정 2] 이번 주 월요일 ~ 일요일 계산 로직 (한국 시간 기준)
+// [상수 함수 2] 이번 주 월~일 날짜 배열 생성
 const getDaysArray = () => {
   const days = [];
-  const today = new Date(); // 현재 시스템 시간
+  const today = new Date();
   const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
 
   // 오늘이 일요일(0)이면 6일 전이 월요일, 아니면 (요일-1)일 전이 월요일
-  // 예: 목요일(4) -> 3일 전이 월요일
   const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
   const monday = new Date(today);
@@ -44,7 +45,7 @@ const getDaysArray = () => {
     d.setDate(monday.getDate() + i);
 
     days.push({
-      fullDate: getLocalYMD(d), // YYYY-MM-DD (한국 시간)
+      fullDate: getLocalYMD(d),
       date: d.getDate(),
       day: weekDays[d.getDay()],
       isMonday: d.getDay() === 1,
@@ -54,21 +55,36 @@ const getDaysArray = () => {
 };
 
 const Home = () => {
+  const navigate = useNavigate(); // [추가]
+  const { isLoggedIn } = useAuth(); // [추가] 로그인 상태 가져오기
+
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
 
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
+  // 모달 상태들
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
+  const [isLoginNoticeOpen, setIsLoginNoticeOpen] = useState(false); // [추가] 로그인 안내 모달
 
   const [selectedProgram, setSelectedProgram] = useState<{
     id: number;
     title: string;
     price: number;
   } | null>(null);
+
+  // [핵심] 로그인 체크 함수 (Guard)
+  // 로그인이 안 되어 있으면 모달을 띄우고 false 반환, 되어 있으면 true 반환
+  const checkLogin = () => {
+    if (!isLoggedIn) {
+      setIsLoginNoticeOpen(true);
+      return false;
+    }
+    return true;
+  };
 
   // 1. 데이터 가져오기
   useEffect(() => {
@@ -85,43 +101,60 @@ const Home = () => {
     fetchData();
   }, []);
 
-  // 2. 날짜 초기화 (오늘 날짜가 이번 주에 포함되어 있으면 오늘을 선택)
+  // 2. 날짜 초기화
   useEffect(() => {
     const dayList = getDaysArray();
     setDates(dayList);
 
     const todayStr = getLocalYMD(new Date());
-    // 이번 주 목록 중에 오늘 날짜가 있는지 확인
     const hasToday = dayList.find((d) => d.fullDate === todayStr);
-
-    // 있으면 오늘, 없으면(혹시 모를 상황) 월요일을 기본 선택
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
   const handleReviewClick = (reviewId: number) => {
-    alert(`${reviewId}번 게시글 상세 페이지로 이동합니다.`);
+    alert(`${reviewId}번 게시글 상세 페이지로 이동합니다. (구현 예정)`);
   };
 
+  // 3. [수정] 프로그램 예약 버튼 핸들러 (로그인 체크 적용)
   const handleProgramClick = (
     status: string,
     program: { id: number; title: string; price: number },
   ) => {
-    if (status === "open") {
-      setSelectedProgram(program);
-    } else {
+    if (status !== "open") {
       alert("현재 예매 가능한 상태가 아닙니다.");
+      return;
+    }
+    // 로그인 체크 통과 시에만 실행
+    if (checkLogin()) {
+      setSelectedProgram(program);
     }
   };
 
-  // [수정 3] 선택된 날짜와 일치하는 스케줄만 필터링
-  // 백엔드에서 받은 date 문자열과 프론트에서 만든 selectedDate 문자열을 비교합니다.
+  // 4. [수정] 메인 배너 버튼 핸들러 (관람권 예매)
+  const handleHeroBooking = () => {
+    if (checkLogin()) {
+      setIsAdmissionModalOpen(true);
+    }
+  };
+
+  // 5. [수정] 스케줄 클릭 핸들러 (공연 예매)
+  const handleScheduleClick = (status: string) => {
+    if (status === "open") {
+      if (checkLogin()) {
+        setIsAdmissionModalOpen(true);
+      }
+    }
+  };
+
+  // 선택된 날짜와 일치하는 스케줄만 필터링
   const filteredSchedules = schedules.filter(
     (item) => item.date === selectedDate,
   );
 
   return (
     <>
-      <HeroSection onBookClick={() => setIsAdmissionModalOpen(true)} />
+      {/* [수정] HeroSection에 로그인 체크 핸들러 전달 */}
+      <HeroSection onBookClick={handleHeroBooking} />
 
       <S.Section id="about">
         <S.Container>
@@ -212,6 +245,7 @@ const Home = () => {
             <S.ProgramCol>
               <h3>체험 프로그램</h3>
               <S.ExperienceList>
+                {/* 프로그램 1 */}
                 <S.ExperienceItem>
                   <img src={vrImage} alt="VR" />
                   <h4>가상 심해 다이빙 (VR)</h4>
@@ -240,6 +274,8 @@ const Home = () => {
                     예약하기
                   </button>
                 </S.ExperienceItem>
+
+                {/* 프로그램 2 */}
                 <S.ExperienceItem>
                   <img src={feedingImage} alt="Feeding" />
                   <h4>아쿠아리스트 먹이 주기</h4>
@@ -288,7 +324,7 @@ const Home = () => {
               </S.DateSlider>
 
               <div>
-                {/* 월요일인 경우 휴관 안내 */}
+                {/* 월요일 휴관 안내 */}
                 {dates.find((d) => d.fullDate === selectedDate)?.isMonday ? (
                   <div
                     style={{
@@ -309,7 +345,7 @@ const Home = () => {
                     </p>
                   </div>
                 ) : filteredSchedules.length > 0 ? (
-                  // 스케줄이 있는 경우
+                  // 스케줄 목록
                   filteredSchedules.map((item) => (
                     <S.ScheduleItem key={item.id}>
                       <div className="time">{item.time}</div>
@@ -319,10 +355,8 @@ const Home = () => {
                       </div>
                       <div
                         className={`status ${item.status}`}
-                        onClick={() => {
-                          if (item.status === "open")
-                            setIsAdmissionModalOpen(true);
-                        }}
+                        /* [수정] 스케줄 클릭 시 로그인 체크 핸들러 사용 */
+                        onClick={() => handleScheduleClick(item.status)}
                       >
                         {item.status === "closed"
                           ? "마감"
@@ -333,7 +367,6 @@ const Home = () => {
                     </S.ScheduleItem>
                   ))
                 ) : (
-                  // 스케줄이 없는 경우
                   <div
                     style={{
                       padding: "30px",
@@ -408,6 +441,7 @@ const Home = () => {
         </S.Container>
       </S.Section>
 
+      {/* 기존 모달들 */}
       <FaqModal
         isOpen={isFaqModalOpen}
         onClose={() => setIsFaqModalOpen(false)}
@@ -430,6 +464,37 @@ const Home = () => {
           price={selectedProgram.price}
         />
       )}
+
+      {/* [신규 추가] 로그인 필요 안내 모달 */}
+      <CommonModal
+        isOpen={isLoginNoticeOpen}
+        onClose={() => setIsLoginNoticeOpen(false)}
+        title="알림"
+      >
+        <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <p style={{ fontSize: "18px", color: "#fff", marginBottom: "30px" }}>
+            로그인 후 이용 가능합니다.
+          </p>
+          <button
+            onClick={() => {
+              setIsLoginNoticeOpen(false); // 모달 닫고
+              navigate("/login"); // 로그인 페이지로 이동
+            }}
+            style={{
+              padding: "12px 30px",
+              background: "var(--accent-cyan)",
+              border: "none",
+              borderRadius: "5px",
+              fontWeight: "bold",
+              fontSize: "16px",
+              cursor: "pointer",
+              color: "#000",
+            }}
+          >
+            로그인 하러가기
+          </button>
+        </div>
+      </CommonModal>
     </>
   );
 };
