@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import * as S from "./style";
 import CommonModal from "../common/Modal";
-import BookingModal from "../common/BookingModal"; // [ADDED] 예매 모달
+import BookingModal from "../common/BookingModal";
 import { useAuth } from "../../context/AuthContext";
-// import { api } from "../../api/axios"; // (헤더에선 api 호출을 안 하므로 굳이 필요 없음, 삭제)
 
 const Header = () => {
   const { isLoggedIn, username, login, logout } = useAuth();
   const [modalType, setModalType] = useState<"LOGIN" | null>(null);
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
 
-  // [ADDED] 예매 모달 상태
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -44,9 +42,17 @@ const Header = () => {
   };
 
   const handleGoogleLogin = () => {
-    // 백엔드 서버(8080)의 구글 로그인 엔드포인트로 이동
-    // (Spring Security OAuth2가 이 주소를 감지해서 구글 로그인 창을 띄워줍니다)
     window.location.href = "/oauth2/authorization/google";
+  };
+
+  // [수정] 예매하기 버튼 핸들러 (로그인 체크 추가)
+  const handleBookingClick = () => {
+    if (isLoggedIn) {
+      setIsBookingOpen(true); // 로그인 상태면 예매 모달 오픈
+    } else {
+      alert("로그인 후 이용 가능합니다."); // 안내 메시지
+      setModalType("LOGIN"); // 로그인 모달 오픈
+    }
   };
 
   const handleTicketCheck = () => {
@@ -84,8 +90,8 @@ const Header = () => {
             <a onClick={() => handleNavClick("themes")}>테마전시</a>
             <a onClick={() => handleNavClick("programs")}>프로그램</a>
             <a onClick={() => handleNavClick("community")}>커뮤니티</a>
-            {/* [ADDED] 예매하기 버튼 */}
-            <S.BookingButton onClick={() => setIsBookingOpen(true)}>
+            {/* [수정] 클릭 핸들러 교체 */}
+            <S.BookingButton onClick={handleBookingClick}>
               예매하기
             </S.BookingButton>
           </S.Gnb>
@@ -120,7 +126,7 @@ const Header = () => {
         </S.HeaderContent>
       </S.HeaderWrapper>
 
-      {/* [ADDED] 예매 모달 연결 */}
+      {/* 예매 모달 */}
       <BookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
