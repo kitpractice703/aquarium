@@ -12,7 +12,7 @@
 
 - **프로젝트명:** Naquarium Archive
 - **개발 기간:** 2026.01 ~ 2026.02 (진행 중)
-- **개발 인원:** 1인 (Full Stack)
+- **개발 인원:** 4인 (Full Stack)
 - **배포 URL:** https://aquarium-sand.vercel.app
 
 <br/>
