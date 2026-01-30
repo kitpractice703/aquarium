@@ -20,7 +20,6 @@ const MainContent = styled.main`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
 `;
 
 function App() {
@@ -39,7 +38,6 @@ function App() {
       </MainContent>
       <Footer />
     </LayoutWrapper>
-    // [수정] </Router> 태그 삭제!
   );
 }
 
