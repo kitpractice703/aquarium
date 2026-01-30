@@ -14,7 +14,6 @@ export const GlobalStyle = createGlobalStyle`
   
   html { 
     scroll-behavior: smooth; 
-    /* [핵심] 헤더 높이(70px) + 여유(10px) 만큼 덜 올라가게 설정 */
     scroll-padding-top: 80px; 
   }
 
@@ -33,6 +32,7 @@ export const GlobalStyle = createGlobalStyle`
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: none;
   }
 
   a { text-decoration: none; color: inherit; transition: 0.3s; }
