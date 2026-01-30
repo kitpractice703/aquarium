@@ -5,8 +5,6 @@
 
 <img width="1359" height="680" alt="image" src="https://github.com/user-attachments/assets/21c84416-abbc-4926-b08c-53a7f641e945" />
 
-<<<<<<< HEAD
-
 ## 1. 프로젝트 개요
 
 - **프로젝트명:** Naquarium Archive (나쿠아리움 아카이브)
@@ -20,7 +18,6 @@
 - **개발 기간:** 2026.01 ~ 2026.02 (진행 중)
 - **개발 인원:** 1인 (Full Stack)
 - **배포 URL:** https://aquarium-sand.vercel.app
-  > > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
 
 ## 2. 기획 의도 및 주요 기능
 
@@ -29,7 +26,6 @@
 ### 🔑 Key Features
 
 1. **회원 관리 & 인증 (Security)**
-   <<<<<<< HEAD
 
 - 일반 이메일 회원가입/로그인 (BCrypt 암호화)
 - **OAuth 2.0 기반 Google 소셜 로그인** 구현
@@ -73,13 +69,9 @@
 - 자주 묻는 질문(FAQ) 아코디언 UI
 - **Kakao Map API**를 활용한 오시는 길 안내
 
-> > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
-
 ## 3. 기술 스택 (Tech Stack)
 
 ### 🎨 Frontend
-
-<<<<<<< HEAD
 
 - **Language:** TypeScript
 - **Framework:** React 19 (Vite)
@@ -114,12 +106,10 @@
 - **Security:** Spring Security 6, OAuth2 Client
 - **Build Tool:** Gradle
 - **Hosting:** AWS EC2
-  > > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
 
 ## 4. 시스템 아키텍처 (Architecture)
 
 graph LR
-<<<<<<< HEAD
 User["User (Browser)"] -->|HTTPS| Frontend["Frontend (React / Vercel)"]
 Frontend -->|"API Request"| Backend["Backend (Spring Boot / AWS EC2)"]
 Backend -->|CRUD| DB[("MySQL (AWS RDS)")]
@@ -135,13 +125,9 @@ Backend -->|Auth| Google["Google OAuth2 Server"]
 
 ## 5. 트러블 슈팅 (Troubleshooting) 🔥 _[포트폴리오 핵심]_
 
-> > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
-
 개발 과정에서 겪은 주요 문제와 해결 과정을 기록했습니다.
 
 ### 1) 로컬/배포 환경 간의 DB 연결 및 설정 분리
-
-<<<<<<< HEAD
 
 - **문제:** 로컬(`localhost`)과 배포(`EC2`) 환경에서 DB 주소가 달라 매번 코드를 수정해야 하는 번거로움 발생.
 - **해결:** Spring Boot의 `application.properties`에서 **환경 변수 치환 문법**을 활용.
@@ -178,8 +164,6 @@ Backend -->|Auth| Google["Google OAuth2 Server"]
 - **해결:**
 - 개발 환경(Vite): `vite.config.ts`의 `proxy` 설정을 통해 `/api` 요청을 로컬 백엔드로 우회.
 - 배포 환경: `SecurityConfig`에서 `AllowedOrigins`를 명시적으로 허용하고, `WebMvcConfigurer`를 통해 전역 CORS 정책 설정.
-
-> > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
 
 ## 6. ERD (Entity Relationship Diagram)
 
@@ -230,8 +214,6 @@ erDiagram
     }
 ```
 
-<<<<<<< HEAD
-
 - **Users:** 사용자 정보 (Email, Password, Provider, Phone)
 - **Reservations:** 예매 정보 (VisitDate, Count, Price, Status)
 - `Users`와 1:N 관계
@@ -247,7 +229,6 @@ erDiagram
 
 * **Programs / ProgramSchedules:** 프로그램 정보 및 시간표
 * **Posts:** 커뮤니티 게시글
-  > > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
 
 ## 7. 실행 방법 (How to run)
 
@@ -255,11 +236,8 @@ erDiagram
 
 1. `backend/src/main/resources/application.properties`의 DB 설정을 본인 환경에 맞게 수정합니다.
 2. 프로젝트 루트에서 다음 명령어를 실행합니다.
-   <<<<<<< HEAD
 
 =======
-
-> > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
 
 ```bash
 ./gradlew bootRun
@@ -277,7 +255,6 @@ erDiagram
 ### Frontend
 
 1. 프로젝트 폴더로 이동하여 의존성을 설치합니다.
-   > > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
 
 ```bash
 npm install
@@ -289,16 +266,11 @@ npm install
 =======
 
 2. 개발 서버를 실행합니다.
-   > > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
 
 ```bash
 npm run dev
 
 ```
-
-# <<<<<<< HEAD
-
-> > > > > > > 7bf4c559c385269663b9887fcb2df32fe31641df
 
 ---
 
