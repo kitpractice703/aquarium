@@ -1,7 +1,7 @@
 export interface ScheduleData {
   id: number;
-  programId: number; // [추가됨]
-  price: number; // [추가됨]
+  programId: number;
+  price: number;
   date: string;
   time: string;
   title: string;
@@ -18,24 +18,18 @@ export interface ReviewData {
   date: string;
 }
 
+// [수정] 누락된 필드들을 모두 포함하여 재정의
 export interface ReservationDto {
   id: number;
-  ticketNumber?: string;
-  visitDate: string;
-  startTime?: string;
-  programTitle: string;
-  programType?: string;
-  status: string;
-  location?: string;
-  imageUrl?: string;
-}
-
-export interface ReservationDto {
-  id: number;
-  ticketNumber?: string;
-  visitDate: string;
-  programTitle: string;
-  status: string;
+  ticketNumber?: string; // 티켓 번호 (예: T2026...)
+  visitDate: string; // 방문 날짜
+  visitTime?: string; // [핵심] 이 부분이 없어서 에러가 발생했습니다!
+  startTime?: string; // 스케줄 시작 시간 (구버전 호환용)
+  programTitle: string; // 프로그램 제목
+  programType?: string; // PERFORMANCE | EXPERIENCE | ADMISSION
+  status: string; // 예매 상태
+  location?: string; // 장소
+  imageUrl?: string; // 이미지 URL
 }
 
 export interface ReservationRequest {
