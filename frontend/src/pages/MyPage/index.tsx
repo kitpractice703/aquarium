@@ -9,7 +9,7 @@ const MyPage = () => {
   const { username } = useAuth();
   const [reservations, setReservations] = useState<ReservationDto[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { username, logout } = useAuth();
   const [form, setForm] = useState({
     currentPassword: "",
     password: "",
@@ -61,11 +61,26 @@ const MyPage = () => {
     try {
       await updateUserInfo({
         currentPassword: form.currentPassword,
-        password: form.password, // 입력 안 했으면 빈 문자열 또는 undefined
+        password: form.password, // 빈 값이면 백엔드에서 무시됨
         phone: form.phone,
       });
 
-      alert("회원정보가 성공적으로 수정되었습니다.");
+      // [MODIFIED] 로직 분기: 비밀번호를 변경했는지 확인
+      if (form.password && form.password.trim() !== "") {
+        alert("비밀번호가 변경되었습니다. 다시 로그인해주세요.");
+        await logout(); // [핵심] 로그아웃 처리 (AuthContext의 logout -> 메인으로 이동됨)
+      } else {
+        // 전화번호만 변경한 경우
+        alert("회원정보가 성공적으로 수정되었습니다.");
+        // 입력창 초기화 (현재 비밀번호는 남겨둘지, 지울지 선택)
+        setForm((prev) => ({
+          ...prev,
+          currentPassword: "", // 보안상 비워주는 게 좋습니다.
+          password: "",
+          confirmPassword: "",
+        }));
+        // 페이지 새로고침 효과를 원하시면: window.location.reload();
+      }
 
       // (선택) 입력창 초기화
       setForm((prev) => ({
@@ -143,12 +158,13 @@ const MyPage = () => {
                 />
               </S.InputGroup>
               <S.InputGroup>
-                <label>새 비밀번호 확인</label>
+                <label>새 비밀번호</label>
                 <input
                   type="password"
-                  name="confirmPassword"
-                  placeholder="비밀번호 재입력"
-                  value={form.confirmPassword}
+                  name="password"
+                  // [MODIFIED] 문구 수정: 변경 시에만 입력하라는 힌트 제공
+                  placeholder="변경할 경우에만 입력하세요"
+                  value={form.password}
                   onChange={handleChange}
                 />
               </S.InputGroup>

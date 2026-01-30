@@ -47,4 +47,13 @@ public class User {
     public enum Role {
         USER, ADMIN
     }
+
+    public void updateInfo(String newPassword, String newPhone) {
+        if (newPassword != null && !newPassword.isBlank()) {
+            this.password = newPassword;
+        }
+        if (newPhone != null && !newPhone.isBlank()) {
+            this.phone = newPhone;
+        }
+    }
 }
