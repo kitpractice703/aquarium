@@ -134,19 +134,20 @@ export const TicketList = styled.div`
   flex: 1;
 `;
 
-export const TicketCard = styled.div`
+export const TicketCard = styled.div<{ $isProgram?: boolean }>`
+  /* 프로그램이면 보라/파란빛 배경, 아니면 기본 투명 배경 */
   background: ${(props) =>
     props.$isProgram
       ? "rgba(100, 100, 255, 0.1)"
       : "rgba(255, 255, 255, 0.03)"};
 
+  /* 테두리 색상도 구분 */
   border: 1px solid
     ${(props) =>
       props.$isProgram
         ? "rgba(100, 100, 255, 0.3)"
         : "rgba(255, 255, 255, 0.1)"};
 
-  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 20px;
   display: flex;
