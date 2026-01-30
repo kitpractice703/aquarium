@@ -27,6 +27,7 @@ export interface ReservationDto {
 
 export interface ReservationDto {
   id: number;
+  ticketNumber?: string;
   visitDate: string;
   programTitle: string;
   status: string;

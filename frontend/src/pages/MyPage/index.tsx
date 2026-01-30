@@ -157,7 +157,10 @@ const MyPage = () => {
                 reservations.map((ticket) => (
                   <S.TicketCard key={ticket.id}>
                     <S.TicketInfo>
-                      <div className="res-number">No. {ticket.id}</div>
+                      <div className="res-number">
+                        {ticket.ticketNumber ||
+                          `No. ${String(ticket.id).padStart(6, "0")}`}
+                      </div>
                       <div className="title">
                         {ticket.programTitle || "Naquarium 입장권"}
                       </div>
