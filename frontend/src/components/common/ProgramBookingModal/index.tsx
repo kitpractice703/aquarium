@@ -67,17 +67,15 @@ const ProgramBookingModal = ({
   const availableTimes = useMemo(() => {
     if (fixedTime) return [fixedTime]; // 지정석(공연)은 고정
 
-    // 날짜 선택 안했으면 전체 표시
+    // [수정됨] 날짜나 현재 시간에 상관없이 항상 모든 시간을 노출합니다.
+    return PROGRAM_TIMES;
+
+    /* 기존 로직 (주석 처리 또는 삭제)
     if (!date) return PROGRAM_TIMES;
-
     const todayStr = getTodayString();
-
-    // 1. 선택한 날짜가 오늘이 아니면(미래/과거) -> 무조건 전체 오픈!
     if (date !== todayStr) {
       return PROGRAM_TIMES;
     }
-
-    // 2. 오늘이면 -> 현재 시간 이후만 오픈
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
@@ -88,6 +86,7 @@ const ProgramBookingModal = ({
       const targetTotalMinutes = h * 60 + m;
       return targetTotalMinutes > currentTotalMinutes;
     });
+    */
   }, [date, fixedTime]);
 
   // 시간 자동 보정
