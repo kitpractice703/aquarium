@@ -171,7 +171,7 @@ const Signup = () => {
             value={formData.phone}
             onChange={handlePhoneChange} // [변경] 전용 핸들러 사용
             onKeyDown={handleKeyDown}
-            placeholder="010-0000-0000 (숫자만 입력)"
+            placeholder="숫자만 입력 가능합니다."
             maxLength={13} // [추가] 13자리(하이픈 포함) 입력 제한
           />
         </S.InputGroup>

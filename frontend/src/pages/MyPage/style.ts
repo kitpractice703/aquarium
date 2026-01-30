@@ -13,6 +13,7 @@ export const Container = styled.div`
 export const Inner = styled.div`
   width: 90%;
   max-width: 1800px;
+  margin: 0 auto;
 `;
 
 export const PageHeader = styled.div`
