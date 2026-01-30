@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import * as S from "./style";
+// 타입 import 추가
+import type { ReservationDto } from "../../types/api";
 
 const MyPage = () => {
   const { username } = useAuth();
-  const [reservations, setReservations] = useState<any[]>([]);
+  const [reservations, setReservations] = useState<ReservationDto[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({
@@ -18,7 +20,7 @@ const MyPage = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const res = await api.get("/reservations/me");
+        const res = await api.get<ReservationDto[]>("/reservations/me");
         setReservations(res.data);
       } catch (err) {
         console.error("내역 조회 실패:", err);
@@ -34,20 +36,13 @@ const MyPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // [ADDED] 전화번호 포맷팅 함수 (회원가입과 동일)
   const formatPhoneNumber = (value: string) => {
-    const raw = value.replace(/[^0-9]/g, ""); // 숫자 이외 제거
-
-    if (raw.length <= 3) {
-      return raw;
-    } else if (raw.length <= 7) {
-      return `${raw.slice(0, 3)}-${raw.slice(3)}`;
-    } else {
-      return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
-    }
+    const raw = value.replace(/[^0-9]/g, "");
+    if (raw.length <= 3) return raw;
+    if (raw.length <= 7) return `${raw.slice(0, 3)}-${raw.slice(3)}`;
+    return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
   };
 
-  // [ADDED] 전화번호 전용 핸들러
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value);
     setForm((prev) => ({ ...prev, phone: formatted }));
@@ -62,18 +57,10 @@ const MyPage = () => {
       alert("새 비밀번호가 일치하지 않습니다.");
       return;
     }
-
-    // 실제로는 여기서 백엔드로 currentPassword와 함께 수정 요청을 보냅니다.
     alert("회원정보 수정 기능은 준비 중입니다. (UI 데모)");
   };
 
-  if (loading)
-    return (
-      <div style={{ paddingTop: "100px", textAlign: "center", color: "white" }}>
-        Loading...
-      </div>
-    );
-
+  // [핵심] 뱃지 렌더링 함수
   const renderBadge = (type?: string) => {
     if (type === "PERFORMANCE") {
       return (
@@ -85,9 +72,15 @@ const MyPage = () => {
         <span style={{ color: "#ffdd57", marginRight: "6px" }}>[체험]</span>
       );
     }
-    // ADMISSION(입장권)은 뱃지 없음
-    return null;
+    return null; // 입장권은 뱃지 없음
   };
+
+  if (loading)
+    return (
+      <div style={{ paddingTop: "100px", textAlign: "center", color: "white" }}>
+        Loading...
+      </div>
+    );
 
   return (
     <S.Container>
@@ -97,7 +90,6 @@ const MyPage = () => {
         </S.PageHeader>
 
         <S.ContentGrid>
-          {/* [SECTION 1] 내 정보 관리 */}
           <S.Section>
             <S.SectionTitle>내 정보 관리</S.SectionTitle>
             <S.InfoForm>
@@ -105,7 +97,6 @@ const MyPage = () => {
                 <label>아이디 (이메일)</label>
                 <input type="text" value={username || ""} disabled readOnly />
               </S.InputGroup>
-
               <S.InputGroup>
                 <label>현재 비밀번호</label>
                 <input
@@ -116,7 +107,6 @@ const MyPage = () => {
                   onChange={handleChange}
                 />
               </S.InputGroup>
-
               <S.InputGroup>
                 <label>새 비밀번호</label>
                 <input
@@ -137,20 +127,17 @@ const MyPage = () => {
                   onChange={handleChange}
                 />
               </S.InputGroup>
-
-              {/* [MODIFIED] 전화번호 입력 필드 수정 (핸들러 교체 및 maxLength 추가) */}
               <S.InputGroup>
                 <label>전화번호</label>
                 <input
                   type="text"
                   name="phone"
-                  placeholder="숫자만 입력 가능합니다."
+                  placeholder="010-0000-0000 (숫자만 입력)"
                   value={form.phone}
-                  onChange={handlePhoneChange} // [변경] 전용 핸들러 연결
-                  maxLength={13} // [추가] 길이 제한
+                  onChange={handlePhoneChange}
+                  maxLength={13}
                 />
               </S.InputGroup>
-
               <div style={{ marginTop: "auto" }}>
                 <S.UpdateButton onClick={handleUpdateInfo}>
                   정보 수정 저장
@@ -159,18 +146,16 @@ const MyPage = () => {
             </S.InfoForm>
           </S.Section>
 
-          {/* ... (예매 내역 섹션 유지) ... */}
           <S.Section>
             <S.SectionTitle>
               예매 내역 <span>({reservations.length}건)</span>
             </S.SectionTitle>
-
             <S.TicketList>
               {reservations.length === 0 ? (
                 <S.EmptyMsg>예매 내역이 없습니다.</S.EmptyMsg>
               ) : (
                 reservations.map((ticket) => {
-                  // 프로그램(공연/체험)인지 여부 판단
+                  // 프로그램(공연/체험) 여부 판단
                   const isProgram =
                     ticket.programType === "PERFORMANCE" ||
                     ticket.programType === "EXPERIENCE";
@@ -182,7 +167,7 @@ const MyPage = () => {
                           {ticket.ticketNumber || `T-${ticket.id}`}
                         </div>
                         <div className="title">
-                          {/* [수정] 뱃지 함수 호출 */}
+                          {/* 뱃지 표시 */}
                           {renderBadge(ticket.programType)}
                           {ticket.programTitle}
                         </div>
@@ -191,14 +176,14 @@ const MyPage = () => {
                             {ticket.location || "Naquarium 본관"}
                           </span>
                           <span className="date-time">
-                            {ticket.visitDate}{" "}
-                            {ticket.visitTime !== "종일권"
-                              ? ticket.visitTime
+                            {/* 방문 날짜와 시간(종일권 아닐 때만) 표시 */}
+                            {ticket.visitDate}
+                            {ticket.visitTime && ticket.visitTime !== "종일권"
+                              ? ` ${ticket.visitTime}`
                               : ""}
                           </span>
                         </div>
                       </S.TicketInfo>
-
                       <S.TicketStatus $status={ticket.status}>
                         {ticket.status === "CONFIRMED" ? "예매 완료" : "취소됨"}
                       </S.TicketStatus>

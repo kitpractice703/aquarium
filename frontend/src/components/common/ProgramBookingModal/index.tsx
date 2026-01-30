@@ -12,15 +12,13 @@ interface Props {
   price: number;
   fixedDate?: string;
   fixedTime?: string;
-  // [추가] 부모로부터 받는 내 예약 정보와 알림 요청 함수
   myReservations: ReservationDto[];
   onRequireTicket: () => void;
 }
 
-// 2시간 간격 시간표
+// 5개 시간대 정의
 const PROGRAM_TIMES = ["10:00", "12:00", "14:00", "16:00", "18:00"];
 
-// 오늘 날짜 문자열 반환 (YYYY-MM-DD)
 const getTodayString = () => {
   const d = new Date();
   const year = d.getFullYear();
@@ -45,7 +43,7 @@ const ProgramBookingModal = ({
   const [count, setCount] = useState(1);
   const [showPayment, setShowPayment] = useState(false);
 
-  // 1. 모달 열릴 때 초기화 (고정값이 있으면 그것으로 설정)
+  // 1. 초기화
   useEffect(() => {
     if (isOpen) {
       setDate(fixedDate || "");
@@ -55,48 +53,43 @@ const ProgramBookingModal = ({
     }
   }, [isOpen, fixedDate, fixedTime]);
 
-  // 2. [핵심] 날짜가 선택되었을 때 관람권 소지 여부 체크
+  // 2. 관람권 체크
   useEffect(() => {
-    // 날짜가 선택되었고, 고정된 날짜가 아닐 때(즉, 직접 선택했을 때) 체크
     if (date && !fixedDate) {
       const hasTicket = myReservations.some(
         (res) => res.visitDate === date && res.status === "CONFIRMED",
       );
-
       if (!hasTicket) {
-        // 관람권이 없으면 부모에게 알림 모달을 띄워달라고 요청
         onRequireTicket();
       }
     }
   }, [date, fixedDate, myReservations, onRequireTicket]);
 
-  // 3. 예약 가능한 시간 계산 로직
+  // 3. [시간 계산 로직 수정]
   const availableTimes = useMemo(() => {
-    if (fixedTime) return [fixedTime]; // 고정 시간이면 그것만 리턴
+    if (fixedTime) return [fixedTime]; // 지정석(공연)
 
     if (!date) return PROGRAM_TIMES;
 
     const today = getTodayString();
 
-    // 미래 날짜면 모든 시간 오픈
-    if (date > today) return PROGRAM_TIMES;
-
-    // 오늘이면 현재 시간 이후만 오픈
-    if (date === today) {
-      const now = new Date();
-      const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-      return PROGRAM_TIMES.filter((t) => {
-        const [h, m] = t.split(":").map(Number);
-        const targetMinutes = h * 60 + m;
-        return targetMinutes > currentMinutes;
-      });
+    // [핵심] 날짜가 오늘과 다르면(즉, 미래라면) 무조건 전체 시간 표시
+    if (date !== today) {
+      return PROGRAM_TIMES;
     }
 
-    return [];
+    // 오늘인 경우에만 지난 시간 필터링
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    return PROGRAM_TIMES.filter((t) => {
+      const [h, m] = t.split(":").map(Number);
+      const targetMinutes = h * 60 + m;
+      return targetMinutes > currentMinutes;
+    });
   }, [date, fixedTime]);
 
-  // 날짜가 바뀌거나 유효 시간이 바뀔 때, 시간 선택 자동 보정
+  // [추가] 시간이 바뀌거나 목록이 바뀌면 자동 선택 보정
   useEffect(() => {
     if (availableTimes.length > 0) {
       if (!time || !availableTimes.includes(time)) {
@@ -105,7 +98,7 @@ const ProgramBookingModal = ({
     } else {
       setTime("");
     }
-  }, [availableTimes, time]);
+  }, [availableTimes]); // time 제외 (무한루프 방지)
 
   if (!isOpen) return null;
 
@@ -143,7 +136,6 @@ const ProgramBookingModal = ({
             <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
           </S.Header>
           <S.Content>
-            {/* 날짜 선택 */}
             <S.InputGroup>
               <S.Label>날짜 선택</S.Label>
               {fixedDate ? (
@@ -167,7 +159,6 @@ const ProgramBookingModal = ({
               )}
             </S.InputGroup>
 
-            {/* 시간 선택 */}
             <S.InputGroup>
               <S.Label>시간 선택</S.Label>
               {fixedTime ? (
@@ -200,7 +191,6 @@ const ProgramBookingModal = ({
               )}
             </S.InputGroup>
 
-            {/* 인원 선택 */}
             <S.InputGroup>
               <S.Label>인원</S.Label>
               <S.Select
