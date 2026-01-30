@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import * as S from "./style";
-// 타입 import 추가
+import { updateUserInfo } from "../../api/authApi";
 import type { ReservationDto } from "../../types/api";
 
 const MyPage = () => {
@@ -48,7 +48,8 @@ const MyPage = () => {
     setForm((prev) => ({ ...prev, phone: formatted }));
   };
 
-  const handleUpdateInfo = () => {
+  const handleUpdateInfo = async () => {
+    // 1. 유효성 검사
     if (!form.currentPassword) {
       alert("본인 확인을 위해 현재 비밀번호를 입력해주세요.");
       return;
@@ -57,7 +58,31 @@ const MyPage = () => {
       alert("새 비밀번호가 일치하지 않습니다.");
       return;
     }
-    alert("회원정보 수정 기능은 준비 중입니다. (UI 데모)");
+    try {
+      await updateUserInfo({
+        currentPassword: form.currentPassword,
+        password: form.password, // 입력 안 했으면 빈 문자열 또는 undefined
+        phone: form.phone,
+      });
+
+      alert("회원정보가 성공적으로 수정되었습니다.");
+
+      // (선택) 입력창 초기화
+      setForm((prev) => ({
+        ...prev,
+        currentPassword: "",
+        password: "",
+        confirmPassword: "",
+      }));
+    } catch (error: any) {
+      console.error("수정 실패:", error);
+      if (error.response && error.response.data) {
+        // 백엔드에서 보낸 에러 메시지 (예: "현재 비밀번호가 일치하지 않습니다.") 표시
+        alert(error.response.data);
+      } else {
+        alert("정보 수정 중 오류가 발생했습니다.");
+      }
+    }
   };
 
   // [핵심] 뱃지 렌더링 함수

@@ -15,7 +15,17 @@ export const login = async (data: LoginRequest) => {
   return response.data;
 };
 
-// [참고] 구글 로그인은 Axios로 요청하는 게 아닙니다!
-// 구글 로그인은 사용자가 '링크'를 타고 구글 서버로 이동해야 하므로
-// <a href="http://localhost:8080/oauth2/authorization/google">...</a>
-// 형태로 구현하게 됩니다. (이건 로그인 페이지 구현 때 자세히 다룰게요)
+export const updateUserInfo = async (data: {
+  currentPassword: string;
+  password?: string;
+  phone?: string;
+}) => {
+  const payload = {
+    currentPassword: data.currentPassword,
+    newPassword: data.password, // 백엔드 DTO 필드명에 맞춤
+    phone: data.phone,
+  };
+  // PUT /api/users/me
+  const response = await api.put("/users/me", payload);
+  return response.data;
+};
