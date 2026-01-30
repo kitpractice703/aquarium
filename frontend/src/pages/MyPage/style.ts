@@ -13,7 +13,7 @@ export const Container = styled.div`
 export const Inner = styled.div`
   width: 90%;
   /* [MODIFIED] 너비를 1200px -> 1400px로 확장하여 박스를 더 넓게 만듦 */
-  max-width: 1400px;
+  max-width: 1800px;
 `;
 
 export const PageHeader = styled.div`
