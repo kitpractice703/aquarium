@@ -69,11 +69,10 @@
 
 ```mermaid
 graph LR
-    User[User (Browser)] -->|HTTPS| Frontend[React (Vercel)]
-    Frontend -->|API Request| Backend[Spring Boot (AWS EC2)]
-    Backend -->|CRUD| DB[(MySQL - AWS RDS)]
-    Backend -->|Auth| Google[Google OAuth2 Server]
-
+    User["User (Browser)"] -->|HTTPS| Frontend["Frontend (React / Vercel)"]
+    Frontend -->|"API Request"| Backend["Backend (Spring Boot / AWS EC2)"]
+    Backend -->|CRUD| DB[("MySQL (AWS RDS)")]
+    Backend -->|Auth| Google["Google OAuth2 Server"]
 ```
 
 ## 5. 트러블 슈팅 (Troubleshooting) 🔥
@@ -107,6 +106,7 @@ graph LR
 
 ## 6. ERD (Entity Relationship Diagram)
 
+```mermaid
 erDiagram
     USERS ||--o{ RESERVATIONS : makes
     USERS ||--o{ POSTS : writes
@@ -151,6 +151,7 @@ erDiagram
         text content
         double rating
     }
+```
 
 * **Users:** 사용자 정보 (Email, Password, Provider, Phone)
 * **Reservations:** 예매 정보 (VisitDate, Count, Price, Status)
