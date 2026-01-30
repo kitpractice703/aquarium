@@ -16,14 +16,14 @@ interface Props {
   onRequireTicket: () => void;
 }
 
-// 5개 시간대 정의
 const PROGRAM_TIMES = ["10:00", "12:00", "14:00", "16:00", "18:00"];
 
+// 오늘 날짜 구하기 (YYYY-MM-DD) - 로컬 시간 기준
 const getTodayString = () => {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
@@ -43,7 +43,6 @@ const ProgramBookingModal = ({
   const [count, setCount] = useState(1);
   const [showPayment, setShowPayment] = useState(false);
 
-  // 1. 초기화
   useEffect(() => {
     if (isOpen) {
       setDate(fixedDate || "");
@@ -53,7 +52,6 @@ const ProgramBookingModal = ({
     }
   }, [isOpen, fixedDate, fixedTime]);
 
-  // 2. 관람권 체크
   useEffect(() => {
     if (date && !fixedDate) {
       const hasTicket = myReservations.some(
@@ -65,31 +63,34 @@ const ProgramBookingModal = ({
     }
   }, [date, fixedDate, myReservations, onRequireTicket]);
 
-  // 3. [시간 계산 로직 수정]
+  // [시간 계산 로직]
   const availableTimes = useMemo(() => {
-    if (fixedTime) return [fixedTime]; // 지정석(공연)
+    if (fixedTime) return [fixedTime]; // 지정석(공연)은 고정
 
+    // 날짜 선택 안했으면 전체 표시
     if (!date) return PROGRAM_TIMES;
 
-    const today = getTodayString();
+    const todayStr = getTodayString();
 
-    // [핵심] 날짜가 오늘과 다르면(즉, 미래라면) 무조건 전체 시간 표시
-    if (date !== today) {
+    // 1. 선택한 날짜가 오늘이 아니면(미래/과거) -> 무조건 전체 오픈!
+    if (date !== todayStr) {
       return PROGRAM_TIMES;
     }
 
-    // 오늘인 경우에만 지난 시간 필터링
+    // 2. 오늘이면 -> 현재 시간 이후만 오픈
     const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTotalMinutes = currentHour * 60 + currentMinute;
 
     return PROGRAM_TIMES.filter((t) => {
       const [h, m] = t.split(":").map(Number);
-      const targetMinutes = h * 60 + m;
-      return targetMinutes > currentMinutes;
+      const targetTotalMinutes = h * 60 + m;
+      return targetTotalMinutes > currentTotalMinutes;
     });
   }, [date, fixedTime]);
 
-  // [추가] 시간이 바뀌거나 목록이 바뀌면 자동 선택 보정
+  // 시간 자동 보정
   useEffect(() => {
     if (availableTimes.length > 0) {
       if (!time || !availableTimes.includes(time)) {
@@ -98,7 +99,7 @@ const ProgramBookingModal = ({
     } else {
       setTime("");
     }
-  }, [availableTimes]); // time 제외 (무한루프 방지)
+  }, [availableTimes]); // time 의존성 제거
 
   if (!isOpen) return null;
 
