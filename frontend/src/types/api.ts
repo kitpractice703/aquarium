@@ -1,7 +1,7 @@
 export interface ScheduleData {
   id: number;
-  programId: number;
-  price: number;
+  programId: number; // [추가됨]
+  price: number; // [추가됨]
   date: string;
   time: string;
   title: string;
@@ -9,18 +9,23 @@ export interface ScheduleData {
   status: "open" | "closed" | "ready";
 }
 
-export interface ReviewData {
+export interface ReservationDto {
   id: number;
-  title: string;
-  content: string;
-  writerName: string;
-  rating: number;
-  date: string;
+  visitDate: string;
+  programTitle: string;
+  status: string;
+}
+
+export interface ReservationDto {
+  id: number;
+  visitDate: string;
+  programTitle: string;
+  status: string;
 }
 
 export interface ReservationRequest {
-  visitDate: string; // YYYY-MM-DD
-  visitTime: string; // HH:mm
+  visitDate: string;
+  visitTime: string;
   adultCount: number;
   teenCount: number;
 }
@@ -35,11 +40,4 @@ export interface SignupRequest {
 export interface LoginRequest {
   email: string;
   password: string;
-}
-
-export interface ReservationDto {
-  id: number;
-  visitDate: string;
-  programTitle: string;
-  status: string;
 }

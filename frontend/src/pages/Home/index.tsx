@@ -12,6 +12,7 @@ import BookingModal from "../../components/common/BookingModal";
 import ProgramBookingModal from "../../components/common/ProgramBookingModal";
 import LoginRequestModal from "../../components/common/LoginRequestModal";
 import LoginModal from "../../components/common/LoginModal";
+import TicketNoticeModal from "../../components/common/TicketNoticeModal";
 
 import vrImage from "../../assets/images/vr_driving.jpeg";
 import feedingImage from "../../assets/images/feeding.jpg";
@@ -72,6 +73,7 @@ const Home = () => {
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [recentReviews, setRecentReviews] = useState<ReviewData[]>([]);
   const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
+  const [isTicketNoticeOpen, setIsTicketNoticeOpen] = useState(false);
 
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -159,25 +161,20 @@ const Home = () => {
 
   const handleScheduleClick = (item: ScheduleData) => {
     if (item.status !== "open") return;
-
     if (!checkLogin()) return;
 
-    // 1. 해당 날짜(item.date)에 유효한 입장권이 있는지 확인
-    // (예: visitDate가 일치하고, status가 CONFIRMED인 티켓)
+    // 1. 관람권 확인 로직
     const hasTicket = myReservations.some(
       (res) => res.visitDate === item.date && res.status === "CONFIRMED",
     );
 
     if (!hasTicket) {
-      alert(
-        "해당 날짜의 입장권(관람권)이 없습니다.\n관람권을 먼저 예매해주세요.",
-      );
-      // 원한다면 여기서 입장권 예매 모달을 띄워줄 수도 있습니다.
-      // setIsAdmissionModalOpen(true);
+      // [변경] alert 대신 전용 모달 띄우기
+      setIsTicketNoticeOpen(true);
       return;
     }
 
-    // 2. 입장권이 있다면 바로 결제(예약) 모달 띄우기 (날짜/시간 고정)
+    // 2. 관람권 있으면 예약 모달 오픈
     setSelectedProgram({
       id: item.programId,
       title: item.title,
@@ -185,6 +182,12 @@ const Home = () => {
       fixedDate: item.date,
       fixedTime: item.time,
     });
+  };
+
+  // [추가] "예매하러 가기" 버튼 클릭 시 동작
+  const handleGoToBooking = () => {
+    setIsTicketNoticeOpen(false); // 알림창 닫고
+    setIsAdmissionModalOpen(true); // 관람권 예매창 열기
   };
 
   const filteredSchedules = schedules.filter(
@@ -516,16 +519,20 @@ const Home = () => {
           price={selectedProgram.price}
           fixedDate={selectedProgram.fixedDate}
           fixedTime={selectedProgram.fixedTime}
+          // [추가] 예약된 내역과 알림창 띄우는 함수를 넘겨줍니다.
+          myReservations={myReservations}
+          onRequireTicket={() => {
+            setSelectedProgram(null); // 프로그램 모달 닫고
+            setIsTicketNoticeOpen(true); // 알림 모달 띄우기
+          }}
         />
       )}
 
-      <LoginRequestModal
-        isOpen={isLoginNoticeOpen}
-        onClose={() => setIsLoginNoticeOpen(false)}
-        onConfirm={() => {
-          setIsLoginNoticeOpen(false);
-          setIsLoginModalOpen(true);
-        }}
+      {/* [추가] 통합 알림 모달 배치 */}
+      <TicketNoticeModal
+        isOpen={isTicketNoticeOpen}
+        onClose={() => setIsTicketNoticeOpen(false)}
+        onConfirm={handleGoToBooking}
       />
 
       <LoginModal
