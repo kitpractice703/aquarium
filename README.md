@@ -160,7 +160,7 @@ erDiagram
 
 
 * **Programs / ProgramSchedules:** 프로그램 정보 및 시간표
-* **Posts:** 커뮤니티 게시글
+* **Posts:** 커뮤니티 내부의 관람 후기 글
 
 ## 7. 실행 방법 (How to run)
 
