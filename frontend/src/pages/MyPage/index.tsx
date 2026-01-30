@@ -8,7 +8,6 @@ const MyPage = () => {
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // [MODIFIED] '현재 비밀번호' 필드 추가
   const [form, setForm] = useState({
     currentPassword: "",
     password: "",
@@ -35,8 +34,26 @@ const MyPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // [ADDED] 전화번호 포맷팅 함수 (회원가입과 동일)
+  const formatPhoneNumber = (value: string) => {
+    const raw = value.replace(/[^0-9]/g, ""); // 숫자 이외 제거
+
+    if (raw.length <= 3) {
+      return raw;
+    } else if (raw.length <= 7) {
+      return `${raw.slice(0, 3)}-${raw.slice(3)}`;
+    } else {
+      return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
+    }
+  };
+
+  // [ADDED] 전화번호 전용 핸들러
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setForm((prev) => ({ ...prev, phone: formatted }));
+  };
+
   const handleUpdateInfo = () => {
-    // [ADDED] 현재 비밀번호 확인 로직 추가
     if (!form.currentPassword) {
       alert("본인 확인을 위해 현재 비밀번호를 입력해주세요.");
       return;
@@ -74,7 +91,6 @@ const MyPage = () => {
                 <input type="text" value={username || ""} disabled readOnly />
               </S.InputGroup>
 
-              {/* [ADDED] 현재 비밀번호 입력란 (사용자 인증) */}
               <S.InputGroup>
                 <label>현재 비밀번호</label>
                 <input
@@ -106,18 +122,20 @@ const MyPage = () => {
                   onChange={handleChange}
                 />
               </S.InputGroup>
+
+              {/* [MODIFIED] 전화번호 입력 필드 수정 (핸들러 교체 및 maxLength 추가) */}
               <S.InputGroup>
                 <label>전화번호</label>
                 <input
                   type="text"
                   name="phone"
-                  placeholder="010-0000-0000"
+                  placeholder="010-0000-0000 (숫자만 입력)"
                   value={form.phone}
-                  onChange={handleChange}
+                  onChange={handlePhoneChange} // [변경] 전용 핸들러 연결
+                  maxLength={13} // [추가] 길이 제한
                 />
               </S.InputGroup>
 
-              {/* 버튼을 하단 끝으로 밀어주기 위해 margin-top auto 사용 가능 */}
               <div style={{ marginTop: "auto" }}>
                 <S.UpdateButton onClick={handleUpdateInfo}>
                   정보 수정 저장
@@ -126,7 +144,7 @@ const MyPage = () => {
             </S.InfoForm>
           </S.Section>
 
-          {/* [SECTION 2] 예매 확인 */}
+          {/* ... (예매 내역 섹션 유지) ... */}
           <S.Section>
             <S.SectionTitle>
               예매 내역 <span>({reservations.length}건)</span>
