@@ -154,45 +154,52 @@ const MyPage = () => {
               {reservations.length === 0 ? (
                 <S.EmptyMsg>예매 내역이 없습니다.</S.EmptyMsg>
               ) : (
-                reservations.map((ticket) => (
-                  <S.TicketCard key={ticket.id}>
-                    <S.TicketInfo>
-                      <div className="res-number">
-                        {ticket.ticketNumber ||
-                          `No. ${String(ticket.id).padStart(6, "0")}`}
-                      </div>
-                      <div className="title">
-                        {ticket.programTitle || "Naquarium 입장권"}
-                      </div>
-                      <div className="details">
-                        <span className="location">
-                          {ticket.location || "Naquarium 본관"}
-                        </span>
+                reservations.map((ticket) => {
+                  // [Tip] 입장권인지 프로그램인지 구분하는 변수
+                  const isAdmission =
+                    ticket.programTitle.includes("관람권") ||
+                    ticket.programTitle.includes("입장권");
 
-                        {/* [수정] 날짜 표시 로직 개선 */}
-                        <span className="date-time">
-                          {ticket.startTime
-                            ? new Date(ticket.startTime).toLocaleDateString() +
-                              " " +
-                              new Date(ticket.startTime).toLocaleTimeString(
-                                [],
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                },
-                              )
-                            : ticket.visitDate
-                              ? ticket.visitDate
-                              : "날짜 정보 없음"}
-                        </span>
-                      </div>
-                    </S.TicketInfo>
+                  return (
+                    <S.TicketCard key={ticket.id} $isProgram={!isAdmission}>
+                      {" "}
+                      {/* 스타일 props 전달 */}
+                      <S.TicketInfo>
+                        <div className="res-number">
+                          {ticket.ticketNumber || `T-${ticket.id}`}
+                        </div>
+                        <div className="title">
+                          {/* 프로그램이면 앞에 아이콘이나 [체험] 같은 말머리 붙이기 */}
+                          {!isAdmission && (
+                            <span
+                              style={{ color: "#ffdd57", marginRight: "5px" }}
+                            >
+                              [체험]
+                            </span>
+                          )}
+                          {ticket.programTitle}
+                        </div>
+                        <div className="details">
+                          <span className="location">
+                            {ticket.location || "Naquarium 본관"}
+                          </span>
 
-                    <S.TicketStatus $status={ticket.status}>
-                      {ticket.status === "CONFIRMED" ? "예매 완료" : "취소됨"}
-                    </S.TicketStatus>
-                  </S.TicketCard>
-                ))
+                          {/* [수정] 백엔드에서 준 visitDate/visitTime 문자열을 최우선으로 사용 */}
+                          <span className="date-time">
+                            {ticket.visitDate}{" "}
+                            {ticket.visitTime !== "종일권"
+                              ? ticket.visitTime
+                              : ""}
+                            {/* 종일권이면 시간 숨김, 아니면 시간 표시 */}
+                          </span>
+                        </div>
+                      </S.TicketInfo>
+                      <S.TicketStatus $status={ticket.status}>
+                        {ticket.status === "CONFIRMED" ? "예매 완료" : "취소됨"}
+                      </S.TicketStatus>
+                    </S.TicketCard>
+                  );
+                })
               )}
             </S.TicketList>
           </S.Section>

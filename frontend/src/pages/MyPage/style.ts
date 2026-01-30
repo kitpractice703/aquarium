@@ -135,7 +135,17 @@ export const TicketList = styled.div`
 `;
 
 export const TicketCard = styled.div`
-  background: rgba(255, 255, 255, 0.03);
+  background: ${(props) =>
+    props.$isProgram
+      ? "rgba(100, 100, 255, 0.1)"
+      : "rgba(255, 255, 255, 0.03)"};
+
+  border: 1px solid
+    ${(props) =>
+      props.$isProgram
+        ? "rgba(100, 100, 255, 0.3)"
+        : "rgba(255, 255, 255, 0.1)"};
+
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 20px;
