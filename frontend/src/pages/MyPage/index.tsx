@@ -132,7 +132,7 @@ const MyPage = () => {
                 <input
                   type="text"
                   name="phone"
-                  placeholder="010-0000-0000 (숫자만 입력)"
+                  placeholder="숫자만 입력가능합니다."
                   value={form.phone}
                   onChange={handlePhoneChange}
                   maxLength={13}

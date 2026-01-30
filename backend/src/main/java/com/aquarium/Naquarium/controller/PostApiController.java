@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken; // [필수 Import]
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -35,6 +36,7 @@ public class PostApiController {
 
     // 1. [조회] 후기 목록 가져오기
     @GetMapping("/reviews")
+    @Transactional(readOnly = true)
     public List<PostDto> getReviews() {
         return postRepository.findByCategoryOrderByCreatedAtDesc(Post.Category.REVIEW)
                 .stream()

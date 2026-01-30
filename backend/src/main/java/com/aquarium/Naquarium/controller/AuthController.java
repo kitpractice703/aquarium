@@ -38,6 +38,7 @@ public class AuthController {
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .phone(request.getPhone())
                 .role(User.Role.USER)
                 .provider("local")
                 .build();

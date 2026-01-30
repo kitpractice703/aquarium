@@ -20,26 +20,30 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String username; // 이름(닉네임)
+    private String username;
 
-    @Column // 구글 로그인 시 비밀번호가 없을 수 있으므로 nullable
+    @Column
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role; // USER, ADMIN
+    // [Point 1] 필드 선언이 있는지 확인
+    @Column
+    private String phone;
 
-    private String provider; // "google" 또는 "local"
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private String provider;
 
     @Builder
-    public User(String email, String username, String password, Role role, String provider) {
+    public User(String email, String username, String password, String phone, Role role, String provider) {
         this.email = email;
         this.username = username;
         this.password = password;
+        this.phone = phone;
         this.role = role;
         this.provider = provider;
     }
 
-    // Role Enum 정의
     public enum Role {
         USER, ADMIN
     }
