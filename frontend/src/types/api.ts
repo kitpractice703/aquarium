@@ -20,9 +20,14 @@ export interface ReviewData {
 
 export interface ReservationDto {
   id: number;
+  ticketNumber?: string;
   visitDate: string;
+  startTime?: string;
   programTitle: string;
+  programType?: string;
   status: string;
+  location?: string;
+  imageUrl?: string;
 }
 
 export interface ReservationDto {

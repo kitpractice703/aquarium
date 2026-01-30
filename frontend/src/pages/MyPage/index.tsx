@@ -1,212 +1,259 @@
-import { useEffect, useState } from "react";
-import { api } from "../../api/axios";
-import { useAuth } from "../../context/AuthContext";
+import { useState, useEffect, useMemo } from "react";
 import * as S from "./style";
+import PaymentModal from "../PaymentModal";
+import { api } from "../../../api/axios";
+import type { ReservationDto } from "../../../types/api";
 
-const MyPage = () => {
-  const { username } = useAuth();
-  const [reservations, setReservations] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  programTitle: string;
+  programId: number;
+  price: number;
+  fixedDate?: string;
+  fixedTime?: string;
+  myReservations: ReservationDto[];
+  onRequireTicket: () => void;
+}
 
-  const [form, setForm] = useState({
-    currentPassword: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
-  });
+// 2시간 간격 시간표
+const PROGRAM_TIMES = ["10:00", "12:00", "14:00", "16:00", "18:00"];
 
+// 오늘 날짜 문자열 반환 (YYYY-MM-DD)
+const getTodayString = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const ProgramBookingModal = ({
+  isOpen,
+  onClose,
+  programTitle,
+  programId,
+  price,
+  fixedDate,
+  fixedTime,
+  myReservations,
+  onRequireTicket,
+}: Props) => {
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [count, setCount] = useState(1);
+  const [showPayment, setShowPayment] = useState(false);
+
+  // 1. 모달 열릴 때 초기화
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const res = await api.get("/reservations/me");
-        setReservations(res.data);
-      } catch (err) {
-        console.error("내역 조회 실패:", err);
-      } finally {
-        setLoading(false);
+    if (isOpen) {
+      setDate(fixedDate || "");
+      setTime(fixedTime || "");
+      setCount(1);
+      setShowPayment(false);
+    }
+  }, [isOpen, fixedDate, fixedTime]);
+
+  // 2. 날짜 선택 시 관람권 소지 여부 체크
+  useEffect(() => {
+    if (date && !fixedDate) {
+      const hasTicket = myReservations.some(
+        (res) => res.visitDate === date && res.status === "CONFIRMED",
+      );
+
+      if (!hasTicket) {
+        onRequireTicket();
       }
-    };
+    }
+  }, [date, fixedDate, myReservations, onRequireTicket]);
 
-    fetchReservations();
-  }, []);
+  // 3. [핵심 수정] 예약 가능한 시간 계산 로직
+  const availableTimes = useMemo(() => {
+    if (fixedTime) return [fixedTime]; // 고정 시간이면 그것만 리턴
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    if (!date) return PROGRAM_TIMES;
 
-  // [ADDED] 전화번호 포맷팅 함수 (회원가입과 동일)
-  const formatPhoneNumber = (value: string) => {
-    const raw = value.replace(/[^0-9]/g, ""); // 숫자 이외 제거
+    const today = getTodayString();
 
-    if (raw.length <= 3) {
-      return raw;
-    } else if (raw.length <= 7) {
-      return `${raw.slice(0, 3)}-${raw.slice(3)}`;
+    // [수정] 미래 날짜면 필터링 없이 모든 시간 오픈
+    if (date > today) return PROGRAM_TIMES;
+
+    // [수정] 오늘이면 현재 시간 이후만 오픈
+    if (date === today) {
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      return PROGRAM_TIMES.filter((t) => {
+        const [h, m] = t.split(":").map(Number);
+        const targetMinutes = h * 60 + m;
+        return targetMinutes > currentMinutes;
+      });
+    }
+
+    // 과거 날짜는 빈 배열 (선택 불가)
+    return [];
+  }, [date, fixedTime]);
+
+  // 4. [추가] 날짜 변경 시 시간 자동 보정 (유효하지 않은 시간 선택 방지)
+  useEffect(() => {
+    if (availableTimes.length > 0) {
+      // 현재 선택된 'time'이 'availableTimes' 목록에 없으면
+      // (예: 10:00을 선택했는데 날짜를 오늘로 바꿔서 10:00이 목록에서 사라진 경우)
+      if (!time || !availableTimes.includes(time)) {
+        setTime(availableTimes[0]); // 첫 번째 가능한 시간으로 자동 변경
+      }
     } else {
-      return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
+      setTime(""); // 가능한 시간이 없으면 초기화
+    }
+  }, [availableTimes]); // time 의존성을 빼서 무한 루프 방지
+
+  if (!isOpen) return null;
+
+  const totalPrice = price * count;
+
+  const handlePaymentSuccess = async () => {
+    try {
+      await api.post("/reservations/programs", {
+        programId,
+        visitDate: date,
+        visitTime: time,
+        count,
+      });
+      alert("프로그램 예약이 완료되었습니다!");
+      onClose();
+    } catch (error: any) {
+      if (error.response?.status === 400) alert(error.response.data);
+      else if (error.response?.status === 401) alert("로그인이 필요합니다.");
+      else alert("예약 중 오류가 발생했습니다.");
     }
   };
 
-  // [ADDED] 전화번호 전용 핸들러
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhoneNumber(e.target.value);
-    setForm((prev) => ({ ...prev, phone: formatted }));
+  const handlePaymentClick = () => {
+    if (!date) return alert("날짜를 선택해주세요");
+    if (!time) return alert("예약 가능한 시간이 없습니다.");
+    setShowPayment(true);
   };
-
-  const handleUpdateInfo = () => {
-    if (!form.currentPassword) {
-      alert("본인 확인을 위해 현재 비밀번호를 입력해주세요.");
-      return;
-    }
-    if (form.password && form.password !== form.confirmPassword) {
-      alert("새 비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    // 실제로는 여기서 백엔드로 currentPassword와 함께 수정 요청을 보냅니다.
-    alert("회원정보 수정 기능은 준비 중입니다. (UI 데모)");
-  };
-
-  if (loading)
-    return (
-      <div style={{ paddingTop: "100px", textAlign: "center", color: "white" }}>
-        Loading...
-      </div>
-    );
 
   return (
-    <S.Container>
-      <S.Inner>
-        <S.PageHeader>
-          <S.Title>MY PAGE</S.Title>
-        </S.PageHeader>
-
-        <S.ContentGrid>
-          {/* [SECTION 1] 내 정보 관리 */}
-          <S.Section>
-            <S.SectionTitle>내 정보 관리</S.SectionTitle>
-            <S.InfoForm>
-              <S.InputGroup>
-                <label>아이디 (이메일)</label>
-                <input type="text" value={username || ""} disabled readOnly />
-              </S.InputGroup>
-
-              <S.InputGroup>
-                <label>현재 비밀번호</label>
-                <input
-                  type="password"
-                  name="currentPassword"
-                  placeholder="현재 비밀번호 입력"
-                  value={form.currentPassword}
-                  onChange={handleChange}
-                />
-              </S.InputGroup>
-
-              <S.InputGroup>
-                <label>새 비밀번호</label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="변경할 비밀번호 (선택)"
-                  value={form.password}
-                  onChange={handleChange}
-                />
-              </S.InputGroup>
-              <S.InputGroup>
-                <label>새 비밀번호 확인</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="비밀번호 재입력"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                />
-              </S.InputGroup>
-
-              {/* [MODIFIED] 전화번호 입력 필드 수정 (핸들러 교체 및 maxLength 추가) */}
-              <S.InputGroup>
-                <label>전화번호</label>
-                <input
-                  type="text"
-                  name="phone"
-                  placeholder="숫자만 입력 가능합니다."
-                  value={form.phone}
-                  onChange={handlePhoneChange} // [변경] 전용 핸들러 연결
-                  maxLength={13} // [추가] 길이 제한
-                />
-              </S.InputGroup>
-
-              <div style={{ marginTop: "auto" }}>
-                <S.UpdateButton onClick={handleUpdateInfo}>
-                  정보 수정 저장
-                </S.UpdateButton>
-              </div>
-            </S.InfoForm>
-          </S.Section>
-
-          {/* ... (예매 내역 섹션 유지) ... */}
-          <S.Section>
-            <S.SectionTitle>
-              예매 내역 <span>({reservations.length}건)</span>
-            </S.SectionTitle>
-
-            <S.TicketList>
-              {reservations.length === 0 ? (
-                <S.EmptyMsg>예매 내역이 없습니다.</S.EmptyMsg>
+    <>
+      <S.Overlay onClick={onClose}>
+        <S.Container onClick={(e) => e.stopPropagation()}>
+          <S.Header>
+            <h2>{programTitle} 예약</h2>
+            <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
+          </S.Header>
+          <S.Content>
+            {/* 날짜 선택 */}
+            <S.InputGroup>
+              <S.Label>날짜 선택</S.Label>
+              {fixedDate ? (
+                <div
+                  style={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    padding: "10px 0",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
+                  {fixedDate} (지정일)
+                </div>
               ) : (
-                reservations.map((ticket) => {
-                  // [Tip] 입장권인지 프로그램인지 구분하는 변수
-                  const isAdmission =
-                    ticket.programTitle.includes("관람권") ||
-                    ticket.programTitle.includes("입장권");
-
-                  return (
-                    <S.TicketCard key={ticket.id} $isProgram={!isAdmission}>
-                      {" "}
-                      {/* 스타일 props 전달 */}
-                      <S.TicketInfo>
-                        <div className="res-number">
-                          {ticket.ticketNumber || `T-${ticket.id}`}
-                        </div>
-                        <div className="title">
-                          {/* 프로그램이면 앞에 아이콘이나 [체험] 같은 말머리 붙이기 */}
-                          {!isAdmission && (
-                            <span
-                              style={{ color: "#ffdd57", marginRight: "5px" }}
-                            >
-                              [체험]
-                            </span>
-                          )}
-                          {ticket.programTitle}
-                        </div>
-                        <div className="details">
-                          <span className="location">
-                            {ticket.location || "Naquarium 본관"}
-                          </span>
-
-                          {/* [수정] 백엔드에서 준 visitDate/visitTime 문자열을 최우선으로 사용 */}
-                          <span className="date-time">
-                            {ticket.visitDate}{" "}
-                            {ticket.visitTime !== "종일권"
-                              ? ticket.visitTime
-                              : ""}
-                            {/* 종일권이면 시간 숨김, 아니면 시간 표시 */}
-                          </span>
-                        </div>
-                      </S.TicketInfo>
-                      <S.TicketStatus $status={ticket.status}>
-                        {ticket.status === "CONFIRMED" ? "예매 완료" : "취소됨"}
-                      </S.TicketStatus>
-                    </S.TicketCard>
-                  );
-                })
+                <S.Input
+                  type="date"
+                  value={date}
+                  min={getTodayString()}
+                  onChange={(e) => setDate(e.target.value)}
+                />
               )}
-            </S.TicketList>
-          </S.Section>
-        </S.ContentGrid>
-      </S.Inner>
-    </S.Container>
+            </S.InputGroup>
+
+            {/* 시간 선택 */}
+            <S.InputGroup>
+              <S.Label>시간 선택</S.Label>
+              {fixedTime ? (
+                <div
+                  style={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    padding: "10px 0",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
+                  {fixedTime} (지정석)
+                </div>
+              ) : (
+                <S.Select
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  disabled={availableTimes.length === 0}
+                >
+                  {availableTimes.length > 0 ? (
+                    availableTimes.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">예약 가능한 시간이 없습니다</option>
+                  )}
+                </S.Select>
+              )}
+            </S.InputGroup>
+
+            {/* 인원 선택 */}
+            <S.InputGroup>
+              <S.Label>인원</S.Label>
+              <S.Select
+                value={count}
+                onChange={(e) => setCount(Number(e.target.value))}
+              >
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <option key={n} value={n}>
+                    {n}명
+                  </option>
+                ))}
+              </S.Select>
+            </S.InputGroup>
+
+            <S.Summary>
+              <div>
+                <span>프로그램</span>
+                <span>{programTitle}</span>
+              </div>
+              <div>
+                <span>1인 가격</span>
+                <span>{price.toLocaleString()}원</span>
+              </div>
+              <div className="total">
+                <span>총 결제금액</span>
+                <span>{totalPrice.toLocaleString()}원</span>
+              </div>
+            </S.Summary>
+          </S.Content>
+          <S.Footer>
+            <S.Button
+              onClick={handlePaymentClick}
+              style={{
+                opacity: !date || !time ? 0.5 : 1,
+                cursor: !date || !time ? "not-allowed" : "pointer",
+              }}
+            >
+              결제하기
+            </S.Button>
+          </S.Footer>
+        </S.Container>
+      </S.Overlay>
+
+      {showPayment && (
+        <PaymentModal
+          amount={totalPrice}
+          orderName={`${programTitle} (${count}명)`}
+          onSuccess={handlePaymentSuccess}
+          onClose={() => setShowPayment(false)}
+        />
+      )}
+    </>
   );
 };
 
-export default MyPage;
+export default ProgramBookingModal;
