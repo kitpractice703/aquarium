@@ -22,6 +22,27 @@ const Signup = () => {
     setErrorMsg("");
   };
 
+  // [ADDED] 전화번호 자동 포맷팅 함수 (숫자만 남기고 하이픈 추가)
+  const formatPhoneNumber = (value: string) => {
+    const raw = value.replace(/[^0-9]/g, ""); // 숫자 이외의 문자 제거
+
+    if (raw.length <= 3) {
+      return raw;
+    } else if (raw.length <= 7) {
+      return `${raw.slice(0, 3)}-${raw.slice(3)}`;
+    } else {
+      // 010-1234-5678 (11자리 제한은 maxLength에서 처리)
+      return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
+    }
+  };
+
+  // [ADDED] 전화번호 전용 변경 핸들러
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setFormData((prev) => ({ ...prev, phone: formatted }));
+    setErrorMsg("");
+  };
+
   // 엔터키 누르면 가입 실행
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -87,7 +108,6 @@ const Signup = () => {
   };
 
   return (
-    // [MODIFIED] onClick -> onMouseDown으로 변경하여 클릭 즉시 닫히도록 개선
     <S.SignupContainer onMouseDown={handleOverlayClick}>
       <S.FormCard>
         <S.CloseBtn onClick={() => navigate("/")}>&times;</S.CloseBtn>
@@ -139,6 +159,20 @@ const Signup = () => {
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             placeholder="비밀번호를 한 번 더 입력하세요"
+          />
+        </S.InputGroup>
+
+        {/* [MODIFIED] 전화번호 입력 필드 수정 (핸들러 교체 및 maxLength 추가) */}
+        <S.InputGroup>
+          <S.Label>전화번호</S.Label>
+          <S.Input
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handlePhoneChange} // [변경] 전용 핸들러 사용
+            onKeyDown={handleKeyDown}
+            placeholder="010-0000-0000 (숫자만 입력)"
+            maxLength={13} // [추가] 13자리(하이픈 포함) 입력 제한
           />
         </S.InputGroup>
 
