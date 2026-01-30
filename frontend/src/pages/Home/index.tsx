@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
+// [체크] 이제 types/api.ts에 ReviewData가 있으므로 에러가 사라질 것입니다.
 import type { ScheduleData, ReviewData, ReservationDto } from "../../types/api";
 
 import HeroSection from "../../components/HeroSection";
@@ -19,7 +20,7 @@ import feedingImage from "../../assets/images/feeding.jpg";
 
 import * as S from "./style";
 
-// [추가] 홈 화면에 보여줄 FAQ 데이터 (3개)
+// ... (HOME_FAQ_DATA, getLocalYMD, getDaysArray 함수들은 기존 코드 유지) ...
 const HOME_FAQ_DATA = [
   {
     q: "Q. 예매 취소는 언제까지 가능한가요?",
@@ -78,13 +79,13 @@ const Home = () => {
   const [dates, setDates] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
-  // [추가] 홈 화면 FAQ 아코디언 상태 (null = 모두 닫힘)
   const [faqIndex, setFaqIndex] = useState<number | null>(null);
 
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
 
+  // [상태 선언됨 - 사용처 필요]
   const [isLoginNoticeOpen, setIsLoginNoticeOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -135,7 +136,6 @@ const Home = () => {
     setSelectedDate(hasToday ? todayStr : dayList[0].fullDate);
   }, []);
 
-  // [추가] FAQ 토글 함수
   const toggleFaq = (idx: number) => {
     setFaqIndex(faqIndex === idx ? null : idx);
   };
@@ -163,18 +163,15 @@ const Home = () => {
     if (item.status !== "open") return;
     if (!checkLogin()) return;
 
-    // 1. 관람권 확인 로직
     const hasTicket = myReservations.some(
       (res) => res.visitDate === item.date && res.status === "CONFIRMED",
     );
 
     if (!hasTicket) {
-      // [변경] alert 대신 전용 모달 띄우기
       setIsTicketNoticeOpen(true);
       return;
     }
 
-    // 2. 관람권 있으면 예약 모달 오픈
     setSelectedProgram({
       id: item.programId,
       title: item.title,
@@ -184,10 +181,9 @@ const Home = () => {
     });
   };
 
-  // [추가] "예매하러 가기" 버튼 클릭 시 동작
   const handleGoToBooking = () => {
-    setIsTicketNoticeOpen(false); // 알림창 닫고
-    setIsAdmissionModalOpen(true); // 관람권 예매창 열기
+    setIsTicketNoticeOpen(false);
+    setIsAdmissionModalOpen(true);
   };
 
   const filteredSchedules = schedules.filter(
@@ -199,6 +195,7 @@ const Home = () => {
       <HeroSection onBookClick={handleHeroBooking} />
 
       <S.Section id="about">
+        {/* ... (about 섹션 내용 유지) ... */}
         <S.Container>
           <S.SectionTitle>아쿠아리움 소개</S.SectionTitle>
           <S.IntroDesc>
@@ -281,6 +278,7 @@ const Home = () => {
       <ThemeSection />
 
       <S.Section id="programs">
+        {/* ... (programs 섹션 내용 유지) ... */}
         <S.Container>
           <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
           <S.ProgramLayout>
@@ -420,6 +418,7 @@ const Home = () => {
       </S.Section>
 
       <div id="community" style={{ width: "100%" }}>
+        {/* ... (community 섹션 내용 유지) ... */}
         <S.Section>
           <S.Container>
             <S.SectionTitle>커뮤니티</S.SectionTitle>
@@ -430,12 +429,11 @@ const Home = () => {
                   <span onClick={() => setIsFaqModalOpen(true)}>+</span>
                 </S.CommTitle>
 
-                {/* [수정] HOME_FAQ_DATA를 이용하여 렌더링하고, 아코디언 기능 적용 */}
                 {HOME_FAQ_DATA.map((item, idx) => (
                   <S.FaqItem
                     key={idx}
-                    $active={faqIndex === idx} // 선택된 항목만 active
-                    onClick={() => toggleFaq(idx)} // 클릭 시 토글
+                    $active={faqIndex === idx}
+                    onClick={() => toggleFaq(idx)}
                   >
                     <div className="question">{item.q}</div>
                     <div className="answer">{item.a}</div>
@@ -497,6 +495,7 @@ const Home = () => {
         </S.Section>
       </div>
 
+      {/* [모달 컴포넌트들] */}
       <FaqModal
         isOpen={isFaqModalOpen}
         onClose={() => setIsFaqModalOpen(false)}
@@ -519,20 +518,28 @@ const Home = () => {
           price={selectedProgram.price}
           fixedDate={selectedProgram.fixedDate}
           fixedTime={selectedProgram.fixedTime}
-          // [추가] 예약된 내역과 알림창 띄우는 함수를 넘겨줍니다.
           myReservations={myReservations}
           onRequireTicket={() => {
-            setSelectedProgram(null); // 프로그램 모달 닫고
-            setIsTicketNoticeOpen(true); // 알림 모달 띄우기
+            setSelectedProgram(null);
+            setIsTicketNoticeOpen(true);
           }}
         />
       )}
 
-      {/* [추가] 통합 알림 모달 배치 */}
       <TicketNoticeModal
         isOpen={isTicketNoticeOpen}
         onClose={() => setIsTicketNoticeOpen(false)}
         onConfirm={handleGoToBooking}
+      />
+
+      {/* [복구] LoginRequestModal을 JSX에 포함시켜야 에러가 사라집니다. */}
+      <LoginRequestModal
+        isOpen={isLoginNoticeOpen}
+        onClose={() => setIsLoginNoticeOpen(false)}
+        onConfirm={() => {
+          setIsLoginNoticeOpen(false);
+          setIsLoginModalOpen(true);
+        }}
       />
 
       <LoginModal

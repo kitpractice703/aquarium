@@ -9,6 +9,15 @@ export interface ScheduleData {
   status: "open" | "closed" | "ready";
 }
 
+export interface ReviewData {
+  id: number;
+  title: string;
+  content: string;
+  writerName: string;
+  rating: number;
+  date: string;
+}
+
 export interface ReservationDto {
   id: number;
   visitDate: string;
