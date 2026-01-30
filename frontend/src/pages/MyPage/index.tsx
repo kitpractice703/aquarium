@@ -165,10 +165,22 @@ const MyPage = () => {
                         <span className="location">
                           {ticket.location || "Naquarium 본관"}
                         </span>
+
+                        {/* [수정] 날짜 표시 로직 개선 */}
                         <span className="date-time">
                           {ticket.startTime
-                            ? new Date(ticket.startTime).toLocaleDateString()
-                            : "날짜 정보 없음"}
+                            ? new Date(ticket.startTime).toLocaleDateString() +
+                              " " +
+                              new Date(ticket.startTime).toLocaleTimeString(
+                                [],
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
+                              )
+                            : ticket.visitDate
+                              ? ticket.visitDate
+                              : "날짜 정보 없음"}
                         </span>
                       </div>
                     </S.TicketInfo>
