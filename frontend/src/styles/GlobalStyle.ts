@@ -20,6 +20,7 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     width: 100%;
+    max-width: none;
     font-family: "Noto Sans KR", sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-white);
