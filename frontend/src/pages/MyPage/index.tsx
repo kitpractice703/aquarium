@@ -6,7 +6,6 @@ import { updateUserInfo } from "../../api/authApi";
 import type { ReservationDto } from "../../types/api";
 
 const MyPage = () => {
-  const { username } = useAuth();
   const [reservations, setReservations] = useState<ReservationDto[]>([]);
   const [loading, setLoading] = useState(true);
   const { username, logout } = useAuth();
