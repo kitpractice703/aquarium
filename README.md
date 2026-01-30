@@ -1,4 +1,3 @@
-````markdown
 # 🌊 Naquarium Archive (나쿠아리움)
 
 > **"보이지 않던 바다, 그 너머의 기록"**
@@ -47,14 +46,11 @@
 
 ## 4. 시스템 아키텍처
 
-```mermaid
 graph LR
-    User["User (Browser)"] -->|HTTPS| Frontend["Frontend (Vercel)"]
-    Frontend -->|"API Request (/api)"| Backend["Backend (AWS EC2)"]
-    Backend -->|Query| DB[("MySQL (AWS RDS)")]
-    Backend -->|Auth| Google["Google OAuth2"]
-```
-````
+User["User (Browser)"] -->|HTTPS| Frontend["Frontend (Vercel)"]
+Frontend -->|"API Request (/api)"| Backend["Backend (AWS EC2)"]
+Backend -->|Query| DB[("MySQL (AWS RDS)")]
+Backend -->|Auth| Google["Google OAuth2"]
 
 ## 5. 트러블 슈팅 (Troubleshooting) 🔥
 
