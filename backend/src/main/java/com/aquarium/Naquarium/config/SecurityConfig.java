@@ -49,7 +49,10 @@ public class SecurityConfig {
                                 "/api/posts/reviews", // 후기 조회는 누구나 가능
                                 "/error",
                                 "/oauth2/**",
-                                "/login/oauth2/**"
+                                "/login/oauth2/**",
+                                "/api/programs/**",
+                                "/api/posts/**",
+                                "/api/users/reset-password/**"
                         ).permitAll()
                         .anyRequest().authenticated() // 나머지는(예약 등) 로그인 필수
                 )

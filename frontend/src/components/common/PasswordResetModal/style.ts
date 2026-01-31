@@ -1,4 +1,3 @@
-// frontend/src/components/common/PasswordResetModal/style.ts
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -16,18 +15,17 @@ export const Form = styled.form`
 
 export const Description = styled.p`
   font-size: 14px;
-  color: #666;
+  color: var(--text-gray); /* LoginModal과 동일한 회색 */
   line-height: 1.5;
   margin-bottom: 5px;
   text-align: center;
 
   strong {
-    color: var(--accent-cyan); /* 포인트 컬러 적용 */
+    color: #fff; /* 강조 텍스트 흰색 */
     font-weight: bold;
   }
 `;
 
-// LoginModal과 동일한 인풋 스타일 그룹
 export const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -36,48 +34,46 @@ export const InputGroup = styled.div`
 
 export const Label = styled.label`
   font-size: 14px;
-  font-weight: 500;
-  color: #333;
+  color: var(--text-gray); /* 라벨 색상 통일 */
 `;
 
 export const InputBox = styled.input`
   width: 100%;
-  height: 45px;
-  padding: 0 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 15px;
-  background-color: #f9f9f9;
-  transition: all 0.2s ease;
+  padding: 12px;
+  /* LoginModal과 동일한 다크 테마 배경 */
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  color: #fff;
+  font-size: 16px;
+  transition: 0.3s;
 
   &::placeholder {
-    color: #aaa;
-    font-size: 14px;
+    color: #555;
   }
 
   &:focus {
     outline: none;
     border-color: var(--accent-cyan);
-    background-color: #fff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
   }
 `;
 
 export const SubmitButton = styled.button`
   width: 100%;
-  height: 50px;
-  background-color: var(--accent-cyan); /* 프로젝트 메인 컬러 */
-  color: white;
+  padding: 15px;
+  background: var(--accent-cyan); /* 포인트 컬러 */
+  color: #000;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: 0.3s;
   margin-top: 10px;
 
   &:hover {
-    filter: brightness(0.9);
+    background: #00dbe6;
   }
 `;
 
@@ -87,8 +83,9 @@ export const BackLink = styled.span`
   color: #888;
   text-decoration: underline;
   cursor: pointer;
+  margin-top: 5px;
 
   &:hover {
-    color: #333;
+    color: #fff;
   }
 `;
