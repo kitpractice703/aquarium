@@ -278,6 +278,15 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
+        // [FIX] 아래 두 줄 추가
+        onOpenSignup={() => {
+          setIsLoginModalOpen(false);
+          window.location.href = "/signup"; // 간단한 이동
+        }}
+        onOpenReset={() => {
+          setIsLoginModalOpen(false);
+          alert("상단 메뉴의 로그인을 이용해주세요.");
+        }}
       />
     </>
   );

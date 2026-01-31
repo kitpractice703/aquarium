@@ -10,7 +10,7 @@ interface Props {
   onOpenReset: () => void; // [ADDED] 비밀번호 찾기 열기 요청
 }
 
-const LoginModal = ({ isOpen, onClose, onOpenSignup, onOpenReset }: Props) => {
+const LoginModal = ({ isOpen, onClose, onOpenReset }: Props) => {
   const { login } = useAuth();
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
 
