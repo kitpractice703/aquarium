@@ -9,11 +9,6 @@ interface Props {
 }
 
 const CommonModal = ({ isOpen, onClose, title, children }: Props) => {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "auto";
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   return (

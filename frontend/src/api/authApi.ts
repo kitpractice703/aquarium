@@ -31,7 +31,7 @@ export const updateUserInfo = async (data: {
 };
 
 export const checkUserForReset = async (email: string, phone: string) => {
-  const response = await axiosInstance.post("/users/reset-password/check", {
+  const response = await api.post("/users/reset-password/check", {
     email,
     phone,
   });
@@ -39,7 +39,8 @@ export const checkUserForReset = async (email: string, phone: string) => {
 };
 
 export const resetPassword = async (email: string, newPassword: string) => {
-  const response = await axiosInstance.post("/users/reset-password", {
+  // [FIX] axiosInstance -> api 로 변경
+  const response = await api.post("/users/reset-password", {
     email,
     newPassword,
   });

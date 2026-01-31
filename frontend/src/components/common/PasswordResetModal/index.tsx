@@ -69,8 +69,8 @@ const PasswordResetModal = ({
     e.preventDefault();
     if (newPassword !== confirmPassword)
       return alert("비밀번호가 일치하지 않습니다.");
-    if (newPassword.length < 4)
-      return alert("비밀번호는 4자 이상이어야 합니다.");
+    if (newPassword.length < 8)
+      return alert("비밀번호는 8자 이상이어야 합니다.");
 
     try {
       await resetPassword(email, newPassword);
@@ -123,7 +123,7 @@ const PasswordResetModal = ({
               <S.Label>새 비밀번호</S.Label>
               <S.InputBox
                 type="password"
-                placeholder="4자 이상 입력"
+                placeholder="8자 이상 입력"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
