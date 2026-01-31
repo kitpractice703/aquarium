@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
-// [FIX] 배포 빌드 에러 방지를 위해 필요한 타입만 import하고, ScheduleData는 내부 인터페이스로 대체합니다.
-// (types/api.ts의 ScheduleData와 실제 백엔드 응답 구조가 다를 수 있어 안전하게 내부 정의 사용)
 import type { ReviewData, ReservationDto } from "../../types/api";
 
 import HeroSection from "../../components/HeroSection";
@@ -21,16 +19,16 @@ import feedingImage from "../../assets/images/feeding.jpg";
 
 import * as S from "./style";
 
-// [FIX] 컴포넌트 내부에서 사용할 스케줄 데이터 타입 정의 (빨간줄 해결의 핵심)
+// [내부 인터페이스] 프론트엔드에서 사용할 스케줄 구조
 interface ScheduleItemData {
-  id: number; // 백엔드의 scheduleId
+  id: number;
   programId: number;
-  title: string; // 백엔드의 programTitle
-  place: string; // 백엔드의 location
-  time: string; // 백엔드의 startTime
-  status: string; // 'open' | 'closed' 등 (프론트에서 가공)
-  date: string; // 날짜 (YYYY-MM-DD)
-  price: number; // 가격
+  title: string;
+  place: string;
+  time: string;
+  status: string;
+  date: string;
+  price: number;
 }
 
 const HOME_FAQ_DATA = [
@@ -83,7 +81,6 @@ const getDaysArray = () => {
 const Home = () => {
   const { isLoggedIn } = useAuth();
 
-  // [FIX] ScheduleData 대신 위에서 정의한 ScheduleItemData 사용
   const [schedules, setSchedules] = useState<ScheduleItemData[]>([]);
   const [recentReviews, setRecentReviews] = useState<ReviewData[]>([]);
   const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
@@ -117,43 +114,52 @@ const Home = () => {
     return true;
   };
 
+  // [DATA FETCHING] 데이터 로드 (스케줄 & 후기 복구)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // [FIX] 스케줄 로드 로직: 날짜별 조회가 필요할 수 있으나,
-        // 일단 전체 리스트를 가져온다고 가정하고 API 호출
-        // 백엔드 응답 형태(ScheduleDto)를 프론트엔드용(ScheduleItemData)으로 변환
-        // *만약 백엔드가 /schedules?date=... 형태라면 아래 로직 수정 필요*
-        // 현재는 전체를 받아와서 날짜별로 필터링하는 구조로 보임
+        // 1. 스케줄 가져오기 (Uncommented & Mapped)
+        try {
+          // 전체 스케줄을 가져온다고 가정 (혹은 날짜 파라미터 필요 시 ?date=... 추가)
+          const scheduleRes = await api.get("/schedules");
+          const rawSchedules = Array.isArray(scheduleRes.data)
+            ? scheduleRes.data
+            : [];
 
-        // 날짜별로 가져오는 것이 아니라면, 일단 오늘 날짜 기준으로 가져오거나
-        // 백엔드 API가 전체 목록을 준다면 그대로 받아서 변환합니다.
-        // 여기서는 에러 방지를 위해 빈 배열로 초기화하거나, 실제 호출을 시도합니다.
+          // 백엔드 데이터(DTO) -> 프론트엔드 데이터(State) 변환
+          const mappedSchedules = rawSchedules.map((item: any) => ({
+            id: item.scheduleId, // 백엔드: scheduleId
+            programId: item.programId, // 백엔드: programId
+            title: item.programTitle || item.title || "프로그램", // 이름 매핑
+            place: item.location || "메인홀", // 위치 매핑
+            time: item.startTime ? item.startTime.substring(0, 5) : "00:00",
+            status: item.isClosed ? "closed" : "open",
+            date: item.date || getLocalYMD(new Date()), // 날짜가 없으면 오늘 날짜로 처리 (주의)
+            price: 0, // 가격 정보는 별도 조회 필요할 수 있음
+          }));
 
-        // *임시 수정*: 백엔드 API 명세에 따라 다르지만,
-        // /schedules 엔드포인트가 날짜 파라미터를 요구할 가능성이 높음.
-        // 일단 에러가 안 나게 빈 배열로 두거나, 필요한 경우 API 호출 복구.
+          setSchedules(mappedSchedules);
+        } catch (e) {
+          console.error("스케줄 로드 실패:", e);
+          setSchedules([]);
+        }
 
-        // const scheduleRes = await api.get("/schedules");
-        // setSchedules(scheduleRes.data.map((item: any) => ({
-        //   id: item.scheduleId,
-        //   programId: item.programId,
-        //   title: item.programTitle,
-        //   place: item.location,
-        //   time: item.startTime.substring(0, 5),
-        //   status: item.isClosed ? "closed" : "open",
-        //   date: selectedDate, // 날짜 정보가 API에 없다면 현재 선택된 날짜로 가정
-        //   price: 0 // 가격 정보가 스케줄에 없다면 0 또는 별도 조회
-        // })));
+        // 2. 후기 가져오기
+        try {
+          const reviewRes = await api.get<any>("/posts/reviews?page=0&size=5");
+          // Page 객체(content) 또는 List 바로 반환 대응
+          const reviews = reviewRes.data.content
+            ? reviewRes.data.content
+            : Array.isArray(reviewRes.data)
+              ? reviewRes.data
+              : [];
+          setRecentReviews(reviews);
+        } catch (e) {
+          console.error("후기 로드 실패:", e);
+          setRecentReviews([]);
+        }
 
-        // [안전한 배포를 위한 임시 처리]
-        // 실제 데이터 연동 시 위 주석을 참고하여 API 응답을 매핑해주세요.
-        setSchedules([]);
-
-        const reviewRes = await api.get<any>("/posts/reviews?page=0&size=5");
-        // Page 객체(content) 처리
-        setRecentReviews(reviewRes.data.content || []);
-
+        // 3. 내 예약 가져오기 (로그인 시)
         if (isLoggedIn) {
           try {
             const myRes = await api.get<ReservationDto[]>("/reservations/me");
@@ -167,33 +173,7 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [isLoggedIn]); // selectedDate 의존성 제거 (무한루프 방지)
-
-  // [ADDED] 날짜 변경 시 스케줄 다시 불러오는 로직 (백엔드 API 연동 시 필요)
-  useEffect(() => {
-    if (!selectedDate) return;
-
-    const fetchSchedulesByDate = async () => {
-      try {
-        const res = await api.get(`/schedules?date=${selectedDate}`);
-        // 백엔드 응답(Dto) -> 프론트 상태(State) 매핑
-        const mapped = res.data.map((item: any) => ({
-          id: item.scheduleId,
-          programId: item.programId,
-          title: item.programTitle,
-          place: item.location,
-          time: item.startTime ? item.startTime.substring(0, 5) : "00:00",
-          status: item.isClosed ? "closed" : "open",
-          date: selectedDate,
-          price: 0, // 가격은 스케줄 DTO에 보통 없어서 0으로 둠 (프로그램 정보에서 가져와야 함)
-        }));
-        setSchedules(mapped);
-      } catch (e) {
-        setSchedules([]); // 에러 시 빈 배열
-      }
-    };
-    fetchSchedulesByDate();
-  }, [selectedDate]);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const dayList = getDaysArray();
@@ -230,16 +210,10 @@ const Home = () => {
     if (item.status !== "open") return;
     if (!checkLogin()) return;
 
-    // 예약 여부 확인 (옵션)
-    // const hasTicket = myReservations.some(
-    //   (res) => res.visitDate === item.date && res.status === "CONFIRMED",
-    // );
-    // if (!hasTicket) { ... }
-
     setSelectedProgram({
-      id: item.programId, // 스케줄의 프로그램 ID 사용
+      id: item.programId,
       title: item.title,
-      price: item.price > 0 ? item.price : 20000, // 가격 정보가 없으면 기본값 (예시)
+      price: item.price > 0 ? item.price : 20000,
       fixedDate: item.date,
       fixedTime: item.time,
     });
@@ -250,8 +224,10 @@ const Home = () => {
     setIsAdmissionModalOpen(true);
   };
 
-  // 날짜 필터링은 useEffect에서 API 호출로 처리하므로 여기서는 그대로 렌더링
-  const filteredSchedules = schedules;
+  // 날짜 필터링: API에서 받아온 전체 스케줄 중 선택된 날짜와 일치하는 것만 보여줌
+  const filteredSchedules = schedules.filter(
+    (item) => item.date === selectedDate,
+  );
 
   return (
     <>
@@ -603,15 +579,12 @@ const Home = () => {
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
         onOpenSignup={() => {
-          // [FIX] 회원가입 페이지 이동 로직 (LoginModal Props 요구사항 충족)
           setIsLoginModalOpen(false);
           window.location.href = "/signup";
         }}
         onOpenReset={() => {
-          // [FIX] 비밀번호 찾기 (LoginModal Props 요구사항 충족)
           setIsLoginModalOpen(false);
-          alert("비밀번호 찾기 기능을 준비 중입니다.");
-          // 또는 비밀번호 찾기 모달 상태를 Home에서 관리하여 열어줄 수 있음
+          alert("상단 메뉴의 '로그인' -> '비밀번호 찾기'를 이용해주세요.");
         }}
       />
     </>
