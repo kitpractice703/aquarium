@@ -1,11 +1,10 @@
-// frontend/src/components/Header/index.tsx
-
-import { useState } from "react"; // [수정] 'React' 제거
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import * as S from "./style";
 import BookingModal from "../common/BookingModal";
 import LoginRequestModal from "../common/LoginRequestModal";
 import LoginModal from "../common/LoginModal";
+import PasswordResetModal from "../common/PasswordResetModal"; // [ADDED] import 추가
 import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
@@ -13,6 +12,7 @@ const Header = () => {
 
   const [modalType, setModalType] = useState<"LOGIN" | "NOTICE" | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isResetOpen, setIsResetOpen] = useState(false); // [ADDED] 비밀번호 찾기 모달 상태
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,6 +35,18 @@ const Header = () => {
     } else {
       setModalType("NOTICE");
     }
+  };
+
+  // [ADDED] 비밀번호 찾기 모달 열기 (로그인창은 닫음)
+  const openResetModal = () => {
+    setModalType(null);
+    setIsResetOpen(true);
+  };
+
+  // [ADDED] 비밀번호 찾기 -> 다시 로그인으로 전환
+  const switchResetToLogin = () => {
+    setIsResetOpen(false);
+    setModalType("LOGIN");
   };
 
   const handleNavClick = (id: string) => {
@@ -98,13 +110,31 @@ const Header = () => {
         </S.HeaderContent>
       </S.HeaderWrapper>
 
+      {/* 예매 모달 */}
       <BookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
       />
 
-      <LoginModal isOpen={modalType === "LOGIN"} onClose={closeModal} />
+      {/* 로그인 모달 */}
+      <LoginModal
+        isOpen={modalType === "LOGIN"}
+        onClose={closeModal}
+        onOpenSignup={() => {
+          closeModal();
+          navigate("/signup");
+        }}
+        onOpenReset={openResetModal} // [ADDED] 비밀번호 찾기 열기 핸들러 전달
+      />
 
+      {/* [ADDED] 비밀번호 찾기 모달 (Header가 직접 관리) */}
+      <PasswordResetModal
+        isOpen={isResetOpen}
+        onClose={() => setIsResetOpen(false)}
+        onSwitchToLogin={switchResetToLogin}
+      />
+
+      {/* 로그인 유도 모달 */}
       <LoginRequestModal
         isOpen={modalType === "NOTICE"}
         onClose={() => setModalType(null)}

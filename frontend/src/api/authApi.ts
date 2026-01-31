@@ -29,3 +29,19 @@ export const updateUserInfo = async (data: {
   const response = await api.put("/users/me", payload);
   return response.data;
 };
+
+export const checkUserForReset = async (email: string, phone: string) => {
+  const response = await axiosInstance.post("/users/reset-password/check", {
+    email,
+    phone,
+  });
+  return response.data;
+};
+
+export const resetPassword = async (email: string, newPassword: string) => {
+  const response = await axiosInstance.post("/users/reset-password", {
+    email,
+    newPassword,
+  });
+  return response.data;
+};
