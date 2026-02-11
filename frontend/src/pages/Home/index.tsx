@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
 // Hooks
-import { useHomeData, ScheduleItemData } from "./hooks/useHomeData";
+import { useHomeData } from "./hooks/useHomeData";
 import { useDateControl } from "./hooks/useDateControl";
+import type { ScheduleData } from "../../types/api";
 
 // Sub-Components
 import HeroSection from "../../components/HeroSection";
 import ThemeSection from "../../components/common/ThemeSection";
-import AboutSection from "./components/AboutSection";
+import AboutSection from "../Home/";
 import ProgramSection from "./components/ProgramSection";
 import CommunitySection from "./components/CommunitySection";
 
@@ -66,7 +67,7 @@ const Home = () => {
     if (checkLogin()) setSelectedProgram(program);
   };
 
-  const handleScheduleClick = (item: ScheduleItemData) => {
+  const handleScheduleClick = (item: ScheduleData) => {
     if (item.status !== "open") return;
     if (checkLogin()) {
       setSelectedProgram({

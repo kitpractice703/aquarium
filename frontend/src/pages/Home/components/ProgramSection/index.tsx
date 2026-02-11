@@ -1,19 +1,19 @@
 import * as S from "./style";
 import vrImage from "../../../../assets/images/vr_driving.jpeg";
 import feedingImage from "../../../../assets/images/feeding.jpg";
-import type { ScheduleItemData } from "../hooks/useHomeData";
+import type { ScheduleData } from "../../../../types/api";
 
 interface Props {
   dates: any[];
   selectedDate: string;
   onDateChange: (date: string) => void;
-  schedules: ScheduleItemData[];
+  schedules: ScheduleData[];
   onProgramClick: (program: {
     id: number;
     title: string;
     price: number;
   }) => void;
-  onScheduleClick: (item: ScheduleItemData) => void;
+  onScheduleClick: (item: ScheduleData) => void;
 }
 
 const ProgramSection = ({

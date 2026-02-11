@@ -1,23 +1,16 @@
 import { useState, useEffect } from "react";
 import { api } from "../../../api/axios";
-import type { ReviewData, ReservationDto } from "../../../types/api";
-
-export interface ScheduleItemData {
-  id: number;
-  programId: number;
-  title: string;
-  place: string;
-  time: string;
-  status: string;
-  date: string;
-  price: number;
-}
+import type {
+  ReviewData,
+  ReservationDto,
+  ScheduleData,
+} from "../../../types/api";
 
 // ✅ [사수 코멘트]
 // 데이터 로딩 로직을 한곳에 모았습니다.
 // 이제 컴포넌트에서는 useHomeData() 한 줄이면 데이터를 가져올 수 있습니다.
 export const useHomeData = (isLoggedIn: boolean) => {
-  const [schedules, setSchedules] = useState<ScheduleItemData[]>([]);
+  const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [recentReviews, setRecentReviews] = useState<ReviewData[]>([]);
   const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
 
@@ -39,20 +32,22 @@ export const useHomeData = (isLoggedIn: boolean) => {
             ? scheduleRes.data
             : [];
 
-          const mappedSchedules = rawSchedules.map((item: any) => ({
-            id: item.scheduleId || item.id, // DTO 필드명 대응
-            programId: item.programId,
-            title: item.programTitle || item.title || "프로그램",
-            place: item.location || item.place || "메인홀",
-            time: item.startTime
-              ? item.startTime.includes("T")
-                ? item.startTime.split("T")[1].substring(0, 5)
-                : item.time
-              : "00:00",
-            status: item.isClosed ? "closed" : "open",
-            date: item.date || getLocalYMD(new Date()),
-            price: item.price || 0,
-          }));
+          const mappedSchedules: ScheduleData[] = rawSchedules.map(
+            (item: any) => ({
+              id: item.scheduleId || item.id, // DTO 필드명 대응
+              programId: item.programId,
+              title: item.programTitle || item.title || "프로그램",
+              place: item.location || item.place || "메인홀",
+              time: item.startTime
+                ? item.startTime.includes("T")
+                  ? item.startTime.split("T")[1].substring(0, 5)
+                  : item.time
+                : "00:00",
+              status: item.isClosed ? "closed" : "open",
+              date: item.date || getLocalYMD(new Date()),
+              price: item.price || 0,
+            }),
+          );
           setSchedules(mappedSchedules);
         } catch (e) {
           console.error("스케줄 로드 실패:", e);

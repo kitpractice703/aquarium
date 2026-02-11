@@ -6,7 +6,7 @@ export interface ScheduleData {
   time: string;
   title: string;
   place: string;
-  status: "open" | "closed" | "ready";
+  status: string;
 }
 
 export interface ReviewData {
