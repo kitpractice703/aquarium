@@ -181,3 +181,43 @@ export const ScheduleItem = styled.div`
     }
   }
 `;
+
+export const Btn1 = styled.button`
+  margin-top: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  background: var(--accent-cyan);
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+
+  transition: 0.3s;
+  &:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+  }
+`;
+
+export const NoPerformances = styled.div`
+  padding: 30px;
+  textalign: center;
+  color: #888;
+`;
+
+export const ClosedNotice = styled.div`
+  text-align: center;
+  padding: 50px 0;
+  color: #ff6b6b;
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    color: inherit;
+  }
+
+  p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--text-gray, #888);
+  }
+`;

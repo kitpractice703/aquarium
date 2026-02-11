@@ -1,68 +1,30 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import * as S from "./style";
 import BookingModal from "../common/BookingModal";
 import LoginRequestModal from "../common/LoginRequestModal";
 import LoginModal from "../common/LoginModal";
-import PasswordResetModal from "../common/PasswordResetModal"; // [ADDED] import 추가
-import { useAuth } from "../../context/AuthContext";
+import PasswordResetModal from "../common/PasswordResetModal";
+import { useHeaderLogic } from "./hooks/useHeaderLogic"; // 커스텀 훅 import
 
 const Header = () => {
-  const { isLoggedIn, username, logout } = useAuth();
-
-  const [modalType, setModalType] = useState<"LOGIN" | "NOTICE" | null>(null);
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [isResetOpen, setIsResetOpen] = useState(false); // [ADDED] 비밀번호 찾기 모달 상태
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const closeModal = () => {
-    setModalType(null);
-  };
-
-  const handleBookingClick = () => {
-    if (isLoggedIn) {
-      setIsBookingOpen(true);
-    } else {
-      setModalType("NOTICE");
-    }
-  };
-
-  const handleTicketCheck = () => {
-    if (isLoggedIn) {
-      navigate("/mypage");
-    } else {
-      setModalType("NOTICE");
-    }
-  };
-
-  // [ADDED] 비밀번호 찾기 모달 열기 (로그인창은 닫음)
-  const openResetModal = () => {
-    setModalType(null);
-    setIsResetOpen(true);
-  };
-
-  // [ADDED] 비밀번호 찾기 -> 다시 로그인으로 전환
-  const switchResetToLogin = () => {
-    setIsResetOpen(false);
-    setModalType("LOGIN");
-  };
-
-  const handleNavClick = (id: string) => {
-    if (location.pathname !== "/") {
-      navigate("/");
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) element.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    } else {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  };
+  // 로직은 훅에서 전부 가져옴
+  const {
+    isLoggedIn,
+    username,
+    logout,
+    modalType,
+    setModalType,
+    isBookingOpen,
+    setIsBookingOpen,
+    isResetOpen,
+    setIsResetOpen,
+    closeModal,
+    handleBookingClick,
+    handleTicketCheck,
+    openResetModal,
+    switchResetToLogin,
+    handleNavClick,
+    navigate,
+  } = useHeaderLogic();
 
   return (
     <>
@@ -110,13 +72,12 @@ const Header = () => {
         </S.HeaderContent>
       </S.HeaderWrapper>
 
-      {/* 예매 모달 */}
+      {/* --- Modals --- */}
       <BookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
       />
 
-      {/* 로그인 모달 */}
       <LoginModal
         isOpen={modalType === "LOGIN"}
         onClose={closeModal}
@@ -124,17 +85,15 @@ const Header = () => {
           closeModal();
           navigate("/signup");
         }}
-        onOpenReset={openResetModal} // [ADDED] 비밀번호 찾기 열기 핸들러 전달
+        onOpenReset={openResetModal}
       />
 
-      {/* [ADDED] 비밀번호 찾기 모달 (Header가 직접 관리) */}
       <PasswordResetModal
         isOpen={isResetOpen}
         onClose={() => setIsResetOpen(false)}
         onSwitchToLogin={switchResetToLogin}
       />
 
-      {/* 로그인 유도 모달 */}
       <LoginRequestModal
         isOpen={modalType === "NOTICE"}
         onClose={() => setModalType(null)}

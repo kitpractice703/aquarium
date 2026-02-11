@@ -46,7 +46,7 @@ const ProgramSection = ({
                   실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR
                   체험입니다.
                 </p>
-                <button
+                <S.Btn1
                   onClick={() =>
                     onProgramClick({
                       id: 101,
@@ -56,7 +56,7 @@ const ProgramSection = ({
                   }
                 >
                   예약하기
-                </button>
+                </S.Btn1>
               </S.ExperienceItem>
               <S.ExperienceItem>
                 <img src={feedingImage} alt="Feeding" />
@@ -65,7 +65,7 @@ const ProgramSection = ({
                   전문 아쿠아리스트와 함께 메인 수조의 물고기들에게 직접 먹이를
                   줍니다.
                 </p>
-                <button
+                <S.Btn1
                   onClick={() =>
                     onProgramClick({
                       id: 102,
@@ -75,7 +75,7 @@ const ProgramSection = ({
                   }
                 >
                   예약하기
-                </button>
+                </S.Btn1>
               </S.ExperienceItem>
             </S.ExperienceList>
           </S.ProgramCol>
@@ -99,10 +99,10 @@ const ProgramSection = ({
 
             <div>
               {isMonday ? (
-                <div className="empty-msg closed">
+                <S.ClosedNotice>
                   <h3>오늘은 정기 휴관일입니다.</h3>
                   <p>매월 첫째 주 월요일은 시설 점검을 위해 쉽니다.</p>
-                </div>
+                </S.ClosedNotice>
               ) : filteredSchedules.length > 0 ? (
                 filteredSchedules.map((item) => (
                   <S.ScheduleItem key={item.id}>
@@ -124,9 +124,9 @@ const ProgramSection = ({
                   </S.ScheduleItem>
                 ))
               ) : (
-                <div className="empty-msg">
+                <S.NoPerformances>
                   해당 날짜에는 예정된 공연 일정이 없습니다.
-                </div>
+                </S.NoPerformances>
               )}
             </div>
           </S.ProgramCol>

@@ -10,6 +10,14 @@ export const AboutGrid = styled.div`
   }
 `;
 
+export const SubTitle = styled.h4`
+  margin-bottom: 15px;
+  color: #fff;
+  padding-left: 5px;
+  font-size: 20px;
+  font-weight: bold;
+`;
+
 export const InfoBox = styled.div`
   background: var(--bg-card);
   padding: 30px;
@@ -53,26 +61,43 @@ export const Section = styled.section`
 export const DescArea = styled.div`
   margin-top: 15px;
   padding: 0 5px;
+
+  p {
+    margin-top: 5px;
+    font-size: 14px;
+    color: var(--text-gray);
+
+    &:first-child {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #fff;
+      font-weight: bold;
+    }
+  }
 `;
 
-export const InfoItem = styled.div`
+export const InfoItem = styled.div<{ $isWarning?: boolean }>`
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 10px;
-  font-size: 16px; /* 폰트 크기 약간 증가 */
+  font-size: 16px;
+
   &:last-child {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
   }
+
   span:first-child {
-    color: #ddd;
+    color: ${(props) => (props.$isWarning ? "#ff6b6b" : "#ddd")};
   }
+
   span:last-child {
     font-weight: bold;
-    color: #fff;
+    color: ${(props) => (props.$isWarning ? "#ff6b6b" : "#fff")};
   }
 `;
 

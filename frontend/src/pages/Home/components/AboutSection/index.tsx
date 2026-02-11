@@ -20,15 +20,7 @@ const AboutSection = () => {
 
         <S.AboutGrid>
           <div>
-            <h4
-              style={{
-                marginBottom: "15px",
-                color: "#fff",
-                paddingLeft: "5px",
-              }}
-            >
-              이용 안내
-            </h4>
+            <S.SubTitle>이용 안내</S.SubTitle>
             <S.InfoBox>
               <S.InfoItem>
                 <span>성인 (19세 이상)</span> <span>35,000원</span>
@@ -39,44 +31,19 @@ const AboutSection = () => {
               <S.InfoItem>
                 <span>운영 시간</span> <span>10:00 - 22:00</span>
               </S.InfoItem>
-              <S.InfoItem style={{ border: "none", color: "#ff6b6b" }}>
+              <S.InfoItem $isWarning>
                 <span>휴관일</span> <span>매월 첫째주 월요일</span>
               </S.InfoItem>
             </S.InfoBox>
           </div>
           <div>
-            <h4
-              style={{
-                marginBottom: "15px",
-                color: "#fff",
-                paddingLeft: "5px",
-              }}
-            >
-              찾아오시는 길
-            </h4>
+            <S.SubTitle>찾아오시는 길</S.SubTitle>
             <S.MapWrapper>
               <KakaoMap />
             </S.MapWrapper>
             <S.DescArea>
-              <p
-                style={{
-                  marginTop: "15px",
-                  fontSize: "16px",
-                  color: "#fff",
-                  fontWeight: "bold",
-                }}
-              >
-                📍 인천광역시 부평구 가상의 주소
-              </p>
-              <p
-                style={{
-                  marginTop: "5px",
-                  fontSize: "14px",
-                  color: "var(--text-gray)",
-                }}
-              >
-                (주차: 지하 2층 ~ 4층 무료 이용 가능)
-              </p>
+              <p>📍 인천광역시 부평구 가상의 주소</p>
+              <p>(주차: 지하 2층 ~ 4층 무료 이용 가능)</p>
             </S.DescArea>
           </div>
         </S.AboutGrid>

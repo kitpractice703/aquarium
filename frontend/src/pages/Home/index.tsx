@@ -9,7 +9,7 @@ import type { ScheduleData } from "../../types/api";
 // Sub-Components
 import HeroSection from "../../components/HeroSection";
 import ThemeSection from "../../components/common/ThemeSection";
-import AboutSection from "../Home/";
+import AboutSection from "./components/AboutSection";
 import ProgramSection from "./components/ProgramSection";
 import CommunitySection from "./components/CommunitySection";
 

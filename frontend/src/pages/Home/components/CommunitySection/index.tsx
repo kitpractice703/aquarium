@@ -1,5 +1,5 @@
 import * as S from "./style";
-import type { ReviewData } from "../../../types/api";
+import type { ReviewData } from "../../../../types/api";
 
 interface Props {
   reviews: ReviewData[];
@@ -60,7 +60,7 @@ const CommunitySection = ({
             </S.CommTitle>
             <S.CommList>
               {reviews.length === 0 ? (
-                <li className="empty">아직 등록된 후기가 없습니다.</li>
+                <li>아직 등록된 후기가 없습니다.</li>
               ) : (
                 reviews.slice(0, 5).map((review) => (
                   <li key={review.id} onClick={onOpenReview}>
