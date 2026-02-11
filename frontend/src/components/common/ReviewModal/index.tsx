@@ -1,109 +1,37 @@
-import { useState, useEffect } from "react";
-import { api } from "../../../api/axios";
-import { useAuth } from "../../../context/AuthContext";
 import * as S from "./style";
 import LoginRequestModal from "../LoginRequestModal";
 import LoginModal from "../LoginModal";
+import { useReview } from "./hooks/useReview"; // 훅 import
 
+// ✅ Props 인터페이스는 여기에 (컴포넌트 사용 규칙이니까)
 interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface ReviewData {
-  id: number;
-  title: string;
-  content: string;
-  writerName: string;
-  rating: number;
-  date: string;
-}
-
-const ITEMS_PER_PAGE = 5;
-
 const ReviewModal = ({ isOpen, onClose }: Props) => {
-  const { isLoggedIn } = useAuth();
-
-  const [view, setView] = useState<"LIST" | "DETAIL" | "WRITE">("LIST");
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
-  const [selectedReview, setSelectedReview] = useState<ReviewData | null>(null);
-
-  // [1] 로그인 안내(경고) 모달 상태
-  const [isLoginNoticeOpen, setIsLoginNoticeOpen] = useState(false);
-  // [2] 실제 로그인(입력) 모달 상태 (새로 추가)
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  const [writeForm, setWriteForm] = useState({
-    title: "",
-    content: "",
-    rating: 5,
-  });
-
-  const fetchReviews = async () => {
-    try {
-      const response = await api.get("/posts/reviews");
-      setReviews(response.data);
-    } catch (error) {
-      console.error("후기 로딩 실패:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      setView("LIST");
-      setCurrentPage(1);
-      fetchReviews();
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [isOpen]);
-
-  const handleWriteClick = () => {
-    if (isLoggedIn) {
-      setView("WRITE");
-    } else {
-      setIsLoginNoticeOpen(true);
-    }
-  };
-
-  const handleSubmitReview = async () => {
-    if (!writeForm.title || !writeForm.content) {
-      alert("제목과 내용을 모두 입력해주세요.");
-      return;
-    }
-
-    try {
-      await api.post("/posts/reviews", {
-        title: writeForm.title,
-        content: writeForm.content,
-        rating: writeForm.rating,
-      });
-
-      alert("후기가 등록되었습니다!");
-
-      setWriteForm({ title: "", content: "", rating: 5 });
-      setView("LIST");
-      fetchReviews();
-    } catch (error: any) {
-      console.error(error);
-      if (error.response?.status === 401) {
-        setIsLoginNoticeOpen(true);
-      } else {
-        alert("후기 등록 중 오류가 발생했습니다.");
-      }
-    }
-  };
+  // 로직은 훅에서 싹 가져오기
+  const {
+    view,
+    setView,
+    currentPage,
+    setCurrentPage,
+    reviews,
+    currentItems,
+    totalPages,
+    selectedReview,
+    setSelectedReview,
+    writeForm,
+    setWriteForm,
+    handleWriteClick,
+    handleSubmitReview,
+    isLoginNoticeOpen,
+    setIsLoginNoticeOpen,
+    isLoginModalOpen,
+    setIsLoginModalOpen,
+  } = useReview(isOpen);
 
   if (!isOpen) return null;
-
-  const totalPages = Math.ceil(reviews.length / ITEMS_PER_PAGE);
-  const currentItems = reviews.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
 
   return (
     <>
@@ -117,7 +45,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
           </S.Header>
 
           <S.Content>
-            {/* ... (LIST, DETAIL, WRITE 뷰 로직은 기존과 동일하므로 생략하지 않고 그대로 둡니다) ... */}
+            {/* [1] 목록 화면 */}
             {view === "LIST" && (
               <>
                 <S.TableHeader>
@@ -148,6 +76,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                   ))
                 )}
 
+                {/* 페이지네이션 */}
                 {reviews.length > 0 && (
                   <S.Pagination>
                     <button
@@ -178,10 +107,12 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                   </S.Pagination>
                 )}
 
+                {/* 글쓰기 버튼 (스타일이 absolute이므로 Content 안에서도 우측 하단에 뜸) */}
                 <S.WriteBtn onClick={handleWriteClick}>✎ 글쓰기</S.WriteBtn>
               </>
             )}
 
+            {/* [2] 상세 화면 */}
             {view === "DETAIL" && selectedReview && (
               <S.DetailView>
                 <h3>{selectedReview.title}</h3>
@@ -202,6 +133,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
               </S.DetailView>
             )}
 
+            {/* [3] 글쓰기 화면 */}
             {view === "WRITE" && (
               <S.WriteForm>
                 <div className="rating-select">
@@ -215,11 +147,11 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                       })
                     }
                   >
-                    <option value="5">★★★★★ (5점)</option>
-                    <option value="4">★★★★☆ (4점)</option>
-                    <option value="3">★★★☆☆ (3점)</option>
-                    <option value="2">★★☆☆☆ (2점)</option>
-                    <option value="1">★☆☆☆☆ (1점)</option>
+                    {[5, 4, 3, 2, 1].map((score) => (
+                      <option key={score} value={score}>
+                        {"★".repeat(score)} ({score}점)
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <input
@@ -258,28 +190,26 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
         </S.Container>
       </S.Overlay>
 
-      {/* [3] 로그인 유도 모달 */}
+      {/* 로그인 관련 모달들 */}
       <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}
         onConfirm={() => {
-          setIsLoginNoticeOpen(false); // 경고창 닫고
-          setIsLoginModalOpen(true); // [변경] 페이지 이동 대신 로그인 모달 띄우기
+          setIsLoginNoticeOpen(false);
+          setIsLoginModalOpen(true);
         }}
       />
 
-      {/* [4] 실제 로그인 모달 */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
-        // [FIX] 아래 두 줄 추가
         onOpenSignup={() => {
           setIsLoginModalOpen(false);
-          window.location.href = "/signup"; // 간단한 이동
+          window.location.href = "/signup";
         }}
         onOpenReset={() => {
           setIsLoginModalOpen(false);
-          alert("상단 메뉴의 로그인을 이용해주세요.");
+          alert("비밀번호 찾기는 상단 메뉴를 이용해주세요.");
         }}
       />
     </>

@@ -6,122 +6,157 @@ export const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 3000;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 `;
 
 export const Container = styled.div`
-  background: #222;
   width: 90%;
   max-width: 500px;
+  background: #222;
   border-radius: 15px;
-  overflow: hidden;
+  padding: 30px;
+  position: relative;
   color: #fff;
-  border: 1px solid #444;
-`;
-
-export const Header = styled.div`
-  padding: 20px;
-  background: #333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between;
-  h2 {
-    margin: 0;
-    font-size: 18px;
-    color: var(--accent-cyan);
-  }
+  flex-direction: column;
+  gap: 20px;
 `;
 
-export const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
+export const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
 `;
 
-export const Content = styled.div`
-  padding: 20px;
-`;
-
-export const StepTitle = styled.h3`
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 16px;
-  color: #eee;
-`;
-
-export const InputGroup = styled.div`
-  margin-bottom: 20px;
-`;
 export const Label = styled.label`
-  display: block;
-  margin-bottom: 8px;
-  color: #aaa;
   font-size: 14px;
+  color: #aaa;
+  font-weight: bold;
 `;
-export const Select = styled.select`
-  width: 100%;
-  padding: 10px;
-  background: #444;
-  color: #fff;
-  border: 1px solid #555;
-  border-radius: 5px;
-`;
+
 export const Input = styled.input`
   width: 100%;
-  padding: 10px;
-  background: #444;
+  padding: 12px;
+  background: #333;
+  border: 1px solid #444;
+  border-radius: 8px;
   color: #fff;
-  border: 1px solid #555;
-  border-radius: 5px;
-`;
+  font-size: 16px;
 
-export const Summary = styled.div`
-  background: rgba(0, 242, 255, 0.1);
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 20px;
-  div {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-    font-size: 14px;
-  }
-  .total {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    font-weight: bold;
-    font-size: 18px;
-    color: var(--accent-cyan);
+  &:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
   }
 `;
 
-export const Footer = styled.div`
-  padding: 20px;
-  display: flex;
-  justify-content: flex-end;
-`;
-export const Button = styled.button`
-  background: var(--accent-cyan);
-  color: #000;
-  border: none;
-  padding: 12px 24px;
+export const Select = styled.select`
+  width: 100%;
+  padding: 12px;
+  background: #333;
+  border: 1px solid #444;
   border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.9;
+  color: #fff;
+  font-size: 16px;
+  appearance: none; /* 기본 화살표 제거하고 커스텀 할 때 유용 */
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
 
 export const FixedInfo = styled.div`
   color: #fff;
   font-weight: bold;
-  padding: 10px 0;
-  border-bottom: 1px solid #444;
+  padding: 12px;
+  background: #333;
+  border-radius: 8px;
+  border: 1px solid #444;
+  opacity: 0.8;
+`;
+
+/* 수량 조절 버튼 영역 */
+export const CounterRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #333;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+
+  .label {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    button {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid #555;
+      background: #444;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &:hover {
+        background: #555;
+      }
+    }
+
+    span {
+      font-size: 18px;
+      font-weight: bold;
+      min-width: 20px;
+      text-align: center;
+    }
+  }
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #444;
+
+  .price {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--accent-cyan);
+  }
+`;
+
+export const Button = styled.button<{ $primary?: boolean }>`
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  background: ${(props) => (props.$primary ? "var(--accent-cyan)" : "#444")};
+  color: ${(props) => (props.$primary ? "#000" : "#fff")};
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
 `;

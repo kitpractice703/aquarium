@@ -18,7 +18,12 @@ export interface ReviewData {
   date: string;
 }
 
-// [수정] 누락된 필드들을 모두 포함하여 재정의
+export interface ReviewRequest {
+  title: string;
+  content: string;
+  rating: number;
+}
+
 export interface ReservationDto {
   id: number;
   ticketNumber?: string; // 티켓 번호 (예: T2026...)

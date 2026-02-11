@@ -1,4 +1,3 @@
-// src/components/common/ProgramBookingModal/hooks/useProgramBooking.ts
 import { useState, useEffect } from "react";
 import { api } from "../../../../api/axios";
 import type {
@@ -13,6 +12,7 @@ export const useProgramBooking = (
   fixedDate?: string,
   fixedTime?: string,
 ) => {
+  // [상태 관리]
   const [step, setStep] = useState(1);
   const [date, setDate] = useState(fixedDate || "");
   const [time, setTime] = useState(fixedTime || "");
@@ -24,22 +24,24 @@ export const useProgramBooking = (
   const [schedules, setSchedules] = useState<ProgramSchedule[]>([]);
   const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
   const [showPayment, setShowPayment] = useState(false);
-  const [requireTicket, setRequireTicket] = useState(false); // 관람권 필요 알림
+  const [requireTicket, setRequireTicket] = useState(false);
 
-  // 1. 초기 데이터 로딩 (프로그램 목록, 내 예약 내역)
+  // 1. 초기 데이터 로딩
   useEffect(() => {
     if (isOpen) {
       fetchPrograms();
       fetchMyReservations();
       // 초기화
       setStep(1);
-      if (!fixedDate) setDate("");
-      if (!fixedTime) setTime("");
       setCount(1);
       setShowPayment(false);
       setRequireTicket(false);
+
+      // 고정된 값이 없으면 초기화, 있으면 유지
+      if (!fixedDate) setDate("");
+      if (!fixedTime) setTime("");
     }
-  }, [isOpen]);
+  }, [isOpen, fixedDate, fixedTime]);
 
   // 2. 날짜가 선택되면 스케줄 조회
   useEffect(() => {
@@ -48,7 +50,7 @@ export const useProgramBooking = (
     }
   }, [date, selectedProgramId]);
 
-  // 3. 관람권 소지 여부 체크 로직 (중요!)
+  // 3. 관람권 소지 여부 체크
   useEffect(() => {
     if (date) {
       const hasAdmission = myReservations.some(
@@ -58,18 +60,19 @@ export const useProgramBooking = (
           (res.programType === "ADMISSION" || !res.programType),
       );
       if (!hasAdmission) {
-        setRequireTicket(true); // 관람권 없으면 알림창 띄움
+        setRequireTicket(true);
       }
     }
   }, [date, myReservations]);
 
-  // [API 함수들]
+  // API 호출 함수들
   const fetchPrograms = async () => {
     try {
       const res = await api.get<Program[]>("/programs");
       setPrograms(res.data);
+      // 목록이 있고, 아직 선택된 게 없으면 첫 번째 자동 선택
       if (res.data.length > 0 && !selectedProgramId) {
-        setSelectedProgramId(res.data[0].id); // 첫 번째 프로그램 기본 선택
+        setSelectedProgramId(res.data[0].id);
       }
     } catch (err) {
       console.error("프로그램 로딩 실패", err);
@@ -78,7 +81,6 @@ export const useProgramBooking = (
 
   const fetchSchedules = async (programId: number, dateStr: string) => {
     try {
-      // 쿼리 파라미터는 백엔드 스펙에 맞게 수정 (예: ?date=2026-02-14)
       const res = await api.get<ProgramSchedule[]>(
         `/programs/${programId}/schedules?date=${dateStr}`,
       );
@@ -97,10 +99,21 @@ export const useProgramBooking = (
     }
   };
 
-  // [핸들러 함수들]
+  // 핸들러 함수들
+  const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newId = Number(e.target.value);
+    setSelectedProgramId(newId);
+    // 프로그램 변경 시 날짜/시간 초기화 (고정된 경우 제외)
+    if (!fixedDate) setDate("");
+    if (!fixedTime) setTime("");
+  };
+
+  const handleCountChange = (delta: number) => {
+    setCount((prev) => Math.max(1, prev + delta)); // 최소 1명
+  };
+
   const handlePaymentSuccess = async () => {
     try {
-      // 실제 예약 API 호출
       await api.post("/reservations/program", {
         programId: selectedProgramId,
         visitDate: date,
@@ -114,33 +127,36 @@ export const useProgramBooking = (
     }
   };
 
-  const handleNext = () => {
-    if (step === 1 && date && time) setStep(2);
-    else if (step === 2) setShowPayment(true);
+  const handleBookingClick = () => {
+    // 유효성 검사
+    if (!date || !time) {
+      alert("날짜와 시간을 선택해주세요.");
+      return;
+    }
+    setShowPayment(true);
   };
 
+  // 계산 로직
   const selectedProgram = programs.find((p) => p.id === selectedProgramId);
   const totalPrice = selectedProgram ? selectedProgram.price * count : 0;
 
-  // [반환] View에서 필요한 것만 쏙쏙 골라 담기
   return {
     step,
-    setStep,
     date,
     setDate,
     time,
     setTime,
-    count,
-    setCount,
+    count, // handleCountChange로 제어하므로 setCount는 굳이 내보내지 않아도 됨 (하지만 필요하면 추가)
+    handleCountChange,
     programs,
     selectedProgramId,
-    setSelectedProgramId,
+    handleProgramChange,
     schedules,
     requireTicket,
-    setRequireTicket, // 알림창 제어용
+    setRequireTicket,
     showPayment,
     setShowPayment,
-    handleNext,
+    handleBookingClick,
     handlePaymentSuccess,
     totalPrice,
     selectedProgram,
