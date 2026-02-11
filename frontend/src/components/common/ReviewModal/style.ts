@@ -292,3 +292,14 @@ export const ActionBtn = styled.button<{ $outline?: boolean }>`
     color: ${(props) => (props.$outline ? "#fff" : "#000")};
   }
 `;
+
+export const EmptyMessage = styled.div`
+  padding: 40px;
+  text-align: center;
+  color: #888;
+  font-size: 16px; /* 폰트 크기도 살짝 지정해주면 좋습니다 */
+`;
+
+export const RatingText = styled.span`
+  color: #ffdd57;
+`;

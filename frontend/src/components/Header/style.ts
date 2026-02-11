@@ -79,7 +79,6 @@ export const UserMenu = styled.div`
     color: #fff;
   }
 
-  /* [추가] 모바일 화면(좁은 화면)일 때 간격과 글자 크기 살짝 줄이기 */
   @media (max-width: 480px) {
     gap: 10px;
     font-size: 13px;

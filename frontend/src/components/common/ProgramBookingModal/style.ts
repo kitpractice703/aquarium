@@ -118,3 +118,10 @@ export const Button = styled.button`
     opacity: 0.9;
   }
 `;
+
+export const FixedInfo = styled.div`
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 0;
+  border-bottom: 1px solid #444;
+`;

@@ -53,40 +53,27 @@ const ProgramBookingModal = ({
   }, [isOpen, fixedDate, fixedTime]);
 
   useEffect(() => {
-    if (date && !fixedDate) {
-      const hasTicket = myReservations.some(
-        (res) => res.visitDate === date && res.status === "CONFIRMED",
+    if (date) {
+      // 1. 해당 날짜에 유효한(CONFIRMED) '입장권(ADMISSION)'이 있는지 확인
+      const hasAdmission = myReservations.some(
+        (res) =>
+          res.visitDate === date &&
+          res.status === "CONFIRMED" &&
+          // [Tip] 혹시 모르니 프로그램 예약이 아닌 '순수 입장권'인지 확실히 체크 (없으면 통과)
+          (res.programType === "ADMISSION" || !res.programType),
       );
-      if (!hasTicket) {
+
+      // 2. 입장권이 없으면 즉시 '관람권 필요' 알림창으로 전환
+      if (!hasAdmission) {
         onRequireTicket();
       }
     }
-  }, [date, fixedDate, myReservations, onRequireTicket]);
+  }, [date, myReservations, onRequireTicket]);
 
   // [시간 계산 로직]
   const availableTimes = useMemo(() => {
     if (fixedTime) return [fixedTime]; // 지정석(공연)은 고정
-
-    // [수정됨] 날짜나 현재 시간에 상관없이 항상 모든 시간을 노출합니다.
     return PROGRAM_TIMES;
-
-    /* 기존 로직 (주석 처리 또는 삭제)
-    if (!date) return PROGRAM_TIMES;
-    const todayStr = getTodayString();
-    if (date !== todayStr) {
-      return PROGRAM_TIMES;
-    }
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
-    const currentTotalMinutes = currentHour * 60 + currentMinute;
-
-    return PROGRAM_TIMES.filter((t) => {
-      const [h, m] = t.split(":").map(Number);
-      const targetTotalMinutes = h * 60 + m;
-      return targetTotalMinutes > currentTotalMinutes;
-    });
-    */
   }, [date, fixedTime]);
 
   // 시간 자동 보정
@@ -139,16 +126,7 @@ const ProgramBookingModal = ({
             <S.InputGroup>
               <S.Label>날짜 선택</S.Label>
               {fixedDate ? (
-                <div
-                  style={{
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "10px 0",
-                    borderBottom: "1px solid #444",
-                  }}
-                >
-                  {fixedDate} (지정일)
-                </div>
+                <S.FixedInfo>{fixedDate} (지정일)</S.FixedInfo>
               ) : (
                 <S.Input
                   type="date"
@@ -162,16 +140,7 @@ const ProgramBookingModal = ({
             <S.InputGroup>
               <S.Label>시간 선택</S.Label>
               {fixedTime ? (
-                <div
-                  style={{
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "10px 0",
-                    borderBottom: "1px solid #444",
-                  }}
-                >
-                  {fixedTime} (지정석)
-                </div>
+                <S.FixedInfo>{fixedTime} (지정석)</S.FixedInfo>
               ) : (
                 <S.Select
                   value={time}

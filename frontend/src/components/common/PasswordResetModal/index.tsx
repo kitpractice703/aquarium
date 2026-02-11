@@ -1,7 +1,7 @@
-// frontend/src/components/common/PasswordResetModal/index.tsx
-import React, { useState } from "react";
+// [MODIFIED] useRef, useEffect 추가
+import React, { useState, useRef, useEffect } from "react";
 import * as S from "./style";
-import Modal from "../Modal";
+import CommonModal from "../Modal"; // [FIX] Modal -> CommonModal (경로/이름 확인 필요)
 import { checkUserForReset, resetPassword } from "../../../api/authApi";
 
 interface PasswordResetModalProps {
@@ -21,7 +21,19 @@ const PasswordResetModal = ({
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // 상태 초기화
+  // [ADDED] 새 비밀번호 입력창을 가리킬 Ref 생성
+  const newPasswordRef = useRef<HTMLInputElement>(null);
+
+  // [ADDED] 단계가 'RESET'으로 바뀌면 새 비밀번호 입력창에 포커스
+  useEffect(() => {
+    if (step === "RESET" && newPasswordRef.current) {
+      // 약간의 지연을 주어 렌더링이 확실히 끝난 뒤 실행 (안전장치)
+      setTimeout(() => {
+        newPasswordRef.current?.focus();
+      }, 50);
+    }
+  }, [step]);
+
   const handleClose = () => {
     setStep("VERIFY");
     setEmail("");
@@ -31,9 +43,8 @@ const PasswordResetModal = ({
     onClose();
   };
 
-  // [ADDED] 전화번호 자동 하이픈 및 숫자만 입력 로직
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 남기기
+    const rawValue = e.target.value.replace(/[^0-9]/g, "");
     let formattedValue = rawValue;
 
     if (rawValue.length > 3 && rawValue.length <= 7) {
@@ -42,20 +53,17 @@ const PasswordResetModal = ({
       formattedValue = `${rawValue.slice(0, 3)}-${rawValue.slice(3, 7)}-${rawValue.slice(7, 11)}`;
     }
 
-    // 최대 13자리(하이픈 포함)까지만 입력
     if (formattedValue.length <= 13) {
       setPhone(formattedValue);
     }
   };
 
-  // 1단계: 본인 확인
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !phone) return alert("이메일과 전화번호를 입력해주세요.");
     if (phone.length < 13) return alert("전화번호를 올바르게 입력해주세요.");
 
     try {
-      // 이제 phone 변수에 하이픈이 포함되어 서버로 전송됩니다 (예: 010-1234-5678)
       await checkUserForReset(email, phone);
       alert("본인 확인되었습니다. 새 비밀번호를 설정해주세요.");
       setStep("RESET");
@@ -64,7 +72,6 @@ const PasswordResetModal = ({
     }
   };
 
-  // 2단계: 비밀번호 변경
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword)
@@ -76,14 +83,14 @@ const PasswordResetModal = ({
       await resetPassword(email, newPassword);
       alert("비밀번호가 변경되었습니다! 로그인해주세요.");
       handleClose();
-      onSwitchToLogin(); // 로그인창으로 이동
+      onSwitchToLogin();
     } catch (error: any) {
       alert("비밀번호 변경 실패: " + (error.response?.data || "오류 발생"));
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="비밀번호 찾기">
+    <CommonModal isOpen={isOpen} onClose={handleClose} title="비밀번호 찾기">
       <S.Container>
         {step === "VERIFY" ? (
           <S.Form onSubmit={handleVerify}>
@@ -99,6 +106,7 @@ const PasswordResetModal = ({
                 placeholder="example@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoFocus
               />
             </S.InputGroup>
 
@@ -108,7 +116,7 @@ const PasswordResetModal = ({
                 type="text"
                 placeholder="010-0000-0000"
                 value={phone}
-                onChange={handlePhoneChange} // 하이픈 자동 적용 함수 연결
+                onChange={handlePhoneChange}
                 maxLength={13}
               />
             </S.InputGroup>
@@ -121,7 +129,9 @@ const PasswordResetModal = ({
 
             <S.InputGroup>
               <S.Label>새 비밀번호</S.Label>
+              {/* [MODIFIED] Ref 연결 */}
               <S.InputBox
+                ref={newPasswordRef}
                 type="password"
                 placeholder="8자 이상 입력"
                 value={newPassword}
@@ -144,7 +154,7 @@ const PasswordResetModal = ({
         )}
         <S.BackLink onClick={onSwitchToLogin}>로그인으로 돌아가기</S.BackLink>
       </S.Container>
-    </Modal>
+    </CommonModal>
   );
 };
 

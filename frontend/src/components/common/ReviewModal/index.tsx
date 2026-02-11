@@ -128,15 +128,9 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                 </S.TableHeader>
 
                 {reviews.length === 0 ? (
-                  <div
-                    style={{
-                      padding: "40px",
-                      textAlign: "center",
-                      color: "#888",
-                    }}
-                  >
+                  <S.EmptyMessage>
                     아직 등록된 후기가 없습니다. 첫 번째 주인공이 되어보세요!
-                  </div>
+                  </S.EmptyMessage>
                 ) : (
                   currentItems.map((item) => (
                     <S.ReviewItem
@@ -194,9 +188,9 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                 <div className="meta">
                   <span>작성자: {selectedReview.writerName}</span>
                   <span>날짜: {selectedReview.date}</span>
-                  <span style={{ color: "#ffdd57" }}>
+                  <S.RatingText>
                     평점: {"★".repeat(selectedReview.rating)}
-                  </span>
+                  </S.RatingText>
                 </div>
                 <div className="body">{selectedReview.content}</div>
 
