@@ -1,212 +1,137 @@
-import { useState, useEffect, useMemo } from "react";
+// src/components/common/ProgramBookingModal/index.tsx
 import * as S from "./style";
+import CommonModal from "../Modal";
 import PaymentModal from "../PaymentModal";
-import { api } from "../../../api/axios";
-import type { ReservationDto } from "../../../types/api";
+import TicketNoticeModal from "../TicketNoticeModal"; // 관람권 알림 모달
+import { useProgramBooking } from "./hooks/useProgramBooking";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  programTitle: string;
-  programId: number;
-  price: number;
   fixedDate?: string;
   fixedTime?: string;
-  myReservations: ReservationDto[];
-  onRequireTicket: () => void;
 }
-
-const PROGRAM_TIMES = ["10:00", "12:00", "14:00", "16:00", "18:00"];
-
-// 오늘 날짜 구하기 (YYYY-MM-DD) - 로컬 시간 기준
-const getTodayString = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
 
 const ProgramBookingModal = ({
   isOpen,
   onClose,
-  programTitle,
-  programId,
-  price,
   fixedDate,
   fixedTime,
-  myReservations,
-  onRequireTicket,
 }: Props) => {
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [count, setCount] = useState(1);
-  const [showPayment, setShowPayment] = useState(false);
+  // 훅에서 로직 몽땅 가져오기
+  const {
+    step,
+    setStep,
+    date,
+    setDate,
+    time,
+    setTime,
+    count,
+    setCount,
+    programs,
+    selectedProgramId,
+    setSelectedProgramId,
+    schedules,
+    requireTicket,
+    setRequireTicket,
+    showPayment,
+    setShowPayment,
+    handleNext,
+    handlePaymentSuccess,
+    totalPrice,
+    selectedProgram,
+  } = useProgramBooking(isOpen, onClose, fixedDate, fixedTime);
 
-  useEffect(() => {
-    if (isOpen) {
-      setDate(fixedDate || "");
-      setTime(fixedTime || "");
-      setCount(1);
-      setShowPayment(false);
-    }
-  }, [isOpen, fixedDate, fixedTime]);
-
-  useEffect(() => {
-    if (date) {
-      // 1. 해당 날짜에 유효한(CONFIRMED) '입장권(ADMISSION)'이 있는지 확인
-      const hasAdmission = myReservations.some(
-        (res) =>
-          res.visitDate === date &&
-          res.status === "CONFIRMED" &&
-          // [Tip] 혹시 모르니 프로그램 예약이 아닌 '순수 입장권'인지 확실히 체크 (없으면 통과)
-          (res.programType === "ADMISSION" || !res.programType),
-      );
-
-      // 2. 입장권이 없으면 즉시 '관람권 필요' 알림창으로 전환
-      if (!hasAdmission) {
-        onRequireTicket();
-      }
-    }
-  }, [date, myReservations, onRequireTicket]);
-
-  // [시간 계산 로직]
-  const availableTimes = useMemo(() => {
-    if (fixedTime) return [fixedTime]; // 지정석(공연)은 고정
-    return PROGRAM_TIMES;
-  }, [date, fixedTime]);
-
-  // 시간 자동 보정
-  useEffect(() => {
-    if (availableTimes.length > 0) {
-      if (!time || !availableTimes.includes(time)) {
-        setTime(availableTimes[0]);
-      }
-    } else {
-      setTime("");
-    }
-  }, [availableTimes]); // time 의존성 제거
-
-  if (!isOpen) return null;
-
-  const totalPrice = price * count;
-
-  const handlePaymentSuccess = async () => {
-    try {
-      await api.post("/reservations/programs", {
-        programId,
-        visitDate: date,
-        visitTime: time,
-        count,
-      });
-      alert("프로그램 예약이 완료되었습니다!");
-      onClose();
-    } catch (error: any) {
-      if (error.response?.status === 400) alert(error.response.data);
-      else if (error.response?.status === 401) alert("로그인이 필요합니다.");
-      else alert("예약 중 오류가 발생했습니다.");
-    }
-  };
-
-  const handlePaymentClick = () => {
-    if (!date) return alert("날짜를 선택해주세요");
-    if (!time) return alert("예약 가능한 시간이 없습니다.");
-    setShowPayment(true);
-  };
+  // 관람권이 없으면 알림 모달을 대신 보여줌
+  if (requireTicket) {
+    return (
+      <TicketNoticeModal
+        isOpen={true}
+        onClose={onClose}
+        onConfirm={() => {
+          setRequireTicket(false);
+          onClose();
+          // 필요시 예매 페이지로 이동 로직 추가
+        }}
+      />
+    );
+  }
 
   return (
     <>
-      <S.Overlay onClick={onClose}>
-        <S.Container onClick={(e) => e.stopPropagation()}>
-          <S.Header>
-            <h2>{programTitle} 예약</h2>
-            <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
-          </S.Header>
-          <S.Content>
-            <S.InputGroup>
-              <S.Label>날짜 선택</S.Label>
-              {fixedDate ? (
-                <S.FixedInfo>{fixedDate} (지정일)</S.FixedInfo>
-              ) : (
-                <S.Input
-                  type="date"
-                  value={date}
-                  min={getTodayString()}
-                  onChange={(e) => setDate(e.target.value)}
-                />
-              )}
-            </S.InputGroup>
+      <CommonModal isOpen={isOpen} onClose={onClose} title="프로그램 예약">
+        <S.Container>
+          {/* 프로그램 선택 드롭다운 (옵션) */}
+          <S.Section>
+            <label>프로그램 선택</label>
+            <select
+              value={selectedProgramId || ""}
+              onChange={(e) => {
+                setSelectedProgramId(Number(e.target.value));
+                setDate("");
+                setTime(""); // 프로그램 바뀌면 초기화
+              }}
+              disabled={!!fixedDate} // 공연 등 지정된 경우 변경 불가
+            >
+              {programs.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.title} ({p.price.toLocaleString()}원)
+                </option>
+              ))}
+            </select>
+          </S.Section>
 
-            <S.InputGroup>
-              <S.Label>시간 선택</S.Label>
-              {fixedTime ? (
-                <S.FixedInfo>{fixedTime} (지정석)</S.FixedInfo>
-              ) : (
-                <S.Select
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  disabled={availableTimes.length === 0}
-                >
-                  {availableTimes.length > 0 ? (
-                    availableTimes.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">예약 가능한 시간이 없습니다</option>
-                  )}
-                </S.Select>
-              )}
-            </S.InputGroup>
+          {/* 날짜 선택 */}
+          <S.Section>
+            <label>날짜 선택</label>
+            {fixedDate ? (
+              <S.FixedInfo>{fixedDate} (지정일)</S.FixedInfo>
+            ) : (
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                min={getTodayString()}
+              />
+            )}
+          </S.Section>
 
-            <S.InputGroup>
-              <S.Label>인원</S.Label>
-              <S.Select
-                value={count}
-                onChange={(e) => setCount(Number(e.target.value))}
-              >
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={n}>
-                    {n}명
+          {/* 시간 선택 */}
+          <S.Section>
+            <label>시간 선택</label>
+            {fixedTime ? (
+              <S.FixedInfo>{fixedTime} (지정석)</S.FixedInfo>
+            ) : (
+              <select value={time} onChange={(e) => setTime(e.target.value)}>
+                <option value="">시간을 선택해주세요</option>
+                {schedules.map((sch) => (
+                  <option
+                    key={sch.id}
+                    value={sch.startTime.split(" ")[1]}
+                    disabled={sch.isClosed}
+                  >
+                    {sch.startTime.split(" ")[1]} {sch.isClosed ? "(마감)" : ""}
                   </option>
                 ))}
-              </S.Select>
-            </S.InputGroup>
+              </select>
+            )}
+          </S.Section>
 
-            <S.Summary>
-              <div>
-                <span>프로그램</span>
-                <span>{programTitle}</span>
-              </div>
-              <div>
-                <span>1인 가격</span>
-                <span>{price.toLocaleString()}원</span>
-              </div>
-              <div className="total">
-                <span>총 결제금액</span>
-                <span>{totalPrice.toLocaleString()}원</span>
-              </div>
-            </S.Summary>
-          </S.Content>
+          {/* 인원 선택 & 결제 버튼 등... (BookingModal과 유사하게 구현) */}
           <S.Footer>
-            <S.Button
-              onClick={handlePaymentClick}
-              style={{
-                opacity: !date || !time ? 0.5 : 1,
-                cursor: !date || !time ? "not-allowed" : "pointer",
-              }}
-            >
-              결제하기
-            </S.Button>
+            <div className="price">총 {totalPrice.toLocaleString()}원</div>
+            <button onClick={handleNext} disabled={!date || !time}>
+              예약하기
+            </button>
           </S.Footer>
         </S.Container>
-      </S.Overlay>
+      </CommonModal>
 
+      {/* 결제 모달 */}
       {showPayment && (
         <PaymentModal
           amount={totalPrice}
-          orderName={`${programTitle} (${count}명)`}
+          orderName={selectedProgram?.title || "프로그램 예약"}
           onSuccess={handlePaymentSuccess}
           onClose={() => setShowPayment(false)}
         />

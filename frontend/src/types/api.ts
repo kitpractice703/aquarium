@@ -50,3 +50,20 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
+
+export interface Program {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string; // 혹은 image_url 등 백엔드와 맞춤
+  price: number;
+  type: "EXPERIENCE" | "PERFORMANCE"; // 체험 | 공연
+}
+
+export interface ProgramSchedule {
+  id: number;
+  programId: number;
+  location: string;
+  startTime: string; // "2026-02-14 14:00:00"
+  isClosed: boolean;
+}
