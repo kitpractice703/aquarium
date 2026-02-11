@@ -1,30 +1,25 @@
-import { useState } from "react";
-import * as S from "./style"; // 스타일 파일 import
+import * as S from "./style";
+import { usePayment } from "./hooks/usePayment"; // 훅 가져오기
 
 interface Props {
   amount: number;
   orderName: string;
   onSuccess: () => void;
   onClose: () => void;
+  isOpen: boolean; // isOpen도 받는 게 좋습니다 (PaymentModal을 사용하는 부모가 내려준다고 가정)
 }
 
-const PaymentModal = ({ amount, orderName, onSuccess, onClose }: Props) => {
-  // [수정] 불필요한 isProcessing 제거, useEffect 제거
-  const [step, setStep] = useState<"INPUT" | "PROCESSING" | "SUCCESS">("INPUT");
-
-  const handlePayment = () => {
-    setStep("PROCESSING");
-
-    // 1.5초 뒤에 성공 처리
-    setTimeout(() => {
-      setStep("SUCCESS");
-
-      // 1초 뒤에 부모에게 알림
-      setTimeout(() => {
-        onSuccess();
-      }, 1000);
-    }, 1500);
-  };
+// isOpen이 Props에 없다면 PaymentModal이 렌더링될 때가 곧 열린 상태라고 가정할 수도 있습니다.
+const PaymentModal = ({
+  amount,
+  orderName,
+  onSuccess,
+  onClose,
+  isOpen = true,
+}: Props) => {
+  // [수정 2] 훅은 반드시 여기서! (Top Level)
+  // "onSuccess 함수 줄 테니까, 결제 성공하면 이거 실행해줘" 라고 뇌에게 전달
+  const { step, handlePayment } = usePayment(isOpen, onSuccess);
 
   return (
     <S.Overlay>
@@ -52,6 +47,7 @@ const PaymentModal = ({ amount, orderName, onSuccess, onClose }: Props) => {
                   <input type="text" placeholder="0000" maxLength={4} />
                 </div>
               </div>
+              {/* [수정 3] 훅에서 가져온 handlePayment를 바로 연결 */}
               <S.PayBtn onClick={handlePayment}>결제하기</S.PayBtn>
             </S.CardForm>
           )}

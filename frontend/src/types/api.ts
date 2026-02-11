@@ -69,6 +69,18 @@ export interface ProgramSchedule {
   id: number;
   programId: number;
   location: string;
-  startTime: string; // "2026-02-14 14:00:00"
+  startTime: string;
   isClosed: boolean;
+}
+
+export interface FaqData {
+  id: number;
+  category: string;
+  question: string;
+  answer: string;
+}
+
+export interface Payment {
+  amount: number;
+  orderName: string;
 }
