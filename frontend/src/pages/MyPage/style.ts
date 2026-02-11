@@ -229,3 +229,17 @@ export const EmptyMsg = styled.div`
   justify-content: center;
   white-space: nowrap;
 `;
+
+export const LoadingWrapper = styled.div`
+  padding-top: 100px;
+  text-align: center;
+  color: white;
+  font-size: 18px; /* 글자 크기도 살짝 키워주면 좋습니다 */
+`;
+
+export const Badge = styled.span<{ $type: "PERFORMANCE" | "EXPERIENCE" }>`
+  margin-right: 6px;
+  font-weight: bold;
+
+  color: ${(props) => (props.$type === "PERFORMANCE" ? "#ff6b6b" : "#ffdd57")};
+`;

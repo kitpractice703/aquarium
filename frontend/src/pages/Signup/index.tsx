@@ -77,7 +77,6 @@ const Signup = () => {
     }
   };
 
-  // 모달 핸들러
   const openLogin = () => setIsLoginOpen(true);
   const closeLogin = () => setIsLoginOpen(false);
 
@@ -93,7 +92,6 @@ const Signup = () => {
   };
 
   return (
-    // [FIX] 여기서 SignupContainer와 FormCard를 사용하여 레이아웃 복구
     <S.SignupContainer>
       <S.FormCard>
         <S.Title>회원가입</S.Title>

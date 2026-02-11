@@ -1,23 +1,20 @@
 import styled from "styled-components";
 
-// [ADDED] 반응형 브레이크포인트나 컬러가 전역으로 없다면 깨질 수 있어, 여기서 fallback(기본값)을 고려한 코드로 작성했습니다.
-// 만약 var(--bg-dark) 등이 정의되지 않았다면, 콤마 뒤의 색상이 적용됩니다.
-
 export const Container = styled.div`
   width: 100%;
+  padding-bottom: 100px;
+  background-color: var(--bg-dark);
   min-height: 100vh;
-  padding-top: 80px;
-  /* [MODIFIED] CSS 변수가 없을 경우를 대비해 기본 다크 색상(#121212)을 백업으로 지정했습니다. */
-  background-color: var(--bg-dark, #121212);
 `;
 
 export const Banner = styled.div`
   width: 100%;
   height: 300px;
-  /* [MODIFIED] 이미지 경로가 실제 존재하는지 확인해주세요. 없다면 검은 배경만 보입니다. */
   background:
     linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("/images/theme_light.jpg") no-repeat center/cover;
+    url("/images/program_banner.jpg") no-repeat center/cover;
+  /* 배너 이미지가 없으면 배경색으로 대체 */
+  background-color: #111;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,13 +23,15 @@ export const Banner = styled.div`
 export const Title = styled.h1`
   font-size: 48px;
   color: #fff;
-  text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 `;
 
 export const Content = styled.div`
-  width: 90%;
   max-width: 1200px;
-  margin: 50px auto;
+  margin: -50px auto 0;
+  padding: 0 20px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
@@ -46,26 +45,21 @@ export const Content = styled.div`
 `;
 
 export const Card = styled.div`
-  /* [MODIFIED] 변수 미적용 시 기본값 추가 */
-  background: var(--bg-card, #1e1e1e);
+  background: var(--bg-card);
   border-radius: 15px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: 0.3s;
-  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
 
   &:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(0, 242, 255, 0.15);
-    /* [MODIFIED] 변수 미적용 시 Cyan 색상 기본값 */
-    border-color: var(--accent-cyan, #00f2ff);
   }
 `;
 
 export const CardImage = styled.div`
   width: 100%;
   height: 200px;
-  background-color: #000;
+  background-color: #333; /* 이미지가 로딩되기 전 배경색 */
 
   img {
     width: 100%;
@@ -75,23 +69,44 @@ export const CardImage = styled.div`
 `;
 
 export const CardBody = styled.div`
-  padding: 20px;
+  padding: 25px;
 `;
 
 export const CardTitle = styled.h3`
-  font-size: 20px;
-  margin-bottom: 10px;
+  font-size: 22px;
   color: #fff;
+  margin-bottom: 15px;
+  color: var(--accent-cyan);
 `;
 
 export const CardDesc = styled.p`
-  font-size: 14px;
-  /* [MODIFIED] 변수 미적용 시 회색 기본값 */
-  color: var(--text-gray, #a0a0a0);
+  font-size: 15px;
+  color: var(--text-gray);
   line-height: 1.6;
 
+  /* 긴 텍스트는 3줄까지만 보여주고 말줄임(...) 처리 */
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+`;
+
+export const EmptyMessage = styled.div`
+  grid-column: 1 / -1; /* 그리드 전체 너비 차지 */
+  text-align: center;
+  padding: 100px 0;
+  color: #a0a0a0;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+`;
+
+export const LoadingMessage = styled.p`
+  color: white;
+  text-align: center;
+  grid-column: 1 / -1; /* 그리드 전체 너비 차지 (왼쪽 끝 ~ 오른쪽 끝) */
+  padding: 100px 0; /* 위아래 여백을 넉넉하게 줌 */
+  font-size: 20px; /* 글자 크기도 조금 키워서 잘 보이게 */
+  font-weight: bold;
+  letter-spacing: 1px;
 `;
