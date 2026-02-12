@@ -171,7 +171,7 @@ const ProgramBookingModal = ({
           amount={totalPrice}
           orderName={selectedProgram?.title || programTitle || "프로그램 예약"}
           onSuccess={handlePaymentSuccess}
-          onClose={() => setShowPayment(false)}
+          onClose={() => { setShowPayment(false); onClose(); }}
         />
       )}
     </>
