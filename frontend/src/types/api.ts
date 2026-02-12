@@ -84,3 +84,11 @@ export interface Payment {
   amount: number;
   orderName: string;
 }
+
+export interface ThemeItem {
+  id: number;
+  title: string;
+  desc: string;
+  img: string;
+  color: string;
+}
