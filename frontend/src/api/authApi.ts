@@ -39,7 +39,6 @@ export const checkUserForReset = async (email: string, phone: string) => {
 };
 
 export const resetPassword = async (email: string, newPassword: string) => {
-  // [FIX] axiosInstance -> api 로 변경
   const response = await api.post("/users/reset-password", {
     email,
     newPassword,

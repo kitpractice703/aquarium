@@ -1,7 +1,7 @@
 import * as S from "./style";
 import LoginModal from "../../components/common/LoginModal";
 import PasswordResetModal from "../../components/common/PasswordResetModal";
-import { useSingup } from "./hooks/useSinup";
+import { useSignup } from "./hooks/useSingup";
 
 const Signup = () => {
   const {
@@ -16,7 +16,7 @@ const Signup = () => {
     openReset,
     closeReset,
     switchResetToLogin,
-  } = useSingup();
+  } = useSignup();
 
   return (
     <S.SignupContainer>
@@ -84,7 +84,6 @@ const Signup = () => {
           이미 계정이 있으신가요? <span onClick={openLogin}>로그인</span>
         </S.LoginLink>
 
-        {/* 모달 */}
         <LoginModal
           isOpen={isLoginOpen}
           onClose={closeLogin}

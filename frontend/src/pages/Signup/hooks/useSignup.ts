@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
-import { api } from "../../../api/axios";
+import { signup } from "../../../api/authApi";
 
-export const useSingup = () => {
+export const useSignup = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
 
@@ -57,12 +57,11 @@ export const useSingup = () => {
     if (!form.phone) return alert("전화번호를 입력해주세요.");
 
     try {
-      await api.post("/auth/signup", {
+      await signup({
         email: form.email,
         password: form.password,
         username: form.username,
         phone: form.phone,
-        role: "USER",
       });
       alert("회원가입이 완료되었습니다! 로그인해주세요.");
       navigate("/");
