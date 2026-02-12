@@ -18,7 +18,7 @@ const DEFAULT_TIME_SLOTS = ["10:00", "11:00", "13:00", "14:00", "15:00"];
 
 export const useProgramBooking = (
   isOpen: boolean,
-  onClose: () => void,
+  _onClose: () => void,
   fixedDate?: string,
   fixedTime?: string,
   initialProgramId?: number,
@@ -198,8 +198,7 @@ export const useProgramBooking = (
         visitTime: time,
         count: count,
       });
-      alert("예약이 완료되었습니다!");
-      onClose();
+      /** alert 미사용: PaymentModal SUCCESS 화면의 확인 버튼으로 모달 닫힘 처리 */
     } catch (err) {
       alert("예약 실패");
     }
