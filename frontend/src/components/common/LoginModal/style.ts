@@ -63,3 +63,40 @@ export const GoogleBtn = styled.button`
     background: #f1f1f1;
   }
 `;
+
+export const ResetLink = styled.div`
+  text-align: center;
+  margin-top: 10px;
+
+  span {
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:hover {
+      color: #333;
+    }
+  }
+`;
+
+export const SignupLink = styled.div`
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee; // 위쪽에 구분선 추가
+  font-size: 14px;
+  color: #666;
+
+  span {
+    color: #007bff; // 브랜드 컬러 (파란색)
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 8px;
+
+    &:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+  }
+`;

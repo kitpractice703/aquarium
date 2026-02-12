@@ -1,44 +1,23 @@
-import React, { useState } from "react";
 import CommonModal from "../Modal";
-import { useAuth } from "../../../context/AuthContext";
+import { useLogin } from "./hooks/useLogin";
+
 import * as S from "./style";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onOpenSignup: () => void; // 회원가입으로 이동
-  onOpenReset: () => void; // [ADDED] 비밀번호 찾기 열기 요청
+  onOpenSignup: () => void;
+  onOpenReset: () => void;
 }
 
-const LoginModal = ({ isOpen, onClose, onOpenReset }: Props) => {
-  const { login } = useAuth();
-  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLoginForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    action: () => void,
-  ) => {
-    if (e.key === "Enter") action();
-  };
-
-  const handleLoginSubmit = async () => {
-    try {
-      await login(loginForm);
-      setLoginForm({ email: "", password: "" });
-      onClose();
-    } catch (e) {
-      // 에러 처리는 AuthContext alert
-    }
-  };
-
-  const handleGoogleLogin = () => {
-    window.location.href = "/oauth2/authorization/google";
-  };
+const LoginModal = ({ isOpen, onClose, onOpenReset, onOpenSignup }: Props) => {
+  const {
+    loginForm,
+    handleInputChange,
+    handleKeyDown,
+    handleLoginSubmit,
+    handleGoogleLogin,
+  } = useLogin(onClose, onOpenSignup);
 
   return (
     <CommonModal isOpen={isOpen} onClose={onClose} title="로그인">
@@ -91,23 +70,26 @@ const LoginModal = ({ isOpen, onClose, onOpenReset }: Props) => {
 
       {/* 비밀번호 찾기 링크 */}
       <div style={{ textAlign: "center", marginTop: "10px" }}>
-        <span
+        <S.ResetLink
           onClick={() => {
-            onClose(); // 1. 로그인 창 닫고
-            onOpenReset(); // 2. 부모에게 비밀번호 찾기 열어달라고 요청
-          }}
-          style={{
-            fontSize: "12px",
-            color: "#666",
-            cursor: "pointer",
-            textDecoration: "underline",
+            onClose();
+            onOpenReset();
           }}
         >
           비밀번호를 잊으셨나요?
-        </span>
+        </S.ResetLink>
       </div>
-
-      {/* 여기에 있던 <PasswordResetModal />은 삭제됨 (Header로 이사감) */}
+      <S.SignupLink>
+        계정이 없으신가요?{" "}
+        <span
+          onClick={() => {
+            onClose();
+            onOpenSignup();
+          }}
+        >
+          회원가입
+        </span>
+      </S.SignupLink>
     </CommonModal>
   );
 };

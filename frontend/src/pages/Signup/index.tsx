@@ -1,7 +1,7 @@
 import * as S from "./style";
 import LoginModal from "../../components/common/LoginModal";
 import PasswordResetModal from "../../components/common/PasswordResetModal";
-import { useSignup } from "./hooks/useSingup";
+import { useSignup } from "./hooks/useSignup";
 
 const Signup = () => {
   const {

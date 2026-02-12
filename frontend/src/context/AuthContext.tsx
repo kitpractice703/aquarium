@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUsername(data.username || data.name || data.email || "회원");
         }
       }
-    } catch (e) {
+    } catch (err) {
       setIsLoggedIn(false);
       setUsername(null);
     }

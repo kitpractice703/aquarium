@@ -1,5 +1,5 @@
 import * as S from "./style";
-import ThemeDetailModal from "../ThemeDeatailModal";
+import ThemeDetailModal from "../ThemeDetailModal";
 import { useThemeSection } from "./hooks/useThemeSection";
 
 const ThemeSection = () => {
