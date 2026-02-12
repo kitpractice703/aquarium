@@ -114,7 +114,7 @@ export const useProgramBooking = (
 
   const handlePaymentSuccess = async () => {
     try {
-      await api.post("/reservations/program", {
+      await api.post("/reservations/programs", {
         programId: selectedProgramId,
         visitDate: date,
         visitTime: time,
