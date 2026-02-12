@@ -1,3 +1,8 @@
+/**
+ * 관람권 미보유 안내 모달
+ * - 프로그램 예약 시 당일 관람권이 없으면 표시
+ * - 확인 클릭 시 관람권 예매 페이지로 안내
+ */
 import CommonModal from "../Modal";
 import * as S from "./style";
 

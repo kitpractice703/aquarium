@@ -1,10 +1,11 @@
+/** 로그인 필요 안내 모달 - 비로그인 사용자가 예매/마이페이지 접근 시 표시 */
 import CommonModal from "../Modal";
 import * as S from "./style";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void; // 로그인 버튼 눌렀을 때 실행할 함수
+  onConfirm: () => void;
 }
 
 const LoginRequestModal = ({ isOpen, onClose, onConfirm }: Props) => {

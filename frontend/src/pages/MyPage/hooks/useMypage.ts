@@ -1,3 +1,9 @@
+/**
+ * 마이페이지 로직 커스텀 훅
+ * - 내 예약 목록 조회 (GET /api/reservations/me)
+ * - 회원정보 수정 (비밀번호 변경 + 전화번호 수정)
+ * - 비밀번호 변경 시 자동 로그아웃 처리
+ */
 import { useState, useEffect } from "react";
 import { api } from "../../../api/axios";
 import { useAuth } from "../../../context/AuthContext";
@@ -9,6 +15,7 @@ export const useMyPage = () => {
   const [reservations, setReservations] = useState<ReservationDto[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /** 회원정보 수정 폼 상태 */
   const [form, setForm] = useState({
     currentPassword: "",
     password: "",
@@ -16,7 +23,7 @@ export const useMyPage = () => {
     phone: "",
   });
 
-  // 1. 예약 내역 조회
+  /** 마운트 시 내 예약 목록 조회 */
   useEffect(() => {
     const fetchReservations = async () => {
       try {
@@ -31,7 +38,7 @@ export const useMyPage = () => {
     fetchReservations();
   }, []);
 
-  // 2. 전화번호 포맷팅 유틸리티
+  /** 전화번호 자동 하이픈 포맷팅 (010-0000-0000) */
   const formatPhoneNumber = (value: string) => {
     const raw = value.replace(/[^0-9]/g, "");
     if (raw.length <= 3) return raw;
@@ -39,7 +46,6 @@ export const useMyPage = () => {
     return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
   };
 
-  // 3. 입력 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -49,7 +55,12 @@ export const useMyPage = () => {
     setForm((prev) => ({ ...prev, phone: formatted }));
   };
 
-  // 4. 정보 수정 요청 핸들러
+  /**
+   * 회원정보 수정 처리
+   * - 현재 비밀번호 필수 (본인 확인)
+   * - 새 비밀번호 입력 시 비밀번호 변경 + 자동 로그아웃
+   * - 비밀번호 미입력 시 전화번호만 수정
+   */
   const handleUpdateInfo = async () => {
     if (!form.currentPassword) {
       alert("본인 확인을 위해 현재 비밀번호를 입력해주세요.");

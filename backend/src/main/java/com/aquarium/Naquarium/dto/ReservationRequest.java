@@ -2,12 +2,13 @@ package com.aquarium.Naquarium.dto;
 
 import lombok.Data;
 
+/** 입장권 예약 요청 DTO (프로그램 없이 관람권만 구매) */
 @Data
 public class ReservationRequest {
-    private String visitDate;  // "2026-01-28"
-    private String visitTime;  // "14:00"
+    private String visitDate;
+    private String visitTime;
+    /** 대인(만 13세 이상) 인원수 */
     private int adultCount;
+    /** 소인(만 12세 이하) 인원수 */
     private int teenCount;
-    // totalPrice는 백엔드에서 계산하는 것이 안전하지만,
-    // 편의상 프론트에서 주는 값을 믿거나 재계산 로직을 넣을 수 있습니다.
 }

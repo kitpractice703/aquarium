@@ -1,21 +1,48 @@
+/**
+ * 프로그램 예약 모달 컴포넌트
+ * - 프로그램 선택 → 날짜 → 시간 → 인원 → 결제
+ * - 당일 관람권 미보유 시 TicketNoticeModal로 안내
+ * - fixedDate/fixedTime: 공연 시간표에서 진입 시 사전 설정
+ */
+import { useEffect } from "react";
 import * as S from "./style";
 import CommonModal from "../Modal";
 import PaymentModal from "../PaymentModal";
 import TicketNoticeModal from "../TicketNoticeModal";
 import { useProgramBooking } from "./hooks/useProgramBooking";
+import type { ReservationDto } from "../../../types/api";
+
+/** 오늘 날짜를 YYYY-MM-DD 형식으로 반환 (날짜 선택 최소값) */
+const getTodayString = (): string => {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  programTitle?: string;
+  programId?: number;
+  price?: number;
   fixedDate?: string;
   fixedTime?: string;
+  myReservations?: ReservationDto[];
+  onRequireTicket?: () => void;
 }
 
 const ProgramBookingModal = ({
   isOpen,
   onClose,
+  programTitle,
+  programId,
+  price,
   fixedDate,
   fixedTime,
+  myReservations: parentReservations,
+  onRequireTicket,
 }: Props) => {
   const {
     date,
@@ -27,7 +54,7 @@ const ProgramBookingModal = ({
     programs,
     selectedProgramId,
     handleProgramChange,
-    schedules,
+    timeSlots,
     requireTicket,
     setRequireTicket,
     showPayment,
@@ -36,10 +63,18 @@ const ProgramBookingModal = ({
     handlePaymentSuccess,
     totalPrice,
     selectedProgram,
-  } = useProgramBooking(isOpen, onClose, fixedDate, fixedTime);
+    isProgramLocked,
+  } = useProgramBooking(isOpen, onClose, fixedDate, fixedTime, programId, programTitle, price, parentReservations);
 
-  // 1. 관람권 없음 경고 모달
-  if (requireTicket) {
+  /** 관람권 필요 시 부모 컴포넌트에 알림 */
+  useEffect(() => {
+    if (requireTicket && onRequireTicket) {
+      onRequireTicket();
+    }
+  }, [requireTicket]);
+
+  /** 관람권 미보유 + 부모 핸들러 없음 → 자체 안내 모달 표시 */
+  if (requireTicket && !onRequireTicket) {
     return (
       <TicketNoticeModal
         isOpen={true}
@@ -52,28 +87,29 @@ const ProgramBookingModal = ({
     );
   }
 
-  // 2. 메인 예약 모달
+  if (requireTicket) return null;
+
   return (
     <>
       <CommonModal isOpen={isOpen} onClose={onClose} title="프로그램 예약">
         <S.Container>
-          {/* 프로그램 선택 */}
+          {/* 프로그램 선택 (외부에서 지정 시 잠금) */}
           <S.Section>
             <S.Label>프로그램 선택</S.Label>
             <S.Select
               value={selectedProgramId || ""}
               onChange={handleProgramChange}
-              disabled={!!fixedDate}
+              disabled={isProgramLocked}
             >
               {programs.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.title} ({p.price.toLocaleString()}원)
+                  {p.title}
                 </option>
               ))}
             </S.Select>
           </S.Section>
 
-          {/* 날짜 선택 */}
+          {/* 날짜 선택 (고정일 시 읽기 전용) */}
           <S.Section>
             <S.Label>날짜 선택</S.Label>
             {fixedDate ? (
@@ -88,7 +124,7 @@ const ProgramBookingModal = ({
             )}
           </S.Section>
 
-          {/* 시간 선택 */}
+          {/* 시간 선택 (고정 시간 시 읽기 전용) */}
           <S.Section>
             <S.Label>시간 선택</S.Label>
             {fixedTime ? (
@@ -96,20 +132,16 @@ const ProgramBookingModal = ({
             ) : (
               <S.Select value={time} onChange={(e) => setTime(e.target.value)}>
                 <option value="">시간을 선택해주세요</option>
-                {schedules.map((sch, idx) => {
-                  // 시간 문자열 파싱 ("2026-02-14 14:00:00" -> "14:00")
-                  const timeStr = sch.startTime.split(" ")[1].substring(0, 5);
-                  return (
-                    <option key={idx} value={timeStr} disabled={sch.isClosed}>
-                      {timeStr} {sch.isClosed ? "(마감)" : ""}
-                    </option>
-                  );
-                })}
+                {timeSlots.map((slot, idx) => (
+                  <option key={idx} value={slot}>
+                    {slot}
+                  </option>
+                ))}
               </S.Select>
             )}
           </S.Section>
 
-          {/* 인원 선택 (Hook의 count, handleCountChange 사용) */}
+          {/* 인원 카운터 (최소 1명) */}
           <S.CounterRow>
             <div className="label">예약 인원</div>
             <div className="controls">
@@ -119,7 +151,7 @@ const ProgramBookingModal = ({
             </div>
           </S.CounterRow>
 
-          {/* 하단 결제 버튼 */}
+          {/* 하단: 총 금액 + 결제 버튼 */}
           <S.Footer>
             <div className="price">총 {totalPrice.toLocaleString()}원</div>
             <S.Button
@@ -133,11 +165,11 @@ const ProgramBookingModal = ({
         </S.Container>
       </CommonModal>
 
-      {/* 결제창 */}
+      {/* 결제 모달 */}
       {showPayment && (
         <PaymentModal
           amount={totalPrice}
-          orderName={selectedProgram?.title || "프로그램 예약"}
+          orderName={selectedProgram?.title || programTitle || "프로그램 예약"}
           onSuccess={handlePaymentSuccess}
           onClose={() => setShowPayment(false)}
         />

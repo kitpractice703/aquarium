@@ -3,10 +3,15 @@ package com.aquarium.Naquarium.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+/** 프로그램(공연/체험) 예약 요청 DTO */
 @Getter @Setter
 public class ProgramReservationRequest {
-    private Long programId;         // [변경] 스케줄ID 대신 프로그램ID 사용
-    private String visitDate;       // YYYY-MM-DD
-    private String visitTime;       // HH:mm (새로 추가)
-    private int count;              // 인원수
+    /** 예약 대상 프로그램 ID */
+    private Long programId;
+    /** 방문 날짜 (YYYY-MM-DD 형식) */
+    private String visitDate;
+    /** 방문 시간 (HH:mm 형식) */
+    private String visitTime;
+    /** 예약 인원수 */
+    private int count;
 }

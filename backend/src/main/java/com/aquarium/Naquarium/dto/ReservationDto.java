@@ -5,26 +5,38 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * 예약 응답 DTO (마이페이지 예약 내역 표시용)
+ * - Reservation 엔티티를 프론트엔드에 필요한 형태로 변환
+ * - 입장권/프로그램 예약 모두 처리 (schedule 유무로 구분)
+ */
 @Getter
 public class ReservationDto {
     private Long id;
-    private String ticketNumber; // [원복] 사용자 요청 로직 유지 (T20260130-00001 형식)
+    /** 티켓 번호 (예: T20260212-00001) */
+    private String ticketNumber;
     private String programTitle;
-    private String programType;  // [핵심] 프론트엔드 뱃지([체험], [공연]) 노출을 위한 필드
+    /** 프로그램 유형: ADMISSION(입장권), PERFORMANCE(공연), EXPERIENCE(체험) */
+    private String programType;
     private LocalDateTime startTime;
     private String visitDate;
-    private String visitTime;    // [추가] 프론트엔드 타입 정의와 일치시키기 위해 추가
+    private String visitTime;
     private String location;
     private String status;
     private String imageUrl;
 
+    /**
+     * Reservation 엔티티 → DTO 변환 생성자
+     * - 티켓 번호: 예약일 + 예약ID로 자동 생성
+     * - schedule이 null이면 입장권(ADMISSION)으로 기본 설정
+     */
     public ReservationDto(Reservation reservation) {
         this.id = reservation.getId();
-        this.status = reservation.getStatus().name();
+        this.status = reservation.getStatus() != null ? reservation.getStatus().name() : "CONFIRMED";
         this.visitDate = reservation.getVisitDate();
-        this.visitTime = reservation.getVisitTime(); // [추가] 방문 시간 매핑
+        this.visitTime = reservation.getVisitTime();
 
-        // [원복] 티켓 번호 생성 로직 유지
+        // 티켓 번호 생성: T{yyyyMMdd}-{5자리 ID}
         if (reservation.getReservedAt() != null) {
             String datePart = reservation.getReservedAt().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             this.ticketNumber = String.format("T%s-%05d", datePart, reservation.getId());
@@ -32,22 +44,25 @@ public class ReservationDto {
             this.ticketNumber = String.format("T-%05d", reservation.getId());
         }
 
-        // 스케줄이 있는 경우 (체험/공연 프로그램)
-        if (reservation.getSchedule() != null) {
-            this.startTime = reservation.getSchedule().getStartTime();
-            this.location = reservation.getSchedule().getLocation();
+        // 프로그램 스케줄 정보 로딩 (LazyLoading 예외 방어)
+        try {
+            if (reservation.getSchedule() != null) {
+                this.startTime = reservation.getSchedule().getStartTime();
+                this.location = reservation.getSchedule().getLocation();
 
-            if (reservation.getSchedule().getProgram() != null) {
-                this.programTitle = reservation.getSchedule().getProgram().getTitle();
-                this.imageUrl = reservation.getSchedule().getProgram().getImageUrl();
+                if (reservation.getSchedule().getProgram() != null) {
+                    this.programTitle = reservation.getSchedule().getProgram().getTitle();
+                    this.imageUrl = reservation.getSchedule().getProgram().getImageUrl();
 
-                // [핵심 기능] DB의 ProgramType(EXPERIENCE/PERFORMANCE)을 DTO에 담아 보냅니다.
-                // 이 값이 있으면 프론트엔드에서 자동으로 [체험] 또는 [공연] 뱃지를 붙여줍니다.
-                this.programType = reservation.getSchedule().getProgram().getType().name();
+                    if (reservation.getSchedule().getProgram().getType() != null) {
+                        this.programType = reservation.getSchedule().getProgram().getType().name();
+                    }
+                }
             }
+        } catch (Exception e) {
         }
 
-        // [원복] 스케줄이 없는 경우 (일반 관람권 처리 로직 유지)
+        // 프로그램 정보가 없으면 기본 입장권으로 설정
         if (this.programTitle == null) {
             this.programTitle = "Naquarium 관람권";
             this.programType = "ADMISSION";

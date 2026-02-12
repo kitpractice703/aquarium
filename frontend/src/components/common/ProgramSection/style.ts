@@ -1,3 +1,4 @@
+/** 프로그램 & 일정 섹션 스타일 */
 import styled from "styled-components";
 
 export const Section = styled.section`
@@ -21,6 +22,7 @@ export const SectionTitle = styled.h2`
   color: var(--accent-cyan);
 `;
 
+/** 프로그램 2열 레이아웃: 체험(좌) + 시간표(우), 모바일 1열 */
 export const ProgramLayout = styled.div`
   display: flex;
   gap: 40px;
@@ -43,6 +45,7 @@ export const ExperienceList = styled.div`
   gap: 30px;
 `;
 
+/** 체험 프로그램 카드: 호버 시 이미지 확대 */
 export const ExperienceItem = styled.div`
   display: flex;
   flex-direction: column;
@@ -69,6 +72,7 @@ export const ExperienceItem = styled.div`
   }
 `;
 
+/** 날짜 슬라이더: 가로 스크롤 */
 export const DateSlider = styled.div`
   display: flex;
   gap: 10px;
@@ -85,6 +89,7 @@ export const DateSlider = styled.div`
   }
 `;
 
+/** 날짜 아이템: 선택 시 시안, 월요일(휴관일) 빨간색 표시 */
 export const DateItem = styled.div<{ $active: boolean; $isMonday: boolean }>`
   min-width: 60px;
   padding: 10px 5px;
@@ -116,6 +121,7 @@ export const DateItem = styled.div<{ $active: boolean; $isMonday: boolean }>`
   }
 `;
 
+/** 스케줄 아이템: 시간 / 공연명+장소 / 상태 배지 (open/closed/ready) */
 export const ScheduleItem = styled.div`
   display: flex;
   justify-content: space-between;
@@ -156,6 +162,7 @@ export const ScheduleItem = styled.div`
     min-width: 70px;
     text-align: center;
 
+    /* 예매 가능: 시안 배지 */
     &.open {
       background: rgba(0, 242, 255, 0.1);
       color: var(--accent-cyan);
@@ -167,12 +174,14 @@ export const ScheduleItem = styled.div`
       }
     }
 
+    /* 마감: 빨간 배지 */
     &.closed {
       background: rgba(255, 107, 107, 0.1);
       color: #ff6b6b;
       border: 1px solid #ff6b6b;
       cursor: default;
     }
+    /* 준비 중: 회색 배지 */
     &.ready {
       background: rgba(255, 255, 255, 0.1);
       color: #aaa;
@@ -182,6 +191,7 @@ export const ScheduleItem = styled.div`
   }
 `;
 
+/** 예약하기 버튼 */
 export const Btn1 = styled.button`
   margin-top: 10px;
   padding: 8px 16px;
@@ -198,12 +208,14 @@ export const Btn1 = styled.button`
   }
 `;
 
+/** 빈 일정 안내 */
 export const NoPerformances = styled.div`
   padding: 30px;
   textalign: center;
   color: #888;
 `;
 
+/** 휴관일 안내: 빨간색 텍스트 */
 export const ClosedNotice = styled.div`
   text-align: center;
   padding: 50px 0;

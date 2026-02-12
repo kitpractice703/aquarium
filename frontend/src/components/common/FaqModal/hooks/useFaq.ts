@@ -1,7 +1,13 @@
+/**
+ * FAQ 로직 커스텀 훅
+ * - 하드코딩된 FAQ 데이터 (향후 API 연동 가능)
+ * - 아코디언 토글: 같은 질문 재클릭 시 닫힘
+ * - 모달 열림/닫힘 시 body 스크롤 잠금/해제
+ */
 import { useState, useEffect } from "react";
 import type { FaqData } from "../../../../types/api";
 
-// [데이터] 기존 index.tsx에 있던 데이터를 여기로 옮기고, id를 추가했습니다.
+/** FAQ 데이터 (정적 데이터, 향후 백엔드 API로 전환 가능) */
 const FAQ_LIST: FaqData[] = [
   {
     id: 1,
@@ -57,21 +63,21 @@ const FAQ_LIST: FaqData[] = [
 export const useFaq = (isOpen: boolean) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  // 스크롤 잠금/해제 및 초기화 로직
+  /** 모달 열림/닫힘 시 스크롤 잠금 및 상태 초기화 */
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
-      setOpenIndex(null); // 모달 열릴 때마다 닫힌 상태로 시작
+      setOpenIndex(null);
     } else {
       document.body.style.overflow = "auto";
     }
 
-    // cleanup
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
 
+  /** 아코디언 토글: 같은 항목 클릭 시 닫힘 */
   const handleToggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
   };

@@ -1,3 +1,9 @@
+/**
+ * 테마 상세 모달 로직 커스텀 훅
+ * - 4개 테마의 영상 + 설명 데이터 관리
+ * - 모달 열림 시 초기 테마 설정 + body 스크롤 잠금
+ * - 탭 전환으로 현재 활성 테마 변경
+ */
 import { useState, useEffect } from "react";
 
 import lightSeaVideo from "../../../../assets/videos/light_sea.mp4";
@@ -6,12 +12,12 @@ import deepSeaVideo from "../../../../assets/videos/deep_sea.mp4";
 import protectSeaVideo from "../../../../assets/videos/protect_sea.mp4";
 
 export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
+  /** 테마 데이터: 각 테마별 색상, 영상, 상세 설명 */
   const THEMES = [
     {
       id: 0,
       title: "빛의 바다",
       color: "#ffdd57",
-      // 실제 파일이 없다면 아래 URL들이 샘플 영상으로 나옵니다.
       video: lightSeaVideo,
       desc: `햇빛이 수면 위에서 부서지며 만들어내는 찬란한 빛의 파동.\n그 파동 아래에서 형형색색의 생명들이 태어나고, 바다를 아름답게 꾸며 줍니다.\n찬란한 바다의 한 가운데, 빛의 바다로 여러분을 초대합니다.`,
     },
@@ -40,6 +46,7 @@ export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
 
   const [activeTabId, setActiveTabId] = useState<number>(initialThemeId);
 
+  /** 모달 열림 시 초기 테마 설정 + 스크롤 잠금 */
   useEffect(() => {
     if (isOpen) {
       setActiveTabId(initialThemeId);
@@ -49,6 +56,7 @@ export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
     }
   }, [isOpen, initialThemeId]);
 
+  /** 현재 활성 테마 (없으면 첫 번째 테마 폴백) */
   const currentTheme = THEMES.find((t) => t.id === activeTabId) || THEMES[0];
 
   return {

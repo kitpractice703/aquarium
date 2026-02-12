@@ -1,3 +1,4 @@
+/** 커뮤니티 섹션 스타일 */
 import styled from "styled-components";
 
 export const Section = styled.section`
@@ -21,6 +22,7 @@ export const SectionTitle = styled.h2`
   color: var(--accent-cyan);
 `;
 
+/** 2열 그리드: FAQ(좌) + 후기(우), 모바일 900px 이하 1열 */
 export const CommunityGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -50,6 +52,7 @@ export const CommTitle = styled.h3`
   }
 `;
 
+/** FAQ 아이템: $active 시 답변 표시 */
 export const FaqItem = styled.div<{ $active: boolean }>`
   margin-bottom: 15px;
   cursor: pointer;
@@ -69,6 +72,7 @@ export const FaqItem = styled.div<{ $active: boolean }>`
   }
 `;
 
+/** 후기 리스트 */
 export const CommList = styled.ul`
   li {
     margin-bottom: 15px;
@@ -80,6 +84,9 @@ export const CommList = styled.ul`
     &:hover {
       color: #fff;
       text-decoration: underline;
+    }
+    .rating {
+      color: #ffdd57;
     }
   }
 `;

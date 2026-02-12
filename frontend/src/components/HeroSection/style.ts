@@ -1,14 +1,15 @@
+/** 히어로 섹션 스타일 */
 import styled, { keyframes } from "styled-components";
 
+/** 페이드인 애니메이션: 아래에서 위로 등장 */
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
+/** 히어로 섹션 컨테이너: 풀스크린 (100vh) */
 export const Hero = styled.section`
-  /* [ADDED] 부모(MainContent)의 중앙 정렬을 무시하고 가로를 꽉 채우기 위해 추가 */
   width: 100%;
-
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -20,10 +21,11 @@ export const Hero = styled.section`
   background-color: #000;
 `;
 
+/** 배경 영상: 절대 위치로 전체 영역 커버, 60% 투명도 */
 export const VideoBg = styled.video`
   width: 100%;
   height: 100%;
-  object-fit: cover; /* [핵심] 영상 비율이 깨지지 않고 꽉 차게 만듦 */
+  object-fit: cover; /* 비율 유지하며 꽉 채움 */
   position: absolute;
   top: 0;
   left: 0;
@@ -31,6 +33,7 @@ export const VideoBg = styled.video`
   opacity: 0.6;
 `;
 
+/** 히어로 콘텐츠: 영상 위에 표시, 페이드인 애니메이션 */
 export const Content = styled.div`
   z-index: 1;
   position: relative;
@@ -58,6 +61,7 @@ export const Desc = styled.p`
   }
 `;
 
+/** CTA 버튼: 시안 테두리, 호버 시 배경 채움 + 글로우 효과 */
 export const BtnMain = styled.button`
   padding: 15px 40px;
   background: transparent;

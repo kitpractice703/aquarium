@@ -1,3 +1,9 @@
+/**
+ * API 통신에 사용되는 TypeScript 인터페이스 정의
+ * - 백엔드 DTO와 1:1 대응하는 프론트엔드 타입
+ */
+
+/** 프로그램 일정 데이터 (ScheduleDto 대응) */
 export interface ScheduleData {
   id: number;
   programId: number;
@@ -6,9 +12,10 @@ export interface ScheduleData {
   time: string;
   title: string;
   place: string;
-  status: string;
+  status: string; // "open" | "closed"
 }
 
+/** 후기 응답 데이터 */
 export interface ReviewData {
   id: number;
   title: string;
@@ -18,25 +25,28 @@ export interface ReviewData {
   date: string;
 }
 
+/** 후기 작성 요청 */
 export interface ReviewRequest {
   title: string;
   content: string;
   rating: number;
 }
 
+/** 예약 응답 데이터 (ReservationDto 대응) */
 export interface ReservationDto {
   id: number;
-  ticketNumber?: string; // 티켓 번호 (예: T2026...)
-  visitDate: string; // 방문 날짜
-  visitTime?: string; // [핵심] 이 부분이 없어서 에러가 발생했습니다!
-  startTime?: string; // 스케줄 시작 시간 (구버전 호환용)
-  programTitle: string; // 프로그램 제목
-  programType?: string; // PERFORMANCE | EXPERIENCE | ADMISSION
-  status: string; // 예매 상태
-  location?: string; // 장소
-  imageUrl?: string; // 이미지 URL
+  ticketNumber?: string;
+  visitDate: string;
+  visitTime?: string;
+  startTime?: string;
+  programTitle: string;
+  programType?: string; // "ADMISSION" | "PERFORMANCE" | "EXPERIENCE"
+  status: string; // "CONFIRMED" | "CANCELLED"
+  location?: string;
+  imageUrl?: string;
 }
 
+/** 입장권 예약 요청 */
 export interface ReservationRequest {
   visitDate: string;
   visitTime: string;
@@ -44,6 +54,7 @@ export interface ReservationRequest {
   teenCount: number;
 }
 
+/** 회원가입 요청 */
 export interface SignupRequest {
   username: string;
   email: string;
@@ -51,20 +62,23 @@ export interface SignupRequest {
   phone: string;
 }
 
+/** 로그인 요청 */
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
+/** 프로그램 정보 */
 export interface Program {
   id: number;
   title: string;
   description: string;
-  imageUrl: string; // 혹은 image_url 등 백엔드와 맞춤
+  imageUrl: string;
   price: number;
-  type: "EXPERIENCE" | "PERFORMANCE"; // 체험 | 공연
+  type: "EXPERIENCE" | "PERFORMANCE";
 }
 
+/** 프로그램 일정 (ProgramSchedule 엔티티 대응) */
 export interface ProgramSchedule {
   id: number;
   programId: number;
@@ -73,6 +87,7 @@ export interface ProgramSchedule {
   isClosed: boolean;
 }
 
+/** FAQ 데이터 */
 export interface FaqData {
   id: number;
   category: string;
@@ -80,11 +95,13 @@ export interface FaqData {
   answer: string;
 }
 
+/** 결제 정보 */
 export interface Payment {
   amount: number;
   orderName: string;
 }
 
+/** 테마 전시관 데이터 (Exhibition 엔티티 대응) */
 export interface ThemeItem {
   id: number;
   title: string;

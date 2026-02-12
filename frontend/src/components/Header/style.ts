@@ -1,6 +1,7 @@
+/** Header 컴포넌트 스타일 */
 import styled from "styled-components";
 
-/* [1] 배경 (화면 전체 너비) */
+/** 고정 헤더 배경: 상단 고정, 반투명 블러 효과 */
 export const HeaderWrapper = styled.header`
   position: fixed;
   top: 0;
@@ -14,13 +15,12 @@ export const HeaderWrapper = styled.header`
   z-index: 1000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-  /* 내용물 중앙 정렬 */
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-/* [2] 내용물 (최대 1200px) */
+/** 헤더 내부 콘텐츠 (최대 1200px, 좌우 정렬) */
 export const HeaderContent = styled.div`
   width: 100%;
   max-width: 1200px;
@@ -39,6 +39,7 @@ export const Logo = styled.div`
   cursor: pointer;
 `;
 
+/** 메인 내비게이션 (모바일 768px 이하에서 숨김 처리) */
 export const Gnb = styled.nav`
   display: flex;
   gap: 30px;
@@ -62,14 +63,14 @@ export const Gnb = styled.nav`
   }
 `;
 
+/** 사용자 메뉴 영역 (로그인/회원가입 또는 사용자명/로그아웃) */
 export const UserMenu = styled.div`
   display: flex;
   gap: 15px;
   font-size: 14px;
   color: var(--text-gray);
 
-  /* [추가] 텍스트 줄바꿈 방지 */
-  white-space: nowrap;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 
   span {
     cursor: pointer;
@@ -85,7 +86,7 @@ export const UserMenu = styled.div`
   }
 `;
 
-/* 모달 내부 스타일 */
+/** 모달용 입력 그룹 스타일 */
 export const InputGroup = styled.div`
   margin-bottom: 20px;
   text-align: left;
@@ -109,6 +110,7 @@ export const InputBox = styled.input`
     border-color: var(--accent-cyan);
   }
 `;
+/** 시안 컬러 액션 버튼 (로그인, 회원가입 등) */
 export const BtnAction = styled.button`
   width: 100%;
   padding: 15px;
@@ -125,7 +127,7 @@ export const BtnAction = styled.button`
   }
 `;
 
-/* 구글 로그인 버튼 (스타일 복구) */
+/** Google OAuth2 소셜 로그인 버튼 */
 export const GoogleBtn = styled.button`
   width: 100%;
   padding: 15px;
@@ -147,6 +149,7 @@ export const GoogleBtn = styled.button`
   }
 `;
 
+/** GNB 예매하기 버튼 (라운드형 시안 버튼) */
 export const BookingButton = styled.button`
   background: var(--accent-cyan);
   color: #000;

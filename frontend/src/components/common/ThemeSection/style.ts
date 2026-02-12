@@ -1,17 +1,16 @@
+/** 테마 전시 섹션 스타일 */
 import styled from "styled-components";
 
-/* [1] 배경 (화면 전체) */
+/** 섹션 래퍼: 전체 너비 + 중앙 정렬 */
 export const SectionWrapper = styled.section`
   width: 100%;
   padding: 100px 20px;
   background-color: var(--bg-dark);
-
-  /* 내용 중앙 정렬 */
   display: flex;
   justify-content: center;
 `;
 
-/* [2] 내용물 (최대 1200px) */
+/** 내부 컨테이너: 최대 1200px */
 export const InnerContainer = styled.div`
   width: 100%;
   max-width: 1200px;
@@ -43,6 +42,7 @@ export const SearchInput = styled.input`
   }
 `;
 
+/** 테마 그리드: 4열 (1024px 이하 2열, 600px 이하 1열) */
 export const ThemeGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -55,6 +55,7 @@ export const ThemeGrid = styled.div`
   }
 `;
 
+/** 테마 카드: 호버 시 상승 + 그림자 효과 */
 export const ThemeCard = styled.div`
   background: var(--bg-card);
   border-radius: 15px;

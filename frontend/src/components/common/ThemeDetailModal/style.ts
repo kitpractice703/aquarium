@@ -1,3 +1,4 @@
+/** 테마 상세 모달 스타일 */
 import styled, { keyframes } from "styled-components";
 
 const fadeIn = keyframes`
@@ -34,6 +35,7 @@ export const Container = styled.div`
   overflow: hidden;
 `;
 
+/** 닫기 버튼: 호버 시 90도 회전 */
 export const CloseButton = styled.button`
   position: absolute;
   top: 20px;
@@ -51,12 +53,14 @@ export const CloseButton = styled.button`
   }
 `;
 
+/** 테마 탭 네비게이션 */
 export const Tabs = styled.div`
   display: flex;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(0, 0, 0, 0.2);
 `;
 
+/** 탭 아이템: 선택 시 테마 고유 색상 하단 보더 표시 */
 export const TabItem = styled.div<{ $active: boolean; $color: string }>`
   flex: 1;
   padding: 25px;
@@ -78,6 +82,7 @@ export const TabItem = styled.div<{ $active: boolean; $color: string }>`
   }
 `;
 
+/** 컨텐츠 영역: 설명(좌) + 영상(우), 모바일에서 역순 세로 배치 */
 export const Content = styled.div`
   flex: 1;
   display: flex;
@@ -97,6 +102,7 @@ export const InfoArea = styled.div`
   animation: ${fadeIn} 0.5s ease;
 `;
 
+/** 테마 제목: 각 테마 고유 색상, 텍스트 쉐도우 */
 export const Title = styled.h2<{ $color: string }>`
   font-size: 56px;
   margin-bottom: 30px;
@@ -115,11 +121,11 @@ export const Desc = styled.p`
   white-space: pre-line;
 `;
 
-/* [핵심 수정] 높이(height) 고정을 풀고, 16:9 비율(aspect-ratio)을 적용했습니다. */
+/** 영상 영역: 16:9 비율 고정, 테마 색상 보더 */
 export const VideoArea = styled.div<{ $color: string }>`
   flex: 1.2;
   width: 100%;
-  aspect-ratio: 16 / 9; /* 영상 비율 16:9 고정 */
+  aspect-ratio: 16 / 9;
   background: #000;
   border-radius: 15px;
   overflow: hidden;

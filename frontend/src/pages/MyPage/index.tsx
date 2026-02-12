@@ -1,8 +1,13 @@
+/**
+ * 마이페이지 컴포넌트
+ * - 좌: 내 정보 관리 (비밀번호 변경 + 전화번호 수정)
+ * - 우: 예매 내역 목록 (관람권 / 체험 / 공연 구분 배지)
+ * - 비밀번호 변경 시 자동 로그아웃
+ */
 import * as S from "./style";
-import { useMyPage } from "./hooks/useMyPage"; // 커스텀 훅
+import { useMyPage } from "./hooks/useMypage";
 
 const MyPage = () => {
-  // 로직은 훅에서 다 가져옴
   const {
     username,
     reservations,
@@ -13,6 +18,7 @@ const MyPage = () => {
     handleUpdateInfo,
   } = useMyPage();
 
+  /** 프로그램 타입별 배지 렌더링 */
   const renderBadge = (type?: string) => {
     if (type === "PERFORMANCE") {
       return <S.Badge $type="PERFORMANCE">[공연]</S.Badge>;
@@ -33,13 +39,16 @@ const MyPage = () => {
         </S.PageHeader>
 
         <S.ContentGrid>
+          {/* 좌측: 내 정보 관리 */}
           <S.Section>
             <S.SectionTitle>내 정보 관리</S.SectionTitle>
             <S.InfoForm>
+              {/* 이메일 (읽기 전용) */}
               <S.InputGroup>
                 <label>아이디 (이메일)</label>
                 <input type="text" value={username || ""} disabled readOnly />
               </S.InputGroup>
+              {/* 현재 비밀번호 (본인 확인용) */}
               <S.InputGroup>
                 <label>현재 비밀번호</label>
                 <input
@@ -50,6 +59,7 @@ const MyPage = () => {
                   onChange={handleChange}
                 />
               </S.InputGroup>
+              {/* 새 비밀번호 */}
               <S.InputGroup>
                 <label>새 비밀번호</label>
                 <input
@@ -60,6 +70,7 @@ const MyPage = () => {
                   onChange={handleChange}
                 />
               </S.InputGroup>
+              {/* 새 비밀번호 확인 */}
               <S.InputGroup>
                 <label>새 비밀번호 확인</label>
                 <input
@@ -70,6 +81,7 @@ const MyPage = () => {
                   onChange={handleChange}
                 />
               </S.InputGroup>
+              {/* 전화번호 (자동 하이픈 포맷) */}
               <S.InputGroup>
                 <label>전화번호</label>
                 <input
@@ -89,6 +101,7 @@ const MyPage = () => {
             </S.InfoForm>
           </S.Section>
 
+          {/* 우측: 예매 내역 */}
           <S.Section>
             <S.SectionTitle>
               예매 내역 <span>({reservations.length}건)</span>

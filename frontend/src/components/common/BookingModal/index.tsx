@@ -1,6 +1,12 @@
+/**
+ * 입장권 예매 모달 컴포넌트
+ * - 4단계 위저드: 날짜 선택(Step 1) → 인원 선택(Step 3) → 확인(Step 4) → 결제
+ * - Step 2(시간 선택)는 종일권으로 변경되어 생략됨
+ * - 결제 완료 시 PaymentModal → 백엔드 예약 API 호출
+ */
 import PaymentModal from "../PaymentModal";
 import * as S from "./style";
-import { useBooking } from "./hooks/useBooking"; // 커스텀 훅 Import
+import { useBooking } from "./hooks/useBooking";
 
 interface Props {
   isOpen: boolean;
@@ -8,7 +14,6 @@ interface Props {
 }
 
 const BookingModal = ({ isOpen, onClose }: Props) => {
-  // 로직은 훅에서 다 가져다 씁니다.
   const {
     step,
     calendarData,
@@ -38,7 +43,7 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
           </S.Header>
 
           <S.Content>
-            {/* Step 1: 날짜 선택 */}
+            {/* Step 1: 달력에서 날짜 선택 (오늘 이전 날짜는 비활성화) */}
             {step === 1 && (
               <>
                 <S.StepTitle>
@@ -66,7 +71,7 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
               </>
             )}
 
-            {/* Step 3: 인원 선택 (Step 2 건너뜀) */}
+            {/* Step 3: 인원 선택 (성인/청소년 카운터) */}
             {step === 3 && (
               <>
                 <S.StepTitle>인원을 선택해주세요</S.StepTitle>
@@ -103,7 +108,7 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
               </>
             )}
 
-            {/* Step 4: 예매 정보 확인 */}
+            {/* Step 4: 예매 정보 확인 (날짜, 티켓 종류, 인원, 결제금액) */}
             {step === 4 && (
               <>
                 <S.StepTitle>예매 정보를 확인해주세요</S.StepTitle>
@@ -149,12 +154,13 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
         </S.Container>
       </S.Overlay>
 
+      {/* 결제 모달: Step 4에서 결제하기 클릭 시 표시 */}
       {showPayment && (
         <PaymentModal
           amount={totalPrice}
           orderName="Naquarium 관람권"
           onSuccess={handlePaymentSuccess}
-          onClose={() => setShowPayment(false)}
+          onClose={() => { setShowPayment(false); onClose(); }}
         />
       )}
     </>

@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken; // [필수 Import]
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +17,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 게시글 API 컨트롤러 (후기 CRUD)
+ * - 후기 목록 조회: 비로그인 접근 가능 (permitAll)
+ * - 후기 작성: 로그인 필요
+ */
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -25,7 +30,7 @@ public class PostApiController {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    // [핵심] 로그인 방식에 따라 이메일을 정확하게 추출하는 메서드 (ReservationController와 동일)
+    /** 인증 정보에서 이메일 추출 (일반 로그인 / OAuth2 분기 처리) */
     private String getEmail(Authentication auth) {
         if (auth instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
@@ -34,7 +39,7 @@ public class PostApiController {
         return auth.getName();
     }
 
-    // 1. [조회] 후기 목록 가져오기
+    /** 후기 목록 조회 (최신순, @EntityGraph로 user 즉시 로딩) */
     @GetMapping("/reviews")
     @Transactional(readOnly = true)
     public List<PostDto> getReviews() {
@@ -44,7 +49,7 @@ public class PostApiController {
                 .collect(Collectors.toList());
     }
 
-    // 2. [작성] 후기 쓰기 (로그인 필수)
+    /** 후기 작성 (로그인 필요) */
     @PostMapping("/reviews")
     public ResponseEntity<String> createReview(@RequestBody WriteDto request) {
         try {
@@ -53,9 +58,7 @@ public class PostApiController {
                 return ResponseEntity.status(401).body("로그인이 필요합니다.");
             }
 
-            // [수정] getEmail() 메서드로 진짜 이메일 가져오기
             String email = getEmail(auth);
-            System.out.println(">>> 후기 작성 요청 이메일: " + email); // [로그 확인용]
 
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("사용자 정보 없음"));
@@ -72,12 +75,12 @@ public class PostApiController {
             return ResponseEntity.ok("후기가 등록되었습니다.");
 
         } catch (Exception e) {
-            e.printStackTrace(); // 서버 로그에 에러 출력
+            e.printStackTrace();
             return ResponseEntity.status(500).body("후기 등록 실패: " + e.getMessage());
         }
     }
 
-    // ================= DTO =================
+    /** 후기 응답 DTO (내부 클래스) */
     @Data
     static class PostDto {
         private Long id;
@@ -92,17 +95,14 @@ public class PostApiController {
             this.title = post.getTitle();
             this.content = post.getContent();
 
-            // [방어 코드 1] 작성자 정보가 없으면 "알 수 없음" 처리
             if (post.getUser() != null) {
                 this.writerName = post.getUser().getUsername();
             } else {
                 this.writerName = "알 수 없음";
             }
 
-            // [방어 코드 2] 별점이 없으면 0.0 처리
             this.rating = (post.getRating() != null) ? post.getRating() : 0.0;
 
-            // [방어 코드 3] 날짜 포맷팅
             if (post.getCreatedAt() != null) {
                 this.date = post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             } else {
@@ -111,6 +111,7 @@ public class PostApiController {
         }
     }
 
+    /** 후기 작성 요청 DTO (내부 클래스) */
     @Data
     static class WriteDto {
         private String title;

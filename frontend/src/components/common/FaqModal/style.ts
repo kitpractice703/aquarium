@@ -1,3 +1,4 @@
+/** FAQ 모달 스타일 */
 import styled, { keyframes } from "styled-components";
 
 const fadeIn = keyframes`
@@ -78,7 +79,7 @@ export const Content = styled.div`
   }
 `;
 
-/* 아코디언 아이템 */
+/** 아코디언 아이템 */
 export const AccordionItem = styled.div`
   margin-bottom: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -87,6 +88,7 @@ export const AccordionItem = styled.div`
   }
 `;
 
+/** 질문 헤더: 열림 시 배경 변경 + 시안 텍스트 색상 */
 export const Question = styled.div<{ $isOpen: boolean }>`
   padding: 20px;
   cursor: pointer;
@@ -116,9 +118,9 @@ export const Question = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
+/** 답변: max-height 트랜지션으로 부드러운 펼침/접힘 */
 export const Answer = styled.div<{ $isOpen: boolean }>`
-  max-height: ${(props) =>
-    props.$isOpen ? "500px" : "0"}; /* 애니메이션용 높이 제한 */
+  max-height: ${(props) => (props.$isOpen ? "500px" : "0")};
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
 

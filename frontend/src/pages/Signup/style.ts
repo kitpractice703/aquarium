@@ -1,17 +1,18 @@
+/** 회원가입 페이지 스타일 */
 import styled from "styled-components";
 
-/* 화면 전체를 감싸는 컨테이너 (중앙 정렬 + 배경) */
+/** 전체 컨테이너: 중앙 정렬 + 상단 패딩 (헤더 높이 고려) */
 export const SignupContainer = styled.div`
   width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 120px 20px 50px; /* 헤더 높이 고려 */
+  padding: 120px 20px 50px;
   background: var(--bg-dark, #121212);
 `;
 
-/* 실제 회원가입 폼이 들어가는 카드 영역 */
+/** 가입 폼 카드: 글래스모피즘 효과 */
 export const FormCard = styled.div`
   background: var(--bg-card, rgba(0, 0, 0, 0.5));
   padding: 50px;
@@ -47,6 +48,7 @@ export const Label = styled.label`
   color: var(--text-gray, #ccc);
 `;
 
+/** 입력 필드: 포커스 시 시안 글로우 */
 export const Input = styled.input`
   width: 100%;
   padding: 15px;
@@ -68,6 +70,7 @@ export const Input = styled.input`
   }
 `;
 
+/** 가입 버튼: 호버 시 상승 효과 */
 export const SubmitButton = styled.button`
   width: 100%;
   padding: 15px;
@@ -87,6 +90,7 @@ export const SubmitButton = styled.button`
   }
 `;
 
+/** 로그인 링크 */
 export const LoginLink = styled.div`
   text-align: center;
   margin-top: 25px;

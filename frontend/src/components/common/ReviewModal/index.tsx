@@ -1,16 +1,20 @@
+/**
+ * 관람 후기 모달 컴포넌트
+ * - 3개 뷰: LIST(목록) / DETAIL(상세) / WRITE(작성)
+ * - 페이지네이션: 5건씩 표시
+ * - 비로그인 시 글쓰기 클릭 → 로그인 안내 모달 표시
+ */
 import * as S from "./style";
 import LoginRequestModal from "../LoginRequestModal";
 import LoginModal from "../LoginModal";
-import { useReview } from "./hooks/useReview"; // 훅 import
+import { useReview } from "./hooks/useReview";
 
-// ✅ Props 인터페이스는 여기에 (컴포넌트 사용 규칙이니까)
 interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
 const ReviewModal = ({ isOpen, onClose }: Props) => {
-  // 로직은 훅에서 싹 가져오기
   const {
     view,
     setView,
@@ -45,7 +49,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
           </S.Header>
 
           <S.Content>
-            {/* [1] 목록 화면 */}
+            {/* 목록 뷰 */}
             {view === "LIST" && (
               <>
                 <S.TableHeader>
@@ -107,12 +111,11 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                   </S.Pagination>
                 )}
 
-                {/* 글쓰기 버튼 (스타일이 absolute이므로 Content 안에서도 우측 하단에 뜸) */}
                 <S.WriteBtn onClick={handleWriteClick}>✎ 글쓰기</S.WriteBtn>
               </>
             )}
 
-            {/* [2] 상세 화면 */}
+            {/* 상세 뷰 */}
             {view === "DETAIL" && selectedReview && (
               <S.DetailView>
                 <h3>{selectedReview.title}</h3>
@@ -133,7 +136,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
               </S.DetailView>
             )}
 
-            {/* [3] 글쓰기 화면 */}
+            {/* 작성 뷰 */}
             {view === "WRITE" && (
               <S.WriteForm>
                 <div className="rating-select">
@@ -190,7 +193,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
         </S.Container>
       </S.Overlay>
 
-      {/* 로그인 관련 모달들 */}
+      {/* 로그인 필요 안내 모달 */}
       <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}
@@ -200,6 +203,7 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
         }}
       />
 
+      {/* 로그인 모달 */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}

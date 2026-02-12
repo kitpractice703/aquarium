@@ -1,7 +1,13 @@
+/**
+ * 프로그램 & 일정 섹션 컴포넌트
+ * - 체험 프로그램 카드 (VR 다이빙, 먹이주기)
+ * - 공연 시간표: 날짜 슬라이더 + 해당 날짜의 스케줄 목록
+ * - 월요일 휴관일 안내, 빈 일정 안내 처리
+ */
 import * as S from "./style";
-import vrImage from "../../../../assets/images/vr_driving.jpeg";
-import feedingImage from "../../../../assets/images/feeding.jpg";
-import type { ScheduleData } from "../../../../types/api";
+import vrImage from "../../../assets/images/vr_driving.jpeg";
+import feedingImage from "../../../assets/images/feeding.jpg";
+import type { ScheduleData } from "../../../types/api";
 
 interface Props {
   dates: any[];
@@ -24,18 +30,19 @@ const ProgramSection = ({
   onProgramClick,
   onScheduleClick,
 }: Props) => {
-  // 선택된 날짜에 맞는 스케줄 필터링
+  /** 선택된 날짜에 해당하는 스케줄만 필터링 */
   const filteredSchedules = schedules.filter(
     (item) => item.date === selectedDate,
   );
+  /** 선택된 날짜가 월요일(휴관일)인지 확인 */
   const isMonday = dates.find((d) => d.fullDate === selectedDate)?.isMonday;
 
   return (
     <S.Section id="programs">
       <S.Container>
-        <S.SectionTitle>프로그램 & 일정</S.SectionTitle>
+        <S.SectionTitle>프로그램 &amp; 일정</S.SectionTitle>
         <S.ProgramLayout>
-          {/* 체험 프로그램 */}
+          {/* 체험 프로그램 카드 */}
           <S.ProgramCol>
             <h3>체험 프로그램</h3>
             <S.ExperienceList>
@@ -50,7 +57,7 @@ const ProgramSection = ({
                   onClick={() =>
                     onProgramClick({
                       id: 101,
-                      title: "가상 심해 다이빙",
+                      title: "가상 심해 다이빙 (VR)",
                       price: 15000,
                     })
                   }
@@ -80,7 +87,7 @@ const ProgramSection = ({
             </S.ExperienceList>
           </S.ProgramCol>
 
-          {/* 공연 시간표 */}
+          {/* 공연 시간표: 날짜 슬라이더 + 일정 목록 */}
           <S.ProgramCol>
             <h3 id="schedule-start">공연 시간표</h3>
             <S.DateSlider>

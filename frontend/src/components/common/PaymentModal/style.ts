@@ -1,5 +1,7 @@
+/** 결제 모달 스타일 */
 import styled, { keyframes } from "styled-components";
 
+/** 로딩 스피너 애니메이션 */
 const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -18,6 +20,7 @@ export const Overlay = styled.div`
   justify-content: center;
 `;
 
+/** 결제 모달: 흰색 배경 (다크 테마와 대비하여 결제 UI 구분) */
 export const Container = styled.div`
   background: white;
   width: 360px;
@@ -53,6 +56,7 @@ export const Content = styled.div`
   padding: 20px;
 `;
 
+/** 결제 금액 표시 영역: 파란색 금액 강조 */
 export const AmountBox = styled.div`
   text-align: center;
   margin-bottom: 25px;
@@ -75,6 +79,7 @@ export const AmountBox = styled.div`
   }
 `;
 
+/** 카드 입력 폼: 4자리씩 4칸 */
 export const CardForm = styled.div`
   .input-group {
     margin-bottom: 20px;
@@ -114,6 +119,7 @@ export const PayBtn = styled.button`
   }
 `;
 
+/** 상태 표시 영역 (로딩/성공) */
 export const StatusView = styled.div`
   text-align: center;
   padding: 20px 0;
@@ -129,6 +135,7 @@ export const StatusView = styled.div`
   }
 `;
 
+/** 로딩 스피너 */
 export const Spinner = styled.div`
   width: 40px;
   height: 40px;
@@ -139,6 +146,7 @@ export const Spinner = styled.div`
   animation: ${spin} 1s linear infinite;
 `;
 
+/** 결제 성공 체크 아이콘 */
 export const CheckIcon = styled.div`
   width: 50px;
   height: 50px;

@@ -1,3 +1,8 @@
+/**
+ * 테마 섹션 로직 커스텀 훅
+ * - 4개 테마 데이터 (정적): 이미지 + 제목 + 설명 + 테마 색상
+ * - 카드 클릭 시 선택된 테마 ID 저장 + 상세 모달 열기
+ */
 import { useState } from "react";
 import lightSeaImg from "../../../../assets/images/light_sea.jpg";
 import balanceSeaImg from "../../../../assets/images/balance_sea.jpg";
@@ -9,23 +14,24 @@ export const useThemeSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedThemeId, setSelectedThemeId] = useState<number>(0);
 
+  /** 테마 데이터 (각 테마의 고유 색상으로 시각적 구분) */
   const themeData: ThemeItem[] = [
     {
-      id: 0, // 모달의 0번(빛의 바다)과 연결
+      id: 0,
       title: "빛의 바다",
       desc: "얕은 바다의 산호초와 공생하는 생명들의 화려한 춤",
       img: lightSeaImg,
       color: "#ffdd57",
     },
     {
-      id: 1, // 모달의 1번(균형의 바다)과 연결
+      id: 1,
       title: "균형의 바다",
       desc: "먹이사슬의 정점과 저변, 생태계의 완벽한 조화",
       img: balanceSeaImg,
       color: "#64ffda",
     },
     {
-      id: 2, // 모달의 2번(깊은 바다)과 연결
+      id: 2,
       title: "깊은 바다",
       desc: "빛이 닿지 않는 곳, 발광 생물들의 신비로운 기록",
       img: deepSeaImg,
@@ -40,6 +46,7 @@ export const useThemeSection = () => {
     },
   ];
 
+  /** 테마 카드 클릭: 해당 테마 ID 선택 + 모달 열기 */
   const handleCardClick = (id: number) => {
     setSelectedThemeId(id);
     setIsModalOpen(true);

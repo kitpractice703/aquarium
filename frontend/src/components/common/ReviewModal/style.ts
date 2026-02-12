@@ -1,3 +1,7 @@
+/**
+ * 관람 후기 모달 스타일
+ * - LIST(목록), DETAIL(상세), WRITE(작성) 뷰 스타일 포함
+ */
 import styled, { keyframes } from "styled-components";
 
 const fadeIn = keyframes`
@@ -82,7 +86,9 @@ export const Content = styled.div`
   }
 `;
 
-/* [1] 목록 (List) 스타일 */
+/* ========== [1] 목록 (List) 스타일 ========== */
+
+/** 테이블 헤더: 제목 / 평점 / 작성자 / 날짜 4열 그리드 */
 export const TableHeader = styled.div`
   display: grid;
   grid-template-columns: 1fr 120px 100px 120px;
@@ -98,6 +104,7 @@ export const TableHeader = styled.div`
   }
 `;
 
+/** 후기 아이템 행: 호버 시 배경 변경 */
 export const ReviewItem = styled.div`
   display: grid;
   grid-template-columns: 1fr 120px 100px 120px;
@@ -131,15 +138,15 @@ export const ReviewItem = styled.div`
   }
 `;
 
-/* [수정됨] 페이지네이션 중앙 정렬 강화 */
+/** 페이지네이션: margin-top: auto로 하단 고정 */
 export const Pagination = styled.div`
   display: flex;
-  justify-content: center; /* 가로 중앙 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center;
+  align-items: center;
   gap: 10px;
-  margin-top: auto; /* 내용을 밀고 바닥에 위치 */
+  margin-top: auto;
   padding-top: 30px;
-  width: 100%; /* 부모 영역 전체 사용 */
+  width: 100%;
 
   button {
     background: none;
@@ -151,7 +158,6 @@ export const Pagination = styled.div`
     cursor: pointer;
     transition: 0.3s;
 
-    /* 버튼 내부 텍스트도 중앙 정렬 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -173,6 +179,7 @@ export const Pagination = styled.div`
   }
 `;
 
+/** 글쓰기 FAB 버튼: 우하단 고정, 호버 시 상승 + 글로우 */
 export const WriteBtn = styled.button`
   position: absolute;
   bottom: 30px;
@@ -187,7 +194,7 @@ export const WriteBtn = styled.button`
   cursor: pointer;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   transition: 0.3s;
-  z-index: 10; /* 페이지네이션 위에 뜨도록 설정 */
+  z-index: 10;
 
   &:hover {
     transform: translateY(-3px);
@@ -195,7 +202,7 @@ export const WriteBtn = styled.button`
   }
 `;
 
-/* [2] 글 읽기 (Detail) 스타일 */
+/* ========== [2] 상세 (Detail) 스타일 ========== */
 export const DetailView = styled.div`
   color: #fff;
 
@@ -232,7 +239,7 @@ export const DetailView = styled.div`
   }
 `;
 
-/* [3] 글 쓰기 (Write) 스타일 */
+/* ========== [3] 작성 (Write) 스타일 ========== */
 export const WriteForm = styled.div`
   display: flex;
   flex-direction: column;
@@ -273,6 +280,7 @@ export const WriteForm = styled.div`
   }
 `;
 
+/** 액션 버튼: $outline 시 투명 배경 + 테두리 */
 export const ActionBtn = styled.button<{ $outline?: boolean }>`
   padding: 10px 25px;
   border-radius: 5px;
@@ -293,13 +301,15 @@ export const ActionBtn = styled.button<{ $outline?: boolean }>`
   }
 `;
 
+/** 빈 상태 메시지 */
 export const EmptyMessage = styled.div`
   padding: 40px;
   text-align: center;
   color: #888;
-  font-size: 16px; /* 폰트 크기도 살짝 지정해주면 좋습니다 */
+  font-size: 16px;
 `;
 
+/** 별점 텍스트 (노란색) */
 export const RatingText = styled.span`
   color: #ffdd57;
 `;

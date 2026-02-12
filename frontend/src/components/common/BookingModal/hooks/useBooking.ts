@@ -1,27 +1,32 @@
+/**
+ * 예매 모달 로직 커스텀 훅
+ * - 달력 데이터 생성, 단계 진행, 인원/금액 계산, 결제 후 예약 API 호출
+ * - 모달 열림 시 상태 초기화 + body 스크롤 잠금
+ */
 import { useState, useEffect } from "react";
 import { api } from "../../../../api/axios";
 
-// 달력 데이터 생성 헬퍼 함수 (Hook 밖이나 utils로 빼도 됨)
+/** 현재 월의 달력 데이터 생성 (요일 오프셋 포함) */
 const getCalendarDays = () => {
   const date = new Date();
   const year = date.getFullYear();
   const month = date.getMonth();
-  const firstDay = new Date(year, month, 1).getDay();
-  const lastDate = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay(); // 1일의 요일 (0=일)
+  const lastDate = new Date(year, month + 1, 0).getDate(); // 해당 월의 마지막 날
   const days = [];
-  for (let i = 0; i < firstDay; i++) days.push(null);
+  for (let i = 0; i < firstDay; i++) days.push(null); // 빈 칸(오프셋)
   for (let i = 1; i <= lastDate; i++) days.push(i);
   return { year, month: month + 1, days };
 };
 
-export const useBooking = (isOpen: boolean, onClose: () => void) => {
-  const [step, setStep] = useState(1); // 1:날짜 -> 3:인원 (2:시간 건너뜀)
+export const useBooking = (isOpen: boolean, _onClose: () => void) => {
+  const [step, setStep] = useState(1);
   const [calendarData, setCalendarData] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [counts, setCounts] = useState({ adult: 0, teen: 0 });
   const [showPayment, setShowPayment] = useState(false);
 
-  // 모달 열릴 때 초기화
+  /** 모달 열림/닫힘 시 상태 초기화 및 바디 스크롤 잠금/해제 */
   useEffect(() => {
     if (isOpen) {
       setCalendarData(getCalendarDays());
@@ -35,9 +40,10 @@ export const useBooking = (isOpen: boolean, onClose: () => void) => {
     }
   }, [isOpen]);
 
+  /** 총 금액 계산: 성인 35,000원 + 청소년 29,000원 */
   const totalPrice = counts.adult * 35000 + counts.teen * 29000;
 
-  // 인원 증감 핸들러
+  /** 인원 증감 (최소 0명) */
   const handleCountChange = (type: "adult" | "teen", delta: number) => {
     setCounts((prev) => ({
       ...prev,
@@ -45,23 +51,22 @@ export const useBooking = (isOpen: boolean, onClose: () => void) => {
     }));
   };
 
-  // 다음 단계 이동 핸들러
+  /** 다음 단계 진행: Step 1 → 3 → 4 → 결제 (Step 2 시간 선택 생략) */
   const handleNext = () => {
     if (step === 1 && selectedDate) {
-      setStep(3); // 관람권은 시간 선택 없이 인원 선택으로 점프
+      setStep(3);
     } else if (step === 3 && totalPrice > 0) {
-      setStep(4); // 확인창
+      setStep(4);
     } else if (step === 4) {
       setShowPayment(true);
     }
   };
 
-  // 이전 단계 이동 핸들러
   const handlePrev = () => {
     setStep(step === 3 ? 1 : step - 1);
   };
 
-  // 결제 성공 핸들러
+  /** 결제 성공 시 백엔드 예약 API 호출 (visitTime: "종일권") */
   const handlePaymentSuccess = async () => {
     try {
       const year = calendarData.year;
@@ -74,9 +79,6 @@ export const useBooking = (isOpen: boolean, onClose: () => void) => {
         adultCount: counts.adult,
         teenCount: counts.teen,
       });
-
-      alert("예매가 완료되었습니다!");
-      onClose();
     } catch (error: any) {
       if (error.response?.status === 401) alert("로그인이 필요합니다.");
       else alert("예매 처리 중 오류가 발생했습니다.");

@@ -1,3 +1,4 @@
+/** 마이페이지 스타일 */
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -31,9 +32,10 @@ export const Title = styled.h2`
   letter-spacing: 2px;
 `;
 
+/** 2열 그리드: 정보 관리(좌) + 예매 내역(우), 모바일 1열 */
 export const ContentGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 좌우 너비 1:1 유지 */
+  grid-template-columns: 1fr 1fr;
   gap: 40px;
   align-items: stretch;
 
@@ -47,15 +49,13 @@ export const Section = styled.div`
   padding: 40px;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.05);
-
-  /* 높이 설정 유지 */
   height: 100%;
   min-height: 600px;
-
   display: flex;
   flex-direction: column;
 `;
 
+/** 섹션 제목: 좌측 시안 바 */
 export const SectionTitle = styled.h3`
   font-size: 22px;
   margin-bottom: 30px;
@@ -107,6 +107,7 @@ export const InputGroup = styled.div`
   }
 `;
 
+/** 정보 수정 버튼: 호버 시 시안 전환 */
 export const UpdateButton = styled.button`
   width: 100%;
   margin-top: 20px;
@@ -134,14 +135,12 @@ export const TicketList = styled.div`
   flex: 1;
 `;
 
+/** 예매 카드: 프로그램 타입에 따라 배경/보더 색상 구분 */
 export const TicketCard = styled.div<{ $isProgram?: boolean }>`
-  /* 프로그램이면 보라/파란빛 배경, 아니면 기본 투명 배경 */
   background: ${(props) =>
     props.$isProgram
       ? "rgba(100, 100, 255, 0.1)"
       : "rgba(255, 255, 255, 0.03)"};
-
-  /* 테두리 색상도 구분 */
   border: 1px solid
     ${(props) =>
       props.$isProgram
@@ -197,6 +196,7 @@ export const TicketInfo = styled.div`
   }
 `;
 
+/** 예매 상태 배지: CONFIRMED=초록, 그 외=빨간 */
 export const TicketStatus = styled.div<{ $status: string }>`
   padding: 6px 12px;
   border-radius: 20px;
@@ -222,7 +222,6 @@ export const EmptyMsg = styled.div`
   font-size: 16px;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-
   height: 100%;
   display: flex;
   align-items: center;
@@ -234,9 +233,10 @@ export const LoadingWrapper = styled.div`
   padding-top: 100px;
   text-align: center;
   color: white;
-  font-size: 18px; /* 글자 크기도 살짝 키워주면 좋습니다 */
+  font-size: 18px;
 `;
 
+/** 프로그램 타입 배지: 공연(빨강) / 체험(노랑) */
 export const Badge = styled.span<{ $type: "PERFORMANCE" | "EXPERIENCE" }>`
   margin-right: 6px;
   font-weight: bold;

@@ -15,10 +15,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-// [ADDED] 구글 로그인 정보 처리를 위한 import 추가
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 인증(Authentication) 컨트롤러
+ * - 회원가입, 로그인, 로그아웃, 현재 사용자 정보 조회
+ * - 세션 기반 인증 방식 사용
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -28,7 +32,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    // 1. 회원가입 (생략 - 기존 코드 유지)
+    /** 회원가입 (이메일 중복 시 409 Conflict 반환) */
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -46,7 +50,11 @@ public class AuthController {
         return ResponseEntity.ok("회원가입이 완료되었습니다!");
     }
 
-    // 2. 로그인 (생략 - 기존 코드 유지)
+    /**
+     * 로그인 (세션 기반)
+     * - AuthenticationManager를 통해 이메일/비밀번호 검증
+     * - 인증 성공 시 SecurityContext에 저장하고 세션에 바인딩
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         try {
@@ -55,6 +63,7 @@ public class AuthController {
             );
             SecurityContext securityContext = SecurityContextHolder.getContext();
             securityContext.setAuthentication(authentication);
+            // 세션 생성 및 SecurityContext 바인딩 (JSESSIONID 쿠키로 인증 유지)
             HttpSession session = request.getSession(true);
             session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
             return ResponseEntity.ok("로그인 성공");
@@ -64,29 +73,30 @@ public class AuthController {
         }
     }
 
-    // 3. [MODIFIED] 내 정보 확인 (구글 로그인 대응)
+    /**
+     * 현재 로그인된 사용자 정보 조회
+     * - 일반 로그인: auth.getName() → 이메일
+     * - OAuth2 로그인: OAuth2AuthenticationToken에서 이메일 추출
+     */
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // 1. 로그인 안 된 상태 체크
         if (auth == null || auth.getName().equals("anonymousUser")) {
             return ResponseEntity.status(401).body("로그인되지 않음");
         }
 
-        // 2. [핵심] 구글(OAuth2) 로그인인 경우 -> 이메일 속성을 직접 꺼냄
+        // OAuth2 소셜 로그인인 경우 별도 처리
         if (auth instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
-            // 구글은 "email", 네이버는 "response" 등 제공자마다 다르지만 구글은 "email"로 꺼냅니다.
             String email = oauth2.getPrincipal().getAttribute("email");
             return ResponseEntity.ok(email);
         }
 
-        // 3. 일반 로그인인 경우 -> getName()이 곧 이메일(아이디)
         return ResponseEntity.ok(auth.getName());
     }
 
-    // 4. 로그아웃 (기존 유지)
+    /** 로그아웃 (세션 무효화) */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

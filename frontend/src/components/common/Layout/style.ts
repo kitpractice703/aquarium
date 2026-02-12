@@ -1,5 +1,7 @@
+/** Layout 컴포넌트 스타일 */
 import styled from "styled-components";
 
+/** 전체 페이지 래퍼: Flexbox 세로 배치로 Header-Content-Footer 구조 형성 */
 export const LayoutWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -7,11 +9,11 @@ export const LayoutWrapper = styled.div`
   width: 100%;
 `;
 
+/** 메인 콘텐츠 영역: flex: 1로 남은 공간 채움 (푸터 하단 고정 효과) */
 export const MainContent = styled.main`
-  flex: 1; /* Header, Footer 제외한 나머지 공간 채우기 */
+  flex: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
-  /* Header 높이만큼 패딩이 필요할 수 있음 (GlobalStyle에서 처리 중이라면 생략 가능) */
 `;

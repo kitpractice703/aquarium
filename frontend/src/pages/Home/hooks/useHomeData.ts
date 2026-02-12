@@ -1,3 +1,9 @@
+/**
+ * 홈페이지 데이터 로딩 커스텀 훅
+ * - 날짜별 스케줄 조회 (GET /api/schedules?date=)
+ * - 최근 리뷰 5건 조회 (GET /api/posts/reviews?page=0&size=5)
+ * - 로그인 시 내 예약 목록 조회 (GET /api/reservations/me)
+ */
 import { useState, useEffect } from "react";
 import { api } from "../../../api/axios";
 import type {
@@ -6,81 +12,75 @@ import type {
   ScheduleData,
 } from "../../../types/api";
 
-// ✅ [사수 코멘트]
-// 데이터 로딩 로직을 한곳에 모았습니다.
-// 이제 컴포넌트에서는 useHomeData() 한 줄이면 데이터를 가져올 수 있습니다.
-export const useHomeData = (isLoggedIn: boolean) => {
+export const useHomeData = (isLoggedIn: boolean, selectedDate: string) => {
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [recentReviews, setRecentReviews] = useState<ReviewData[]>([]);
   const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
 
-  // 날짜 포맷 헬퍼 (내부 사용)
-  const getLocalYMD = (d: Date) => {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
+  /** 선택된 날짜에 해당하는 공연 스케줄 조회 */
   useEffect(() => {
-    const fetchData = async () => {
+    if (!selectedDate) return;
+
+    const fetchSchedules = async () => {
       try {
-        // 1. 스케줄 로드
-        try {
-          const scheduleRes = await api.get("/schedules");
-          const rawSchedules = Array.isArray(scheduleRes.data)
-            ? scheduleRes.data
-            : [];
+        const scheduleRes = await api.get(`/schedules?date=${selectedDate}`);
+        const rawSchedules = Array.isArray(scheduleRes.data)
+          ? scheduleRes.data
+          : [];
 
-          const mappedSchedules: ScheduleData[] = rawSchedules.map(
-            (item: any) => ({
-              id: item.scheduleId || item.id, // DTO 필드명 대응
-              programId: item.programId,
-              title: item.programTitle || item.title || "프로그램",
-              place: item.location || item.place || "메인홀",
-              time: item.startTime
-                ? item.startTime.includes("T")
-                  ? item.startTime.split("T")[1].substring(0, 5)
-                  : item.time
-                : "00:00",
-              status: item.isClosed ? "closed" : "open",
-              date: item.date || getLocalYMD(new Date()),
-              price: item.price || 0,
-            }),
-          );
-          setSchedules(mappedSchedules);
-        } catch (e) {
-          console.error("스케줄 로드 실패:", e);
-        }
-
-        // 2. 후기 로드
-        try {
-          const reviewRes = await api.get<any>("/posts/reviews?page=0&size=5");
-          const reviews = reviewRes.data.content
-            ? reviewRes.data.content
-            : Array.isArray(reviewRes.data)
-              ? reviewRes.data
-              : [];
-          setRecentReviews(reviews);
-        } catch (e) {
-          console.error("후기 로드 실패:", e);
-        }
-
-        // 3. 내 예약 로드 (로그인 시)
-        if (isLoggedIn) {
-          try {
-            const myRes = await api.get<ReservationDto[]>("/reservations/me");
-            setMyReservations(myRes.data);
-          } catch (e) {
-            console.error("예약 목록 로드 실패", e);
-          }
-        }
-      } catch (error) {
-        console.error("전체 데이터 로딩 중 에러:", error);
+        /** 백엔드 응답을 프론트엔드 ScheduleData 형식으로 매핑 */
+        const mappedSchedules: ScheduleData[] = rawSchedules.map(
+          (item: any) => ({
+            id: item.scheduleId || item.id,
+            programId: item.programId,
+            title: item.programTitle || item.title || "프로그램",
+            place: item.location || item.place || "메인홀",
+            time: item.time || (item.startTime
+              ? item.startTime.includes("T")
+                ? item.startTime.split("T")[1].substring(0, 5)
+                : item.startTime
+              : "00:00"),
+            status: item.status || (item.isClosed ? "closed" : "open"),
+            date: item.date || selectedDate,
+            price: item.price || 0,
+          }),
+        );
+        setSchedules(mappedSchedules);
+      } catch (e) {
+        console.error("스케줄 로드 실패:", e);
       }
     };
 
-    fetchData();
+    fetchSchedules();
+  }, [selectedDate]);
+
+  /** 최근 리뷰 + 내 예약 조회 (로그인 상태 변경 시) */
+  useEffect(() => {
+    const fetchOtherData = async () => {
+      try {
+        const reviewRes = await api.get<any>("/posts/reviews?page=0&size=5");
+        const reviews = reviewRes.data.content
+          ? reviewRes.data.content
+          : Array.isArray(reviewRes.data)
+            ? reviewRes.data
+            : [];
+        setRecentReviews(reviews);
+      } catch (e) {
+        console.error("후기 로드 실패:", e);
+      }
+
+      /** 로그인 상태에서만 내 예약 조회 (관람권 보유 확인용) */
+      if (isLoggedIn) {
+        try {
+          const myRes = await api.get<ReservationDto[]>("/reservations/me");
+          setMyReservations(myRes.data);
+        } catch (e) {
+          console.error("예약 목록 로드 실패", e);
+        }
+      }
+    };
+
+    fetchOtherData();
   }, [isLoggedIn]);
 
   return { schedules, recentReviews, myReservations };

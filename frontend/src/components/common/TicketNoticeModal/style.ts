@@ -1,3 +1,4 @@
+/** 관람권 미보유 안내 모달 스타일 */
 import styled, { keyframes } from "styled-components";
 
 const fadeIn = keyframes`
@@ -14,6 +15,7 @@ export const Container = styled.div`
   animation: ${fadeIn} 0.3s ease-out;
 `;
 
+/** 메인 메시지: 관람권 강조 (시안 색상) */
 export const Message = styled.p`
   font-size: 18px;
   color: #fff;
@@ -33,6 +35,7 @@ export const SubMessage = styled.p`
   white-space: pre-line;
 `;
 
+/** 관람권 예매 유도 버튼: 호버 시 상승 + 글로우 */
 export const Button = styled.button`
   padding: 12px 30px;
   background: var(--accent-cyan);

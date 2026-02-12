@@ -5,6 +5,11 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
+/**
+ * 예약 엔티티
+ * - 입장권 예약: schedule이 null (관람권만 구매)
+ * - 프로그램 예약: schedule이 존재 (특정 프로그램 회차 예매)
+ */
 @Entity
 @Table(name = "reservations")
 @Getter @Setter
@@ -17,28 +22,30 @@ public class Reservation {
     @Column(name = "reservation_id")
     private Long id;
 
+    /** 예약한 사용자 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // [수정] 일반 입장권 예매일 수 있으므로 nullable = true로 변경
+    /** 프로그램 스케줄 (입장권만 구매 시 null 허용) */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", nullable = true)
     private ProgramSchedule schedule;
 
-    // [추가] 방문 날짜 (예: "2026-01-28")
     @Column(name = "visit_date")
     private String visitDate;
 
-    // [추가] 방문 시간 (예: "14:00")
     @Column(name = "visit_time")
     private String visitTime;
 
-    // [추가] 인원 수 & 금액
+    /** 대인(만 13세 이상) 인원수 */
     private int adultCount;
+    /** 소인(만 12세 이하) 인원수 */
     private int teenCount;
+    /** 최종 결제 금액 (원) */
     private int totalPrice;
 
+    /** 예약 상태: CONFIRMED(확정), CANCELLED(취소) */
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 

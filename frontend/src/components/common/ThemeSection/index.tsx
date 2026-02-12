@@ -1,3 +1,8 @@
+/**
+ * 테마 전시 섹션 컴포넌트
+ * - 4개 테마 카드 그리드: 빛의 바다, 균형의 바다, 깊은 바다, 지켜야 할 바다
+ * - 카드 클릭 시 ThemeDetailModal 열림 (영상 + 상세 설명)
+ */
 import * as S from "./style";
 import ThemeDetailModal from "../ThemeDetailModal";
 import { useThemeSection } from "./hooks/useThemeSection";
@@ -38,6 +43,7 @@ const ThemeSection = () => {
         </S.InnerContainer>
       </S.SectionWrapper>
 
+      {/* 테마 상세 모달 */}
       <ThemeDetailModal
         isOpen={isModalOpen}
         onClose={closeModal}

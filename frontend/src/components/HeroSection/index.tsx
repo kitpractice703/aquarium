@@ -1,3 +1,8 @@
+/**
+ * 히어로 섹션 컴포넌트 (메인 비주얼)
+ * - 전체 화면 배경 영상 + 타이틀/설명 + 예매 CTA 버튼
+ * - 영상: assets/videos/main_video.mp4 (자동 재생, 루프, 음소거)
+ */
 import * as S from "./style";
 import mainVideo from "../../assets/videos/main_video.mp4";
 
@@ -8,6 +13,7 @@ interface Props {
 const HeroSection = ({ onBookClick }: Props) => {
   return (
     <S.Hero>
+      {/* 배경 영상: 자동 재생, 음소거, 반복 */}
       <S.VideoBg autoPlay loop muted playsInline src={mainVideo} />
       <S.Content>
         <S.Title>

@@ -15,7 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@SpringBootTest // 스프링 부트를 켜서 DB까지 연결하는 통합 테스트
+/**
+ * 데이터베이스 연동 테스트
+ * - Exhibition, User, Reservation 엔티티의 기본 조회 동작 검증
+ * - @Transactional: 테스트 종료 시 데이터 롤백 (DB 오염 방지)
+ */
+@SpringBootTest
 public class AquariumRepositoryTest {
 
     @Autowired ExhibitionRepository exhibitionRepository;
@@ -24,8 +29,9 @@ public class AquariumRepositoryTest {
 
     @Test
     @DisplayName("데이터 조회 테스트")
-    @Transactional // 테스트가 끝나면 데이터 변경사항을 롤백해줌 (조회라 상관없지만 습관!)
+    @Transactional
     void testDatabaseConnection() {
+        // 1. 전시물 조회 검증
         System.out.println("========= [1. 전시물 조회 테스트] =========");
         List<Exhibition> exhibitions = exhibitionRepository.findAll();
 
@@ -37,15 +43,14 @@ public class AquariumRepositoryTest {
             }
         }
 
+        // 2. 유저 및 예약 관계 조회 검증
         System.out.println("\n========= [2. 유저 및 예약 조회 테스트] =========");
-        // 아까 넣은 'test@google.com' 유저 찾기
         Optional<User> userBox = userRepository.findByEmail("test@google.com");
 
         if (userBox.isPresent()) {
             User user = userBox.get();
             System.out.println("✅ 유저 찾기 성공: " + user.getUsername() + " (" + user.getEmail() + ")");
 
-            // 이 유저의 예약 내역 가져오기
             List<Reservation> myReservations = reservationRepository.findByUserId(user.getId());
             for (Reservation r : myReservations) {
                 System.out.println("   🎫 예약된 공연: " + r.getSchedule().getProgram().getTitle());

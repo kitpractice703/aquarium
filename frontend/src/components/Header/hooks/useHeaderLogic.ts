@@ -1,3 +1,9 @@
+/**
+ * 헤더 로직 커스텀 훅
+ * - 인증 상태, 모달 상태, 내비게이션 처리를 캡슐화
+ * - 모달 유형: LOGIN(로그인 모달), NOTICE(로그인 필요 안내)
+ * - 페이지 내 스크롤: 홈이 아닌 페이지에서 네비 클릭 시 홈 이동 후 스크롤
+ */
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
@@ -9,15 +15,13 @@ export const useHeaderLogic = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 모달 상태 관리
   const [modalType, setModalType] = useState<ModalType>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isResetOpen, setIsResetOpen] = useState(false);
 
-  // 핸들러: 모달 닫기
   const closeModal = () => setModalType(null);
 
-  // 핸들러: 예매 버튼 클릭
+  /** 예매하기 클릭: 로그인 상태면 예매 모달, 비로그인이면 안내 모달 */
   const handleBookingClick = () => {
     if (isLoggedIn) {
       setIsBookingOpen(true);
@@ -26,7 +30,7 @@ export const useHeaderLogic = () => {
     }
   };
 
-  // 핸들러: 예매 확인/마이페이지 클릭
+  /** 예매확인/마이페이지 클릭: 로그인 상태면 마이페이지, 비로그인이면 안내 모달 */
   const handleTicketCheck = () => {
     if (isLoggedIn) {
       navigate("/mypage");
@@ -35,31 +39,37 @@ export const useHeaderLogic = () => {
     }
   };
 
-  // 핸들러: 비밀번호 찾기 모달 열기
+  /** 비밀번호 재설정 모달 열기 (로그인 모달 → 재설정 모달 전환) */
   const openResetModal = () => {
     setModalType(null);
     setIsResetOpen(true);
   };
 
-  // 핸들러: 비밀번호 찾기 -> 로그인 전환
+  /** 재설정 모달 → 로그인 모달 전환 */
   const switchResetToLogin = () => {
     setIsResetOpen(false);
     setModalType("LOGIN");
   };
 
-  // 핸들러: 네비게이션 스크롤 이동
+  /** 섹션 스크롤 오프셋 (고정 헤더 높이 보정) */
+  const SCROLL_OFFSET = -30;
+  const scrollToElement = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const top = element.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  };
+
+  /** 네비게이션 클릭: 홈이 아닌 페이지에서는 홈으로 이동 후 해당 섹션으로 스크롤 */
   const handleNavClick = (id: string) => {
     if (location.pathname !== "/") {
       navigate("/");
       setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) element.scrollIntoView({ behavior: "smooth" });
+        scrollToElement(id);
       }, 100);
     } else {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+      scrollToElement(id);
     }
   };
 

@@ -1,3 +1,9 @@
+/**
+ * 테마 상세 모달 컴포넌트
+ * - 4개 테마 탭 전환 (각 테마 고유 색상 하이라이트)
+ * - 선택된 테마의 영상 + 상세 설명 표시
+ * - 영상: autoPlay, loop, muted로 자동 재생
+ */
 import * as S from "./style";
 import { useThemeDetail } from "./hooks/useThemeDetail";
 
@@ -19,7 +25,7 @@ const ThemeDetailModal = ({ isOpen, onClose, initialThemeId }: Props) => {
       <S.Container onClick={(e) => e.stopPropagation()}>
         <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
 
-        {/* 상단 탭 */}
+        {/* 테마 탭: 선택 시 해당 테마 색상으로 하단 보더 표시 */}
         <S.Tabs>
           {THEMES.map((theme) => (
             <S.TabItem
@@ -33,23 +39,23 @@ const ThemeDetailModal = ({ isOpen, onClose, initialThemeId }: Props) => {
           ))}
         </S.Tabs>
 
-        {/* 본문 내용 */}
         <S.Content>
+          {/* 테마 설명 영역 */}
           <S.InfoArea>
             <S.Title $color={currentTheme.color}>{currentTheme.title}</S.Title>
             <S.Desc>{currentTheme.desc}</S.Desc>
           </S.InfoArea>
 
-          {/* 비디오 영역 */}
+          {/* 테마 영상: 탭 전환 시 key로 리렌더링하여 새 영상 로드 */}
           <S.VideoArea $color={currentTheme.color}>
             <video
-              key={currentTheme.id} // 키가 바뀌어야 영상이 새로 로드됨
+              key={currentTheme.id}
               src={currentTheme.video}
               autoPlay
               loop
               muted
               playsInline
-              controls // 사용자가 조작 가능하도록 추가
+              controls
             />
           </S.VideoArea>
         </S.Content>

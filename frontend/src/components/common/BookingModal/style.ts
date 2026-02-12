@@ -1,3 +1,4 @@
+/** 예매 모달 스타일 */
 import styled, { keyframes } from "styled-components";
 
 const fadeIn = keyframes`
@@ -5,6 +6,7 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
+/** 모달 오버레이: 어두운 배경 + 블러 */
 export const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -20,6 +22,7 @@ export const Overlay = styled.div`
   animation: ${fadeIn} 0.3s ease-out;
 `;
 
+/** 모달 컨테이너: 최대 600px, 시안 글로우 그림자 */
 export const Container = styled.div`
   background-color: #151e32;
   width: 90%;
@@ -33,7 +36,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  color: #fff; /* 글자색 강제 화이트 */
+  color: #fff;
 `;
 
 export const Header = styled.div`
@@ -54,6 +57,7 @@ export const Header = styled.div`
   }
 `;
 
+/** 닫기 버튼: 호버 시 90도 회전 애니메이션 */
 export const CloseButton = styled.button`
   background: none;
   border: none;
@@ -81,7 +85,7 @@ export const StepTitle = styled.h3`
   text-align: center;
 `;
 
-/* [Step 1] 달력 스타일 */
+/* Step 1: 달력 그리드 (7열) */
 export const CalendarGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -96,6 +100,7 @@ export const DayHeader = styled.div`
   margin-bottom: 10px;
 `;
 
+/** 날짜 버튼: 선택 시 시안 배경, 비활성 시 회색 + not-allowed */
 export const DateBtn = styled.button<{
   $selected: boolean;
   $disabled: boolean;
@@ -118,7 +123,7 @@ export const DateBtn = styled.button<{
   }
 `;
 
-/* [Step 2] 시간 선택 */
+/* Step 2: 시간 선택 (현재 미사용, 종일권으로 대체) */
 export const TimeGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -142,7 +147,7 @@ export const TimeBtn = styled.button<{ $selected: boolean }>`
   }
 `;
 
-/* [Step 3] 인원 선택 */
+/* Step 3: 인원 선택 카운터 */
 export const CounterRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -195,7 +200,7 @@ export const CounterRow = styled.div`
   }
 `;
 
-/* [Step 4] 결과 요약 */
+/* Step 4: 결과 요약 박스 */
 export const SummaryBox = styled.div`
   background: rgba(255, 255, 255, 0.05);
   padding: 25px;
@@ -227,6 +232,7 @@ export const Footer = styled.div`
   gap: 10px;
 `;
 
+/** 이전/다음 버튼: $primary 시 시안 배경 */
 export const Button = styled.button<{ $primary?: boolean }>`
   flex: 1;
   padding: 15px;

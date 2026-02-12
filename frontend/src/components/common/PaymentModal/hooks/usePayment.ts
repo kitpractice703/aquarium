@@ -1,31 +1,33 @@
+/**
+ * 결제 로직 커스텀 훅
+ * - INPUT → PROCESSING(1.5초) → SUCCESS(1초 후 onSuccess 호출)
+ * - 시뮬레이션 결제: setTimeout으로 결제 프로세스 시각화
+ */
 import { useState, useEffect } from "react";
 
-// [수정 1] 외부에서 onSuccess 함수를 받아옵니다.
 export const usePayment = (isOpen: boolean, onSuccess: () => void) => {
   const [step, setStep] = useState<"INPUT" | "PROCESSING" | "SUCCESS">("INPUT");
 
-  // [보너스 수정] 모달이 닫혔다가 다시 열리면 'INPUT' 상태로 초기화해주는 센스!
+  /** 모달 열림 시 초기 상태로 리셋 */
   useEffect(() => {
     if (isOpen) {
       setStep("INPUT");
     }
   }, [isOpen]);
 
+  /** 결제 실행: 1.5초 승인 → 1초 후 성공 콜백 */
   const handlePayment = () => {
     setStep("PROCESSING");
 
-    // 1.5초 뒤 성공
     setTimeout(() => {
       setStep("SUCCESS");
 
-      // 1초 뒤 부모에게 알림 (이제 onSuccess가 뭔지 앎!)
       setTimeout(() => {
         onSuccess();
       }, 1000);
     }, 1500);
   };
 
-  // 객체로 반환
   return {
     step,
     handlePayment,

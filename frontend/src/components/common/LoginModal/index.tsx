@@ -1,3 +1,9 @@
+/**
+ * 로그인 모달 컴포넌트
+ * - 이메일/비밀번호 입력, Enter 키 로그인 지원
+ * - Google OAuth2 소셜 로그인 버튼
+ * - 비밀번호 찾기, 회원가입 링크
+ */
 import CommonModal from "../Modal";
 import { useLogin } from "./hooks/useLogin";
 
@@ -46,6 +52,7 @@ const LoginModal = ({ isOpen, onClose, onOpenReset, onOpenSignup }: Props) => {
 
       <S.BtnAction onClick={handleLoginSubmit}>로그인</S.BtnAction>
 
+      {/* Google OAuth2 소셜 로그인 */}
       <S.GoogleBtn onClick={handleGoogleLogin}>
         <svg width="18" height="18" viewBox="0 0 18 18">
           <path
@@ -79,6 +86,7 @@ const LoginModal = ({ isOpen, onClose, onOpenReset, onOpenSignup }: Props) => {
           비밀번호를 잊으셨나요?
         </S.ResetLink>
       </div>
+      {/* 회원가입 유도 링크 */}
       <S.SignupLink>
         계정이 없으신가요?{" "}
         <span

@@ -1,3 +1,4 @@
+/** 비밀번호 재설정 모달 스타일 */
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -15,13 +16,13 @@ export const Form = styled.form`
 
 export const Description = styled.p`
   font-size: 14px;
-  color: var(--text-gray); /* LoginModal과 동일한 회색 */
+  color: var(--text-gray);
   line-height: 1.5;
   margin-bottom: 5px;
   text-align: center;
 
   strong {
-    color: #fff; /* 강조 텍스트 흰색 */
+    color: #fff;
     font-weight: bold;
   }
 `;
@@ -34,13 +35,13 @@ export const InputGroup = styled.div`
 
 export const Label = styled.label`
   font-size: 14px;
-  color: var(--text-gray); /* 라벨 색상 통일 */
+  color: var(--text-gray);
 `;
 
+/** 다크 테마 입력 필드: 포커스 시 시안 글로우 */
 export const InputBox = styled.input`
   width: 100%;
   padding: 12px;
-  /* LoginModal과 동일한 다크 테마 배경 */
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 5px;
@@ -62,7 +63,7 @@ export const InputBox = styled.input`
 export const SubmitButton = styled.button`
   width: 100%;
   padding: 15px;
-  background: var(--accent-cyan); /* 포인트 컬러 */
+  background: var(--accent-cyan);
   color: #000;
   border: none;
   border-radius: 5px;
@@ -77,6 +78,7 @@ export const SubmitButton = styled.button`
   }
 `;
 
+/** 로그인으로 돌아가기 링크 */
 export const BackLink = styled.span`
   text-align: center;
   font-size: 13px;
