@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 
 /**
  * 프로그램 API 컨트롤러 (인증 불필요)
- * - 전체 프로그램 목록 조회: GET /api/programs
- * - 프로그램별 스케줄 조회: GET /api/programs/{id}/schedules?date=
+ * 프로그램 목록 및 프로그램별 스케줄 조회를 담당
+ * 프로그램 유형(PERFORMANCE/EXPERIENCE)에 따라 적절한 스케줄 테이블을 조회
  */
 @RestController
 @RequestMapping("/api/programs")
@@ -32,7 +32,7 @@ public class ProgramController {
     private final PerformanceScheduleRepository performanceScheduleRepository;
     private final ExperienceScheduleRepository experienceScheduleRepository;
 
-    /** 전체 프로그램 목록 조회 */
+    /** 전체 프로그램 목록 반환 (공연 + 체험 통합) */
     @GetMapping
     public List<Program> getAllPrograms() {
         return programRepository.findAll();
@@ -40,8 +40,7 @@ public class ProgramController {
 
     /**
      * 특정 프로그램의 날짜별 스케줄 조회
-     * - PERFORMANCE → performance_schedules 조회
-     * - EXPERIENCE → experience_schedules 조회
+     * PERFORMANCE → performance_schedules, EXPERIENCE → experience_schedules 에서 조회
      */
     @GetMapping("/{id}/schedules")
     public ResponseEntity<?> getSchedulesByProgramAndDate(
@@ -72,13 +71,15 @@ public class ProgramController {
         return ResponseEntity.ok(result);
     }
 
-    /** 스케줄 응답 DTO (프론트엔드 ProgramSchedule 타입에 대응) */
+    /**
+     * 스케줄 응답 DTO
+     * 프론트엔드 ProgramSchedule 타입에 대응하며, startTime은 "yyyy-MM-dd HH:mm:ss" 형식
+     */
     @Data
     static class ScheduleResponse {
         private Long id;
         private Long programId;
         private String location;
-        /** "yyyy-MM-dd HH:mm:ss" 형식 (프론트엔드에서 split(" ")로 파싱) */
         private String startTime;
         private boolean isClosed;
 

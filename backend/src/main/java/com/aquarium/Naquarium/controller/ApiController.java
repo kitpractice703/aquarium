@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * 공개 API 컨트롤러 (인증 불필요)
- * - 전시관 목록, 프로그램 일정 조회 등 비로그인 사용자도 접근 가능한 API
+ * 전시관 목록, 공연 일정 조회 등 비로그인 사용자도 접근 가능
  */
 @RestController
 @RequestMapping("/api")
@@ -26,34 +25,26 @@ public class ApiController {
 
     private final AquariumService aquariumService;
 
-    /** 전체 전시관 목록 조회 */
+    /** 전체 전시관 목록 반환 */
     @GetMapping("/exhibitions")
     public List<Exhibition> getExhibitions() {
         return aquariumService.getAllExhibitions();
     }
 
     /**
-     * 프로그램 일정 조회 (공연 + 체험 통합)
-     * @param date 조회할 날짜 (미전달 시 전체 일정 반환)
+     * 공연 프로그램 일정 조회 (홈 화면 스케줄 캘린더용)
+     * 체험 프로그램은 포함하지 않으며, 체험 스케줄은 ProgramController에서 개별 조회
+     * @param date 조회 날짜 (미전달 시 전체 일정)
      */
     @GetMapping("/schedules")
     public List<ScheduleDto> getSchedules(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        List<ScheduleDto> result = new ArrayList<>();
-
         if (date != null) {
-            result.addAll(aquariumService.getPerformanceSchedulesByDate(date).stream()
-                    .map(ScheduleDto::new).collect(Collectors.toList()));
-            result.addAll(aquariumService.getExperienceSchedulesByDate(date).stream()
-                    .map(ScheduleDto::new).collect(Collectors.toList()));
-        } else {
-            result.addAll(aquariumService.getAllPerformanceSchedules().stream()
-                    .map(ScheduleDto::new).collect(Collectors.toList()));
-            result.addAll(aquariumService.getAllExperienceSchedules().stream()
-                    .map(ScheduleDto::new).collect(Collectors.toList()));
+            return aquariumService.getPerformanceSchedulesByDate(date).stream()
+                    .map(ScheduleDto::new).collect(Collectors.toList());
         }
-
-        return result;
+        return aquariumService.getAllPerformanceSchedules().stream()
+                .map(ScheduleDto::new).collect(Collectors.toList());
     }
 }

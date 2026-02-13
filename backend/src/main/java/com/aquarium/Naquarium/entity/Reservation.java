@@ -7,8 +7,9 @@ import java.time.LocalDateTime;
 
 /**
  * 예약 엔티티
- * - 입장권 예약: schedule이 null (관람권만 구매)
- * - 프로그램 예약: schedule이 존재 (특정 프로그램 회차 예매)
+ * - 입장권: program, schedule 모두 null
+ * - 체험 프로그램: program만 존재, schedule은 null
+ * - 공연 프로그램: program과 schedule 모두 존재
  */
 @Entity
 @Table(name = "reservations")
