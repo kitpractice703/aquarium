@@ -27,10 +27,15 @@ public class Reservation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    /** 프로그램 스케줄 (입장권만 구매 시 null 허용) */
+    /** 예약된 프로그램 (체험/공연 모두, 입장권만일 경우 null) */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_id", nullable = true)
+    private Program program;
+
+    /** 공연 스케줄 (공연 예약 시 사용, 입장권/체험은 null) */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", nullable = true)
-    private ProgramSchedule schedule;
+    private PerformanceSchedule schedule;
 
     @Column(name = "visit_date")
     private String visitDate;

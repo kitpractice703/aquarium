@@ -17,6 +17,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * - LEFT JOIN: 입장권 예매(schedule이 null)인 경우도 포함
      */
     @Query("SELECT r FROM Reservation r " +
+           "LEFT JOIN FETCH r.program " +
            "LEFT JOIN FETCH r.schedule s " +
            "LEFT JOIN FETCH s.program " +
            "WHERE r.user.email = :email " +

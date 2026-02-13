@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,19 +33,27 @@ public class ApiController {
     }
 
     /**
-     * 프로그램 일정 조회
+     * 프로그램 일정 조회 (공연 + 체험 통합)
      * @param date 조회할 날짜 (미전달 시 전체 일정 반환)
      */
     @GetMapping("/schedules")
     public List<ScheduleDto> getSchedules(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        List<ScheduleDto> result = new ArrayList<>();
+
         if (date != null) {
-            return aquariumService.getSchedulesByDate(date).stream()
-                    .map(ScheduleDto::new)
-                    .collect(Collectors.toList());
+            result.addAll(aquariumService.getPerformanceSchedulesByDate(date).stream()
+                    .map(ScheduleDto::new).collect(Collectors.toList()));
+            result.addAll(aquariumService.getExperienceSchedulesByDate(date).stream()
+                    .map(ScheduleDto::new).collect(Collectors.toList()));
+        } else {
+            result.addAll(aquariumService.getAllPerformanceSchedules().stream()
+                    .map(ScheduleDto::new).collect(Collectors.toList()));
+            result.addAll(aquariumService.getAllExperienceSchedules().stream()
+                    .map(ScheduleDto::new).collect(Collectors.toList()));
         }
-        return aquariumService.getAllSchedules().stream()
-                .map(ScheduleDto::new)
-                .collect(Collectors.toList());
+
+        return result;
     }
 }
