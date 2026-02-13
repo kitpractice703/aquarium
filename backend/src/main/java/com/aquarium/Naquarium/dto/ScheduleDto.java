@@ -1,13 +1,16 @@
 package com.aquarium.Naquarium.dto;
 
-import com.aquarium.Naquarium.entity.ProgramSchedule;
+import com.aquarium.Naquarium.entity.ExperienceSchedule;
+import com.aquarium.Naquarium.entity.PerformanceSchedule;
+import com.aquarium.Naquarium.entity.Program;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * 일정 응답 DTO (홈 화면 스케줄 캘린더 표시용)
- * - ProgramSchedule 엔티티를 날짜/시간 문자열로 변환
+ * - PerformanceSchedule / ExperienceSchedule 엔티티를 날짜/시간 문자열로 변환
  */
 @Data
 public class ScheduleDto {
@@ -23,31 +26,40 @@ public class ScheduleDto {
     /** 마감 상태: "open" 또는 "closed" */
     private String status;
 
-    /** ProgramSchedule 엔티티 → DTO 변환 */
-    public ScheduleDto(ProgramSchedule schedule) {
-        this.id = schedule.getId();
+    /** 공연 스케줄 → DTO 변환 */
+    public ScheduleDto(PerformanceSchedule schedule) {
+        init(schedule.getId(), schedule.getProgram(), schedule.getStartTime(),
+                schedule.getLocation(), schedule.getIsClosed());
+    }
 
-        // 연결된 프로그램 정보 매핑 (null 방어)
-        if (schedule.getProgram() != null) {
-            this.programId = schedule.getProgram().getId();
-            this.price = schedule.getProgram().getPrice();
-            this.title = schedule.getProgram().getTitle();
+    /** 체험 스케줄 → DTO 변환 */
+    public ScheduleDto(ExperienceSchedule schedule) {
+        init(schedule.getId(), schedule.getProgram(), schedule.getStartTime(),
+                schedule.getLocation(), schedule.getIsClosed());
+    }
+
+    /** 공통 초기화 로직 */
+    private void init(Long id, Program program, LocalDateTime startTime, String location, Boolean isClosed) {
+        this.id = id;
+
+        if (program != null) {
+            this.programId = program.getId();
+            this.price = program.getPrice();
+            this.title = program.getTitle();
         } else {
             this.title = "미정 프로그램";
             this.price = 0;
         }
 
-        // 날짜/시간 포맷 변환
-        if (schedule.getStartTime() != null) {
-            this.date = schedule.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            this.time = schedule.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+        if (startTime != null) {
+            this.date = startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            this.time = startTime.format(DateTimeFormatter.ofPattern("HH:mm"));
         } else {
             this.date = "";
             this.time = "";
         }
 
-        this.place = schedule.getLocation();
-
-        this.status = Boolean.TRUE.equals(schedule.getIsClosed()) ? "closed" : "open";
+        this.place = location;
+        this.status = Boolean.TRUE.equals(isClosed) ? "closed" : "open";
     }
 }

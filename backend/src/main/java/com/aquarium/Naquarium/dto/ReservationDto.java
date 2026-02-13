@@ -8,7 +8,9 @@ import java.time.format.DateTimeFormatter;
 /**
  * 예약 응답 DTO (마이페이지 예약 내역 표시용)
  * - Reservation 엔티티를 프론트엔드에 필요한 형태로 변환
- * - 입장권/프로그램 예약 모두 처리 (schedule 유무로 구분)
+ * - 입장권/프로그램 예약 모두 처리
+ *   1. reservation.program 직접 참조 (체험/공연 모두)
+ *   2. reservation.schedule 경유 (레거시 공연 데이터 호환)
  */
 @Getter
 public class ReservationDto {
@@ -28,7 +30,7 @@ public class ReservationDto {
     /**
      * Reservation 엔티티 → DTO 변환 생성자
      * - 티켓 번호: 예약일 + 예약ID로 자동 생성
-     * - schedule이 null이면 입장권(ADMISSION)으로 기본 설정
+     * - program 직접 참조 우선, 없으면 schedule 경유, 없으면 관람권
      */
     public ReservationDto(Reservation reservation) {
         this.id = reservation.getId();
@@ -44,16 +46,26 @@ public class ReservationDto {
             this.ticketNumber = String.format("T-%05d", reservation.getId());
         }
 
-        // 프로그램 스케줄 정보 로딩 (LazyLoading 예외 방어)
+        // 프로그램 정보 로딩 (LazyLoading 예외 방어)
         try {
+            // 1순위: Program 직접 참조 (체험/공연 모두 지원)
+            if (reservation.getProgram() != null) {
+                this.programTitle = reservation.getProgram().getTitle();
+                this.imageUrl = reservation.getProgram().getImageUrl();
+                if (reservation.getProgram().getType() != null) {
+                    this.programType = reservation.getProgram().getType().name();
+                }
+            }
+
+            // 2순위: Schedule 경유 (공연 예약, 레거시 데이터 호환)
             if (reservation.getSchedule() != null) {
                 this.startTime = reservation.getSchedule().getStartTime();
                 this.location = reservation.getSchedule().getLocation();
 
-                if (reservation.getSchedule().getProgram() != null) {
+                // program이 없는 레거시 데이터: schedule → program 경유
+                if (this.programTitle == null && reservation.getSchedule().getProgram() != null) {
                     this.programTitle = reservation.getSchedule().getProgram().getTitle();
                     this.imageUrl = reservation.getSchedule().getProgram().getImageUrl();
-
                     if (reservation.getSchedule().getProgram().getType() != null) {
                         this.programType = reservation.getSchedule().getProgram().getType().name();
                     }

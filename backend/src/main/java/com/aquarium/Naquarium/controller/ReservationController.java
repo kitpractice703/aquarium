@@ -3,10 +3,12 @@ package com.aquarium.Naquarium.controller;
 import com.aquarium.Naquarium.dto.ProgramReservationRequest;
 import com.aquarium.Naquarium.dto.ReservationDto;
 import com.aquarium.Naquarium.dto.ReservationRequest;
-import com.aquarium.Naquarium.entity.ProgramSchedule;
+import com.aquarium.Naquarium.entity.PerformanceSchedule;
+import com.aquarium.Naquarium.entity.Program;
 import com.aquarium.Naquarium.entity.Reservation;
 import com.aquarium.Naquarium.entity.User;
-import com.aquarium.Naquarium.repository.ProgramScheduleRepository;
+import com.aquarium.Naquarium.repository.PerformanceScheduleRepository;
+import com.aquarium.Naquarium.repository.ProgramRepository;
 import com.aquarium.Naquarium.repository.ReservationRepository;
 import com.aquarium.Naquarium.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,8 @@ public class ReservationController {
 
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
-    private final ProgramScheduleRepository programScheduleRepository;
+    private final PerformanceScheduleRepository performanceScheduleRepository;
+    private final ProgramRepository programRepository;
 
     /** 인증 정보에서 이메일 추출 (일반/OAuth2 분기) */
     private String getEmail(Authentication auth) {
@@ -104,7 +107,8 @@ public class ReservationController {
     /**
      * 프로그램(공연/체험) 예약
      * - 선행 조건: 해당 날짜에 입장권(관람권)이 이미 예매되어 있어야 함
-     * - 프로그램별 첫 번째 스케줄을 기준으로 가격을 계산 (count * 단가)
+     * - Program을 직접 조회하여 가격 계산 (count × 단가)
+     * - 공연이면 schedule 연결, 체험이면 schedule null
      */
     @PostMapping("/programs")
     @Transactional
@@ -126,20 +130,24 @@ public class ReservationController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("유저 정보 없음"));
 
-        // 해당 프로그램의 스케줄 조회 (첫 번째 스케줄 사용)
-        ProgramSchedule proxySchedule = programScheduleRepository.findByProgramId(request.getProgramId())
-                .stream().findFirst()
-                .orElse(null);
+        // Program 직접 조회
+        Program program = programRepository.findById(request.getProgramId())
+                .orElseThrow(() -> new RuntimeException("프로그램을 찾을 수 없습니다."));
 
         // 프로그램 가격 계산 (인원수 × 단가)
-        int price = 0;
-        if (proxySchedule != null && proxySchedule.getProgram() != null) {
-            price = proxySchedule.getProgram().getPrice() * request.getCount();
+        int price = program.getPrice() * request.getCount();
+
+        // 공연이면 schedule 연결, 체험이면 null
+        PerformanceSchedule schedule = null;
+        if (program.getType() == Program.ProgramType.PERFORMANCE) {
+            schedule = performanceScheduleRepository.findByProgramId(request.getProgramId())
+                    .stream().findFirst().orElse(null);
         }
 
         Reservation reservation = Reservation.builder()
                 .user(user)
-                .schedule(proxySchedule)
+                .program(program)
+                .schedule(schedule)
                 .visitDate(request.getVisitDate())
                 .visitTime(request.getVisitTime())
                 .adultCount(request.getCount())

@@ -7,7 +7,7 @@ const Footer = () => {
       <p>Copyright © 2026 NAQUARIUM ARCHIVE. All Rights Reserved.</p>
       <p>
         인천광역시 부평구 가상의 주소 | 대표: 허담 | 사업자등록번호:
-        000-00-00000
+        000-00-00000 | 고객센터: 1234-5678
       </p>
     </S.FooterContainer>
   );
