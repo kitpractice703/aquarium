@@ -7,10 +7,8 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * 예약 응답 DTO (마이페이지 예약 내역 표시용)
- * - Reservation 엔티티를 프론트엔드에 필요한 형태로 변환
- * - 입장권/프로그램 예약 모두 처리
- *   1. reservation.program 직접 참조 (체험/공연 모두)
- *   2. reservation.schedule 경유 (레거시 공연 데이터 호환)
+ * Reservation 엔티티를 프론트엔드에 필요한 형태로 변환
+ * 프로그램 정보 조회 우선순위: program 직접 참조 → schedule 경유 → 기본 입장권
  */
 @Getter
 public class ReservationDto {
