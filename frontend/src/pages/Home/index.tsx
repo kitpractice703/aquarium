@@ -12,19 +12,19 @@ import { useHomeData } from "./hooks/useHomeData";
 import { useDateControl } from "./hooks/useDateControl";
 import type { ScheduleData } from "../../types/api";
 
-import HeroSection from "../../components/HeroSection";
-import ThemeSection from "../../components/common/ThemeSection";
-import AboutSection from "../../components/common/AboutSection";
-import ProgramSection from "../../components/common/ProgramSection";
-import CommunitySection from "../../components/common/CommunitySection";
+import HeroSection from "../../components/layout/HeroSection";
+import ThemeSection from "../../components/sections/ThemeSection";
+import AboutSection from "../../components/sections/AboutSection";
+import ProgramSection from "../../components/sections/ProgramSection";
+import CommunitySection from "../../components/sections/CommunitySection";
 
-import FaqModal from "../../components/common/FaqModal";
-import ReviewModal from "../../components/common/ReviewModal";
-import BookingModal from "../../components/common/BookingModal";
-import ProgramBookingModal from "../../components/common/ProgramBookingModal";
-import LoginRequestModal from "../../components/common/LoginRequestModal";
-import LoginModal from "../../components/common/LoginModal";
-import TicketNoticeModal from "../../components/common/TicketNoticeModal";
+import FaqModal from "../../components/modals/FaqModal";
+import ReviewModal from "../../components/modals/ReviewModal";
+import BookingModal from "../../components/modals/BookingModal";
+import ProgramBookingModal from "../../components/modals/ProgramBookingModal";
+import LoginRequestModal from "../../components/modals/LoginRequestModal";
+import LoginModal from "../../components/modals/LoginModal";
+import TicketNoticeModal from "../../components/modals/TicketNoticeModal";
 
 const Home = () => {
   const { isLoggedIn } = useAuth();

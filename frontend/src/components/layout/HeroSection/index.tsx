@@ -14,11 +14,8 @@ interface Props {
 
 const HeroSection = ({ onBookClick }: Props) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  /** 음소거 상태 (기본: 음소거) */
   const [isMuted, setIsMuted] = useState(true);
-  /** 볼륨 값: 0 ~ 1 (기본: 0.5) */
   const [volume, setVolume] = useState(0.5);
-  /** 슬라이더 표시 여부 */
   const [showSlider, setShowSlider] = useState(false);
 
   /** 음소거 토글: 음소거 해제 시 현재 볼륨 적용 */
@@ -39,7 +36,7 @@ const HeroSection = ({ onBookClick }: Props) => {
     setVolume(newVolume);
     if (videoRef.current) {
       videoRef.current.volume = newVolume;
-      /** 볼륨 0이면 자동 음소거, 0 초과면 음소거 해제 */
+      // 볼륨 0이면 자동 음소거
       if (newVolume === 0) {
         videoRef.current.muted = true;
         setIsMuted(true);

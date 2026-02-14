@@ -5,8 +5,8 @@
  * - 로그인/비밀번호 찾기 모달 연결
  */
 import * as S from "./style";
-import LoginModal from "../../components/common/LoginModal";
-import PasswordResetModal from "../../components/common/PasswordResetModal";
+import LoginModal from "../../components/modals/LoginModal";
+import PasswordResetModal from "../../components/modals/PasswordResetModal";
 import { useSignup } from "./hooks/useSignup";
 
 const Signup = () => {

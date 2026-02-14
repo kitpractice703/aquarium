@@ -1,3 +1,4 @@
+/** 카카오 지도 초기화 커스텀 훅 - 지정 좌표에 마커 표시 */
 import { useEffect, useRef } from "react";
 
 declare global {

@@ -1,11 +1,11 @@
 /**
  * 마이페이지 로직 커스텀 훅
- * - 내 예약 목록 조회 (GET /api/reservations/me)
- * - 회원정보 수정 (비밀번호 변경 + 전화번호 수정)
+ * - reservationApi: 내 예약 목록 조회 (당일 이후만 표시)
+ * - authApi: 회원정보 수정 (비밀번호 변경 + 전화번호 수정)
  * - 비밀번호 변경 시 자동 로그아웃 처리
  */
 import { useState, useEffect } from "react";
-import { api } from "../../../api/axios";
+import { getMyReservations } from "../../../api/reservationApi";
 import { useAuth } from "../../../context/AuthContext";
 import { updateUserInfo } from "../../../api/authApi";
 import type { ReservationDto } from "../../../types/api";
@@ -27,11 +27,11 @@ export const useMyPage = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const res = await api.get<ReservationDto[]>("/reservations/me");
+        const data = await getMyReservations();
 
         // 당일 이후 예매건만 표시 (과거 예매 제외)
         const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-        const filtered = res.data.filter(
+        const filtered = data.filter(
           (r) => r.visitDate >= today
         );
         setReservations(filtered);
