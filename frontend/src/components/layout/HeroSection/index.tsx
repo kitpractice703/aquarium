@@ -6,7 +6,7 @@
  */
 import { useState, useRef } from "react";
 import * as S from "./style";
-import mainVideo from "../../assets/videos/main_video.mp4";
+import mainVideo from "../../../assets/videos/main_video.mp4";
 
 interface Props {
   onBookClick: () => void;
