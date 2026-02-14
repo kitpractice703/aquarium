@@ -49,10 +49,11 @@ export const Section = styled.div`
   padding: 40px;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  height: 100%;
   min-height: 600px;
+  max-height: 700px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 /** 섹션 제목: 좌측 시안 바 */
@@ -133,6 +134,25 @@ export const TicketList = styled.div`
   flex-direction: column;
   gap: 15px;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 8px;
+
+  /* 커스텀 스크롤바 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 242, 255, 0.3);
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 242, 255, 0.5);
+  }
 `;
 
 /** 예매 카드: 프로그램 타입에 따라 배경/보더 색상 구분 */

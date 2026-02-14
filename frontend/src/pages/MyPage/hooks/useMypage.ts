@@ -28,7 +28,13 @@ export const useMyPage = () => {
     const fetchReservations = async () => {
       try {
         const res = await api.get<ReservationDto[]>("/reservations/me");
-        setReservations(res.data);
+
+        // 당일 이후 예매건만 표시 (과거 예매 제외)
+        const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+        const filtered = res.data.filter(
+          (r) => r.visitDate >= today
+        );
+        setReservations(filtered);
       } catch (err) {
         console.error("내역 조회 실패:", err);
       } finally {

@@ -152,7 +152,7 @@ export const useProgramBooking = (
         const apiTimes = res.data.map((sch) => {
           return sch.startTime.split(" ")[1].substring(0, 5);
         });
-        setTimeSlots(apiTimes);
+        setTimeSlots(apiTimes.sort());
       } else {
         setSchedules([]);
         setTimeSlots(DEFAULT_TIME_SLOTS);
