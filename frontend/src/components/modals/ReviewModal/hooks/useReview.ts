@@ -1,11 +1,11 @@
 /**
  * 후기 로직 커스텀 훅
- * - 후기 목록 조회 (GET /api/posts/reviews)
- * - 후기 작성 (POST /api/posts/reviews), 로그인 필요
+ * - reviewApi: 후기 목록 조회, 후기 작성
+ * - 로그인 필요: 비로그인 시 LoginRequestModal 표시
  * - 페이지네이션: 5건씩 분할
  */
 import { useState, useEffect } from "react";
-import { api } from "../../../../api/axios";
+import { getAllReviews, createReview } from "../../../../api/reviewApi";
 import { useAuth } from "../../../../context/AuthContext";
 import type { ReviewData, ReviewRequest } from "../../../../types/api";
 
@@ -43,8 +43,8 @@ export const useReview = (isOpen: boolean) => {
   /** 후기 목록 API 호출 */
   const fetchReviews = async () => {
     try {
-      const response = await api.get("/posts/reviews");
-      setReviews(response.data);
+      const data = await getAllReviews();
+      setReviews(data);
     } catch (error) {
       console.error("후기 로딩 실패:", error);
     }
@@ -68,7 +68,7 @@ export const useReview = (isOpen: boolean) => {
     }
 
     try {
-      await api.post("/posts/reviews", writeForm);
+      await createReview(writeForm as any);
       alert("후기가 등록되었습니다!");
       setView("LIST");
       fetchReviews(); // 목록 새로고침

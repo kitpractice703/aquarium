@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class ApiController {
+public class ExhibitionController {
 
     private final AquariumService aquariumService;
 

@@ -1,12 +1,12 @@
 /**
  * 프로그램 예약 로직 커스텀 훅
- * - 프로그램 목록 조회 (GET /api/programs)
- * - 날짜별 스케줄 조회 (GET /api/programs/{id}/schedules?date=)
- * - 내 예약 조회로 당일 관람권 보유 여부 확인
- * - 결제 성공 시 예약 API 호출 (POST /api/reservations/programs)
+ * - programApi: 프로그램 목록/스케줄 조회
+ * - reservationApi: 내 예약 조회, 관람권 보유 확인, 예약 생성
+ * - 결제 완료 시 reserveProgram() 호출
  */
 import { useState, useEffect } from "react";
-import { api } from "../../../../api/axios";
+import { getPrograms, getProgramSchedules } from "../../../../api/programApi";
+import { getMyReservations, reserveProgram } from "../../../../api/reservationApi";
 import type {
   Program,
   ProgramSchedule,
@@ -91,12 +91,12 @@ export const useProgramBooking = (
   /** 프로그램 목록 조회: 초기 프로그램 매칭 (제목 → ID → 첫 번째) */
   const fetchPrograms = async () => {
     try {
-      const res = await api.get<Program[]>("/programs");
-      if (res.data && res.data.length > 0) {
-        setPrograms(res.data);
+      const data = await getPrograms() as Program[];
+      if (data && data.length > 0) {
+        setPrograms(data);
         // 제목으로 매칭 시도
         if (initialProgramTitle) {
-          const matched = res.data.find((p) =>
+          const matched = data.find((p) =>
             p.title.includes(initialProgramTitle) || initialProgramTitle.includes(p.title)
           );
           if (matched) {
@@ -106,14 +106,14 @@ export const useProgramBooking = (
         }
         // ID로 매칭 시도
         if (initialProgramId) {
-          const found = res.data.find((p) => p.id === initialProgramId);
+          const found = data.find((p) => p.id === initialProgramId);
           if (found) {
             setSelectedProgramId(initialProgramId);
             return;
           }
         }
-        // 기본: 첫 번째 프로그램 선택
-        setSelectedProgramId(res.data[0].id);
+        // 기본: 첣 번째 프로그램 선택
+        setSelectedProgramId(data[0].id);
       } else {
         useFallbackProgram();
       }
@@ -144,12 +144,10 @@ export const useProgramBooking = (
   /** 특정 프로그램의 날짜별 스케줄 조회 → 시간 슬롯 갱신 */
   const fetchSchedules = async (programId: number, dateStr: string) => {
     try {
-      const res = await api.get<ProgramSchedule[]>(
-        `/programs/${programId}/schedules?date=${dateStr}`,
-      );
-      if (res.data && res.data.length > 0) {
-        setSchedules(res.data);
-        const apiTimes = res.data.map((sch) => {
+      const data = await getProgramSchedules(programId, dateStr);
+      if (data && data.length > 0) {
+        setSchedules(data as any);
+        const apiTimes = data.map((sch: any) => {
           return sch.startTime.split(" ")[1].substring(0, 5);
         });
         setTimeSlots(apiTimes.sort());
@@ -167,8 +165,8 @@ export const useProgramBooking = (
   /** 내 예약 목록 조회 (관람권 보유 확인용) */
   const fetchMyReservations = async () => {
     try {
-      const res = await api.get<ReservationDto[]>("/reservations/me");
-      setMyReservations(res.data);
+      const data = await getMyReservations();
+      setMyReservations(data);
       setIsReservationsLoaded(true);
     } catch (err) {
       console.error("내 예약 로딩 실패", err);
@@ -192,8 +190,8 @@ export const useProgramBooking = (
   /** 결제 성공 콜백: 백엔드 예약 API 호출 */
   const handlePaymentSuccess = async () => {
     try {
-      await api.post("/reservations/programs", {
-        programId: selectedProgramId,
+      await reserveProgram({
+        programId: selectedProgramId!,
         visitDate: date,
         visitTime: time,
         count: count,

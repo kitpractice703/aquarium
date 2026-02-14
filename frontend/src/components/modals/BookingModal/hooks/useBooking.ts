@@ -4,17 +4,17 @@
  * - 모달 열림 시 상태 초기화 + body 스크롤 잠금
  */
 import { useState, useEffect } from "react";
-import { api } from "../../../../api/axios";
+import { createReservation } from "../../../../api/reservationApi";
 
 /** 현재 월의 달력 데이터 생성 (요일 오프셋 포함) */
 const getCalendarDays = () => {
   const date = new Date();
   const year = date.getFullYear();
   const month = date.getMonth();
-  const firstDay = new Date(year, month, 1).getDay(); // 1일의 요일 (0=일)
-  const lastDate = new Date(year, month + 1, 0).getDate(); // 해당 월의 마지막 날
+  const firstDay = new Date(year, month, 1).getDay();
+  const lastDate = new Date(year, month + 1, 0).getDate();
   const days = [];
-  for (let i = 0; i < firstDay; i++) days.push(null); // 빈 칸(오프셋)
+  for (let i = 0; i < firstDay; i++) days.push(null);
   for (let i = 1; i <= lastDate; i++) days.push(i);
   return { year, month: month + 1, days };
 };
@@ -26,7 +26,7 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
   const [counts, setCounts] = useState({ adult: 0, teen: 0 });
   const [showPayment, setShowPayment] = useState(false);
 
-  /** 모달 열림/닫힘 시 상태 초기화 및 바디 스크롤 잠금/해제 */
+  /** 모달 열림 시 상태 초기화 + body 스크롤 잠금 */
   useEffect(() => {
     if (isOpen) {
       setCalendarData(getCalendarDays());
@@ -43,7 +43,7 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
   /** 총 금액 계산: 성인 35,000원 + 청소년 29,000원 */
   const totalPrice = counts.adult * 35000 + counts.teen * 29000;
 
-  /** 인원 증감 (최소 0명) */
+  /** 인원 증감 */
   const handleCountChange = (type: "adult" | "teen", delta: number) => {
     setCounts((prev) => ({
       ...prev,
@@ -51,7 +51,7 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
     }));
   };
 
-  /** 다음 단계 진행: Step 1 → 3 → 4 → 결제 (Step 2 시간 선택 생략) */
+  /** 다음 단계 진행 (Step 2 시간 선택은 종일권으로 생략) */
   const handleNext = () => {
     if (step === 1 && selectedDate) {
       setStep(3);
@@ -66,14 +66,14 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
     setStep(step === 3 ? 1 : step - 1);
   };
 
-  /** 결제 성공 시 백엔드 예약 API 호출 (visitTime: "종일권") */
+  /** 결제 성공 → 예약 생성 */
   const handlePaymentSuccess = async () => {
     try {
       const year = calendarData.year;
       const month = String(calendarData.month).padStart(2, "0");
       const day = String(selectedDate).padStart(2, "0");
 
-      await api.post("/reservations", {
+      await createReservation({
         visitDate: `${year}-${month}-${day}`,
         visitTime: "종일권",
         adultCount: counts.adult,

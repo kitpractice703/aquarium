@@ -6,10 +6,10 @@
  * - 반응형: 768px 이하에서 햄버거 메뉴 사용
  */
 import * as S from "./style";
-import BookingModal from "../common/BookingModal";
-import LoginRequestModal from "../common/LoginRequestModal";
-import LoginModal from "../common/LoginModal";
-import PasswordResetModal from "../common/PasswordResetModal";
+import BookingModal from "../../modals/BookingModal";
+import LoginRequestModal from "../../modals/LoginRequestModal";
+import LoginModal from "../../modals/LoginModal";
+import PasswordResetModal from "../../modals/PasswordResetModal";
 import { useHeaderLogic } from "./hooks/useHeader";
 
 const Header = () => {

@@ -3,7 +3,7 @@
  * - 아쿠아리움 설명, 이용 안내(요금/운영 시간), 카카오 지도 표시
  * - anchor id="about"으로 헤더 네비게이션 스크롤 대상
  */
-import KakaoMap from "../KakaoMap";
+import KakaoMap from "../../common/KakaoMap";
 import * as S from "./style";
 
 const AboutSection = () => {

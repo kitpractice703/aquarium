@@ -4,7 +4,7 @@
  * - 카드 클릭 시 ThemeDetailModal 열림 (영상 + 상세 설명)
  */
 import * as S from "./style";
-import ThemeDetailModal from "../ThemeDetailModal";
+import ThemeDetailModal from "../../modals/ThemeDetailModal";
 import { useThemeSection } from "./hooks/useThemeSection";
 
 const ThemeSection = () => {
