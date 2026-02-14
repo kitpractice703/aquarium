@@ -120,8 +120,9 @@ public class ReservationController {
 
         String email = getEmail(auth);
 
-        // 입장권 보유 여부 확인 (동일 날짜에 기존 예약이 있는지 검사)
-        boolean hasAdmission = reservationRepository.existsByUserEmailAndVisitDate(email, request.getVisitDate());
+        // 입장권 보유 여부 확인 (동일 날짜에 CONFIRMED 상태의 예약이 있는지 검사)
+        boolean hasAdmission = reservationRepository.existsByUserEmailAndVisitDateAndStatus(
+                email, request.getVisitDate(), Reservation.ReservationStatus.CONFIRMED);
         if (!hasAdmission) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("해당 날짜의 입장권(관람권)이 없습니다. 입장권을 먼저 예매해주세요.");

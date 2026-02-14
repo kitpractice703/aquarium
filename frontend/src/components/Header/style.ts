@@ -80,9 +80,8 @@ export const UserMenu = styled.div`
     color: #fff;
   }
 
-  @media (max-width: 480px) {
-    gap: 10px;
-    font-size: 13px;
+  @media (max-width: 768px) {
+    display: none;
   }
 `;
 
@@ -168,3 +167,141 @@ export const BookingButton = styled.button`
     box-shadow: 0 4px 10px rgba(0, 219, 230, 0.3);
   }
 `;
+
+/* ──────────── 모바일 반응형 컴포넌트 ──────────── */
+
+/** 햄버거 버튼: 768px 이하에서만 표시, 3줄 → X 애니메이션 */
+export const HamburgerButton = styled.button<{ $isOpen: boolean }>`
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 1100;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+
+  span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  /* 열림 상태: X 모양 */
+  ${(props) =>
+    props.$isOpen &&
+    `
+    span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    span:nth-child(2) {
+      opacity: 0;
+    }
+    span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+  `}
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+/** 모바일 배경 오버레이: 메뉴 열림 시 뒤 화면 어둡게 */
+export const MobileOverlay = styled.div<{ $isOpen: boolean }>`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    opacity: ${(props) => (props.$isOpen ? 1 : 0)};
+    visibility: ${(props) => (props.$isOpen ? "visible" : "hidden")};
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+`;
+
+/** 모바일 슬라이드 메뉴: 우측에서 슬라이드 인 */
+export const MobileMenu = styled.nav<{ $isOpen: boolean }>`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 260px;
+    height: 100vh;
+    background: rgba(10, 15, 28, 0.97);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1050;
+    padding: 80px 30px 30px;
+    gap: 0;
+    transform: translateX(${(props) => (props.$isOpen ? "0" : "100%")});
+    transition: transform 0.3s ease;
+  }
+
+  a, .mobile-menu-item {
+    display: block;
+    padding: 16px 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.3s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  a:hover, .mobile-menu-item:hover {
+    color: var(--accent-cyan);
+  }
+
+  .mobile-menu-item.accent {
+    color: var(--accent-cyan);
+    font-weight: bold;
+  }
+`;
+
+/** 모바일 메뉴 내 구분선 */
+export const MobileNavDivider = styled.div`
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 12px 0;
+`;
+
+/** 모바일 메뉴 내 X 닫기 버튼 */
+export const MobileCloseButton = styled.button`
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+  line-height: 1;
+
+  &:hover {
+    color: var(--accent-cyan);
+  }
+`;
+
+

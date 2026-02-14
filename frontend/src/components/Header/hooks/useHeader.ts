@@ -18,11 +18,15 @@ export const useHeaderLogic = () => {
   const [modalType, setModalType] = useState<ModalType>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isResetOpen, setIsResetOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const closeModal = () => setModalType(null);
+  const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
+  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   /** 예매하기 클릭: 로그인 상태면 예매 모달, 비로그인이면 안내 모달 */
   const handleBookingClick = () => {
+    closeMobileMenu();
     if (isLoggedIn) {
       setIsBookingOpen(true);
     } else {
@@ -32,6 +36,7 @@ export const useHeaderLogic = () => {
 
   /** 예매확인/마이페이지 클릭: 로그인 상태면 마이페이지, 비로그인이면 안내 모달 */
   const handleTicketCheck = () => {
+    closeMobileMenu();
     if (isLoggedIn) {
       navigate("/mypage");
     } else {
@@ -63,6 +68,7 @@ export const useHeaderLogic = () => {
 
   /** 네비게이션 클릭: 홈이 아닌 페이지에서는 홈으로 이동 후 해당 섹션으로 스크롤 */
   const handleNavClick = (id: string) => {
+    closeMobileMenu();
     if (location.pathname !== "/") {
       navigate("/");
       setTimeout(() => {
@@ -90,5 +96,8 @@ export const useHeaderLogic = () => {
     switchResetToLogin,
     handleNavClick,
     navigate,
+    mobileMenuOpen,
+    toggleMobileMenu,
+    closeMobileMenu,
   };
 };

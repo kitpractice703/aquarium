@@ -26,4 +26,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     /** 동일 날짜 중복 예약 방지를 위한 존재 여부 확인 */
     boolean existsByUserEmailAndVisitDate(String email, String visitDate);
+
+    /** 특정 상태의 예약 존재 여부 확인 (관람권 보유 확인용 - CONFIRMED만 체크) */
+    boolean existsByUserEmailAndVisitDateAndStatus(String email, String visitDate, Reservation.ReservationStatus status);
 }

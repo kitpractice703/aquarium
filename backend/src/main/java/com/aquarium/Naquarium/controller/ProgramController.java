@@ -58,12 +58,12 @@ public class ProgramController {
 
         if (program.getType() == Program.ProgramType.PERFORMANCE) {
             List<PerformanceSchedule> schedules = (date != null)
-                    ? performanceScheduleRepository.findByProgramIdAndStartTimeBetween(id, startOfDay, endOfDay)
+                    ? performanceScheduleRepository.findByProgramIdAndStartTimeBetweenOrderByStartTimeAsc(id, startOfDay, endOfDay)
                     : performanceScheduleRepository.findByProgramId(id);
             result = schedules.stream().map(ScheduleResponse::new).collect(Collectors.toList());
         } else {
             List<ExperienceSchedule> schedules = (date != null)
-                    ? experienceScheduleRepository.findByProgramIdAndStartTimeBetween(id, startOfDay, endOfDay)
+                    ? experienceScheduleRepository.findByProgramIdAndStartTimeBetweenOrderByStartTimeAsc(id, startOfDay, endOfDay)
                     : experienceScheduleRepository.findByProgramId(id);
             result = schedules.stream().map(ScheduleResponse::new).collect(Collectors.toList());
         }
