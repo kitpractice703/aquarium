@@ -114,8 +114,9 @@ public class ReservationController {
     @PostMapping("/programs")
     @Transactional
     public ResponseEntity<?> reserveProgram(@RequestBody ProgramReservationRequest request) {
+        try {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
+        if (auth == null || auth.getName().equals("anonymousUser")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
 
@@ -166,5 +167,9 @@ public class ReservationController {
         reservationRepository.save(reservation);
 
         return ResponseEntity.ok("프로그램 예약이 완료되었습니다!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("예약 처리 중 오류가 발생했습니다: " + e.getMessage());
+        }
     }
 }

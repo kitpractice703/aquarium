@@ -117,10 +117,22 @@ export const DateBtn = styled.button<{
     props.$selected ? "#000" : props.$disabled ? "#444" : "#fff"};
   cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
   transition: 0.2s;
+  position: relative;
 
   &:hover {
     background: ${(props) => !props.$disabled && "rgba(0, 242, 255, 0.2)"};
   }
+`;
+
+/** 휴관일 표시 라벨 */
+export const ClosedLabel = styled.span`
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  color: #ff6b6b;
+  white-space: nowrap;
 `;
 
 /* Step 2: 시간 선택 (현재 미사용, 종일권으로 대체) */

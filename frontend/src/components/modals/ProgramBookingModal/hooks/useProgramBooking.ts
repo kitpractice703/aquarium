@@ -16,6 +16,13 @@ import type {
 /** 기본 시간 슬롯 (API 실패 시 폴백) */
 const DEFAULT_TIME_SLOTS = ["10:00", "11:00", "13:00", "14:00", "15:00"];
 
+/** 해당 날짜가 매월 첫째 주 월요일(휴관일)인지 확인 */
+const isFirstMonday = (dateStr: string): boolean => {
+  if (!dateStr) return false;
+  const date = new Date(dateStr + "T00:00:00");
+  return date.getDay() === 1 && date.getDate() <= 7;
+};
+
 export const useProgramBooking = (
   isOpen: boolean,
   _onClose: () => void,
@@ -197,8 +204,8 @@ export const useProgramBooking = (
         count: count,
       });
       /** alert 미사용: PaymentModal SUCCESS 화면의 확인 버튼으로 모달 닫힘 처리 */
-    } catch (err) {
-      alert("예약 실패");
+    } catch (err: any) {
+      alert(err?.response?.data || "예약 처리 중 오류가 발생했습니다.");
     }
   };
 
@@ -206,6 +213,10 @@ export const useProgramBooking = (
   const handleBookingClick = () => {
     if (!date || !time) {
       alert("날짜와 시간을 선택해주세요.");
+      return;
+    }
+    if (isFirstMonday(date)) {
+      alert("매월 첫째 주 월요일은 휴관일입니다.");
       return;
     }
     setShowPayment(true);

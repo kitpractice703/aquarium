@@ -118,7 +118,15 @@ const ProgramBookingModal = ({
               <S.Input
                 type="date"
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const d = new Date(val + "T00:00:00");
+                  if (d.getDay() === 1 && d.getDate() <= 7) {
+                    alert("매월 첫째 주 월요일은 휴관일입니다.");
+                    return;
+                  }
+                  setDate(val);
+                }}
                 min={getTodayString()}
               />
             )}

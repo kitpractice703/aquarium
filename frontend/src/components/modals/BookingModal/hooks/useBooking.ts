@@ -6,6 +6,13 @@
 import { useState, useEffect } from "react";
 import { createReservation } from "../../../../api/reservationApi";
 
+/** 해당 월의 첫째 주 월요일 날짜 반환 */
+const getFirstMondayOfMonth = (year: number, month: number): number => {
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const daysUntilMonday = (8 - firstDay) % 7;
+  return 1 + daysUntilMonday;
+};
+
 /** 현재 월의 달력 데이터 생성 (요일 오프셋 포함) */
 const getCalendarDays = () => {
   const date = new Date();
@@ -39,6 +46,11 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
       document.body.style.overflow = "auto";
     }
   }, [isOpen]);
+
+  /** 매월 첫째 주 월요일 (휴관일) */
+  const closedDay = calendarData
+    ? getFirstMondayOfMonth(calendarData.year, calendarData.month)
+    : null;
 
   /** 총 금액 계산: 성인 35,000원 + 청소년 29,000원 */
   const totalPrice = counts.adult * 35000 + counts.teen * 29000;
@@ -90,6 +102,7 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
     calendarData,
     selectedDate,
     setSelectedDate,
+    closedDay,
     counts,
     handleCountChange,
     totalPrice,

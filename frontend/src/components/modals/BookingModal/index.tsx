@@ -19,6 +19,7 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
     calendarData,
     selectedDate,
     setSelectedDate,
+    closedDay,
     counts,
     handleCountChange,
     totalPrice,
@@ -53,20 +54,23 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
                   {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
                     <S.DayHeader key={d}>{d}</S.DayHeader>
                   ))}
-                  {calendarData?.days.map((day: number | null, idx: number) => (
-                    <S.DateBtn
-                      key={idx}
-                      $disabled={!day || day < new Date().getDate()}
-                      $selected={selectedDate === day}
-                      onClick={() =>
-                        day &&
-                        day >= new Date().getDate() &&
-                        setSelectedDate(day)
-                      }
-                    >
-                      {day}
-                    </S.DateBtn>
-                  ))}
+                  {calendarData?.days.map((day: number | null, idx: number) => {
+                    const isClosed = day === closedDay;
+                    const isPast = !day || day < new Date().getDate();
+                    const isDisabled = isPast || isClosed;
+                    return (
+                      <S.DateBtn
+                        key={idx}
+                        $disabled={isDisabled}
+                        $selected={selectedDate === day}
+                        onClick={() => !isDisabled && day && setSelectedDate(day)}
+                        title={isClosed ? "휴관일 (매월 첫째 주 월요일)" : undefined}
+                      >
+                        {day}
+                        {isClosed && <S.ClosedLabel>휴관</S.ClosedLabel>}
+                      </S.DateBtn>
+                    );
+                  })}
                 </S.CalendarGrid>
               </>
             )}
