@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.TimeZone;
 
 /**
  * Naquarium 아쿠아리움 애플리케이션 진입점
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class NaquariumApplication {
 
     public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         SpringApplication.run(NaquariumApplication.class, args);
     }
 

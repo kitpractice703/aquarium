@@ -11,8 +11,8 @@ public interface PerformanceScheduleRepository extends JpaRepository<Performance
     /** 특정 공연 프로그램의 전체 일정 조회 */
     List<PerformanceSchedule> findByProgramId(Long programId);
 
-    /** 날짜 범위로 일정 조회 (캘린더, 홈 화면 스케줄 표시에 사용) */
-    List<PerformanceSchedule> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
+    /** 날짜 범위로 일정 조회 (캘린더, 홈 화면 스케줄 표시에 사용) - 시간 오름차순 */
+    List<PerformanceSchedule> findByStartTimeBetweenOrderByStartTimeAsc(LocalDateTime start, LocalDateTime end);
 
     /** 특정 프로그램의 날짜별 일정 조회 (시간 오름차순) */
     List<PerformanceSchedule> findByProgramIdAndStartTimeBetweenOrderByStartTimeAsc(Long programId, LocalDateTime start, LocalDateTime end);

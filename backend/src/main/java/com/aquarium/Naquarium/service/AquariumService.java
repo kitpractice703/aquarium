@@ -40,6 +40,6 @@ public class AquariumService {
     public List<PerformanceSchedule> getPerformanceSchedulesByDate(LocalDate date) {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(23, 59, 59);
-        return performanceScheduleRepository.findByStartTimeBetween(startOfDay, endOfDay);
+        return performanceScheduleRepository.findByStartTimeBetweenOrderByStartTimeAsc(startOfDay, endOfDay);
     }
 }

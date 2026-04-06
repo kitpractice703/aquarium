@@ -19,7 +19,7 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
     calendarData,
     selectedDate,
     setSelectedDate,
-    closedDay,
+    isClosedDay,
     counts,
     handleCountChange,
     totalPrice,
@@ -55,7 +55,7 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
                     <S.DayHeader key={d}>{d}</S.DayHeader>
                   ))}
                   {calendarData?.days.map((day: number | null, idx: number) => {
-                    const isClosed = day === closedDay;
+                    const isClosed = day ? isClosedDay(day) : false;
                     const isPast = !day || day < new Date().getDate();
                     const isDisabled = isPast || isClosed;
                     return (
@@ -64,7 +64,7 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
                         $disabled={isDisabled}
                         $selected={selectedDate === day}
                         onClick={() => !isDisabled && day && setSelectedDate(day)}
-                        title={isClosed ? "휴관일 (매월 첫째 주 월요일)" : undefined}
+                        title={isClosed ? "휴관일 (매주 월요일)" : undefined}
                       >
                         {day}
                         {isClosed && <S.ClosedLabel>휴관</S.ClosedLabel>}
