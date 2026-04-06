@@ -70,7 +70,7 @@ public class SecurityConfig {
                 // Google OAuth2 소셜 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .defaultSuccessUrl("https://aquarium-sand.vercel.app", true)
+                        .defaultSuccessUrl("https://aquarium-livid.vercel.app", true)
                 );
 
         return http.build();
@@ -87,7 +87,7 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://aquarium-sand.vercel.app"
+                "https://aquarium-livid.vercel.app"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

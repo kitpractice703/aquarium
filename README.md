@@ -11,9 +11,8 @@
 ## 1. 프로젝트 개요
 
 - **프로젝트명:** Naquarium Archive
-- **개발 기간:** 2026.01 ~ 2026.02 (진행 중)
-- **개발 인원:** 4인 (Full Stack)
-- **배포 URL:** https://aquarium-sand.vercel.app
+- **개발 기간:** 2026.01 ~
+- **배포 URL:** https://aquarium-livid.vercel.app
 
 <br/>
 
@@ -40,7 +39,7 @@
 - **Core:** Java 21, Spring Boot 3.5.10
 - **Data:** MySQL 8.0, Spring Data JPA
 - **Security:** Spring Security 6, OAuth2 Client
-- **Infra:** AWS EC2, AWS RDS
+- **Infra:** AWS Elastic Beanstalk, AWS RDS
 
 <br/>
 
@@ -48,10 +47,10 @@
 
 ```mermaid
 graph LR
-User["User (Browser)"] -->|HTTPS| Frontend["Frontend (Vercel)"]
-Frontend -->|"API Request (/api)"| Backend["Backend (AWS EC2)"]
-Backend -->|Query| DB[("MySQL (AWS RDS)")]
-Backend -->|Auth| Google["Google OAuth2"]
+    User["User (Browser)"] -->|HTTPS| Frontend["Frontend (Vercel)"]
+    Frontend -->|"API Request (/api)"| Backend["Backend (AWS Elastic Beanstalk)"]
+    Backend -->|Query| DB[("MySQL (AWS RDS)")]
+    Backend -->|Auth| Google["Google OAuth2"]
 ```
 
 ## 5. 트러블 슈팅 (Troubleshooting) 🔥
