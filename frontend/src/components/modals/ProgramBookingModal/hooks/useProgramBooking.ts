@@ -76,11 +76,12 @@ export const useProgramBooking = (
     }
   }, [date, selectedProgramId]);
 
-  /** 월요일이 선택된 경우 날짜 초기화 (onChange 차단이 브라우저마다 달라 이중 방어) */
+  /** 월요일 선택 시 날짜 즉시 초기화 + 안내 */
   useEffect(() => {
     if (date && isMonday(date)) {
       setDate("");
       setTime("");
+      alert("매주 월요일은 휴관일입니다. 다른 날짜를 선택해주세요.");
     }
   }, [date]);
 

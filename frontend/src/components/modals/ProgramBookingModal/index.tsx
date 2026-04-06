@@ -118,11 +118,7 @@ const ProgramBookingModal = ({
               <S.Input
                 type="date"
                 value={date}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (new Date(val + "T00:00:00").getDay() === 1) return;
-                  setDate(val);
-                }}
+                onChange={(e) => setDate(e.target.value)}
                 min={getTodayString()}
               />
             )}
