@@ -161,7 +161,7 @@ const ProgramBookingModal = ({
             <S.Button
               $primary
               onClick={handleBookingClick}
-              disabled={!date || !time || totalPrice === 0}
+              disabled={!date || !time}
             >
               결제하기
             </S.Button>
