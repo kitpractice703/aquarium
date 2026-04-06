@@ -30,6 +30,9 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
 
+    @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins}")
+    private String corsAllowedOrigins;
+
     /**
      * HTTP 보안 필터 체인 구성
      * - CSRF 비활성화: REST API 서버이므로 토큰 기반 CSRF 보호 불필요
@@ -85,10 +88,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "https://aquarium-livid.vercel.app"
-        ));
+        config.setAllowedOrigins(List.of(corsAllowedOrigins.split(",")));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

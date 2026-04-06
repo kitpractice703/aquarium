@@ -2,6 +2,8 @@ package com.aquarium.Naquarium.dto;
 
 import com.aquarium.Naquarium.entity.Reservation;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -12,6 +14,7 @@ import java.time.format.DateTimeFormatter;
  */
 @Getter
 public class ReservationDto {
+    private static final Logger log = LoggerFactory.getLogger(ReservationDto.class);
     private Long id;
     /** 티켓 번호 (예: T20260212-00001) */
     private String ticketNumber;
@@ -70,6 +73,7 @@ public class ReservationDto {
                 }
             }
         } catch (Exception e) {
+            log.error("예약 DTO 변환 중 오류 (reservationId={}): {}", reservation.getId(), e.getMessage());
         }
 
         // 프로그램 정보가 없으면 기본 입장권으로 설정

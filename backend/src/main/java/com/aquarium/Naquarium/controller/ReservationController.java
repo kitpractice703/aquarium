@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -138,11 +139,16 @@ public class ReservationController {
         // 프로그램 가격 계산 (인원수 × 단가)
         int price = program.getPrice() * request.getCount();
 
-        // 공연이면 schedule 연결, 체험이면 null
+        // 공연이면 선택한 날짜+시간에 맞는 schedule 연결, 체험이면 null
         PerformanceSchedule schedule = null;
         if (program.getType() == Program.ProgramType.PERFORMANCE) {
+            DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
             schedule = performanceScheduleRepository.findByProgramId(request.getProgramId())
-                    .stream().findFirst().orElse(null);
+                    .stream()
+                    .filter(s -> s.getStartTime().toLocalDate().toString().equals(request.getVisitDate())
+                            && s.getStartTime().format(timeFmt).equals(request.getVisitTime()))
+                    .findFirst()
+                    .orElse(null);
         }
 
         Reservation reservation = Reservation.builder()
