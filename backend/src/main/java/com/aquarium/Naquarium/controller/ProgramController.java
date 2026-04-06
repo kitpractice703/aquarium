@@ -18,11 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 프로그램 API 컨트롤러 (인증 불필요)
- * 프로그램 목록 및 프로그램별 스케줄 조회를 담당
- * 프로그램 유형(PERFORMANCE/EXPERIENCE)에 따라 적절한 스케줄 테이블을 조회
- */
+/** 프로그램 API 컨트롤러 - 목록 조회, 유형별(PERFORMANCE/EXPERIENCE) 스케줄 조회 */
 @RestController
 @RequestMapping("/api/programs")
 @RequiredArgsConstructor
@@ -38,10 +34,7 @@ public class ProgramController {
         return programRepository.findAll();
     }
 
-    /**
-     * 특정 프로그램의 날짜별 스케줄 조회
-     * PERFORMANCE → performance_schedules, EXPERIENCE → experience_schedules 에서 조회
-     */
+    /** 특정 프로그램의 날짜별 스케줄 조회 - 유형에 따라 적절한 스케줄 테이블 분기 */
     @GetMapping("/{id}/schedules")
     public ResponseEntity<?> getSchedulesByProgramAndDate(
             @PathVariable Long id,
@@ -71,10 +64,7 @@ public class ProgramController {
         return ResponseEntity.ok(result);
     }
 
-    /**
-     * 스케줄 응답 DTO
-     * 프론트엔드 ProgramSchedule 타입에 대응하며, startTime은 "yyyy-MM-dd HH:mm:ss" 형식
-     */
+    /** 스케줄 응답 DTO - startTime은 "yyyy-MM-dd HH:mm:ss" 형식 */
     @Data
     static class ScheduleResponse {
         private Long id;

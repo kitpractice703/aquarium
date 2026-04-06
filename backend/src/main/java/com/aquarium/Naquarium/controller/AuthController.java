@@ -18,11 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 인증(Authentication) 컨트롤러
- * - 회원가입, 로그인, 로그아웃, 현재 사용자 정보 조회
- * - 세션 기반 인증 방식 사용
- */
+/** 인증 컨트롤러 - 회원가입, 로그인(세션), 로그아웃, 현재 사용자 조회 */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -50,11 +46,7 @@ public class AuthController {
         return ResponseEntity.ok("회원가입이 완료되었습니다!");
     }
 
-    /**
-     * 로그인 (세션 기반)
-     * - AuthenticationManager를 통해 이메일/비밀번호 검증
-     * - 인증 성공 시 SecurityContext에 저장하고 세션에 바인딩
-     */
+    /** 이메일/비밀번호 검증 후 SecurityContext를 세션에 바인딩 */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         try {
@@ -73,11 +65,7 @@ public class AuthController {
         }
     }
 
-    /**
-     * 현재 로그인된 사용자 정보 조회
-     * - 일반 로그인: auth.getName() → 이메일
-     * - OAuth2 로그인: OAuth2AuthenticationToken에서 이메일 추출
-     */
+    /** 현재 인증 사용자 이메일 반환 (일반 로그인 / OAuth2 분기) */
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -86,7 +74,6 @@ public class AuthController {
             return ResponseEntity.status(401).body("로그인되지 않음");
         }
 
-        // OAuth2 소셜 로그인인 경우 별도 처리
         if (auth instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
             String email = oauth2.getPrincipal().getAttribute("email");

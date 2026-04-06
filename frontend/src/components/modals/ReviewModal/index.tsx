@@ -1,9 +1,4 @@
-/**
- * 관람 후기 모달 컴포넌트
- * - 3개 뷰: LIST(목록) / DETAIL(상세) / WRITE(작성)
- * - 페이지네이션: 5건씩 표시
- * - 비로그인 시 글쓰기 클릭 → 로그인 안내 모달 표시
- */
+/** 관람 후기 모달 - LIST / DETAIL / WRITE 뷰 전환, 비로그인 시 로그인 안내 */
 import * as S from "./style";
 import LoginRequestModal from "../LoginRequestModal";
 import LoginModal from "../LoginModal";
@@ -49,7 +44,6 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
           </S.Header>
 
           <S.Content>
-            {/* 목록 뷰 */}
             {view === "LIST" && (
               <>
                 <S.TableHeader>
@@ -80,7 +74,6 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
                   ))
                 )}
 
-                {/* 페이지네이션 */}
                 {reviews.length > 0 && (
                   <S.Pagination>
                     <button
@@ -115,7 +108,6 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
               </>
             )}
 
-            {/* 상세 뷰 */}
             {view === "DETAIL" && selectedReview && (
               <S.DetailView>
                 <h3>{selectedReview.title}</h3>
@@ -136,7 +128,6 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
               </S.DetailView>
             )}
 
-            {/* 작성 뷰 */}
             {view === "WRITE" && (
               <S.WriteForm>
                 <div className="rating-select">
@@ -193,7 +184,6 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
         </S.Container>
       </S.Overlay>
 
-      {/* 로그인 필요 안내 모달 */}
       <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}
@@ -203,7 +193,6 @@ const ReviewModal = ({ isOpen, onClose }: Props) => {
         }}
       />
 
-      {/* 로그인 모달 */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}

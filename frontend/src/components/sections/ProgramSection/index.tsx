@@ -1,9 +1,3 @@
-/**
- * 프로그램 & 일정 섹션 컴포넌트
- * - 체험 프로그램 카드 (VR 다이빙, 먹이주기)
- * - 공연 시간표: 날짜 슬라이더 + 해당 날짜의 스케줄 목록
- * - 월요일 휴관일 안내, 빈 일정 안내 처리
- */
 import * as S from "./style";
 import vrImage from "../../../assets/images/vr_driving.jpeg";
 import feedingImage from "../../../assets/images/feeding.jpg";
@@ -14,11 +8,7 @@ interface Props {
   selectedDate: string;
   onDateChange: (date: string) => void;
   schedules: ScheduleData[];
-  onProgramClick: (program: {
-    id: number;
-    title: string;
-    price: number;
-  }) => void;
+  onProgramClick: (program: { id: number; title: string; price: number }) => void;
   onScheduleClick: (item: ScheduleData) => void;
 }
 
@@ -30,11 +20,7 @@ const ProgramSection = ({
   onProgramClick,
   onScheduleClick,
 }: Props) => {
-  /** 선택된 날짜에 해당하는 스케줄만 필터링 */
-  const filteredSchedules = schedules.filter(
-    (item) => item.date === selectedDate,
-  );
-  /** 선택된 날짜가 월요일(휴관일)인지 확인 */
+  const filteredSchedules = schedules.filter((item) => item.date === selectedDate);
   const isMonday = dates.find((d) => d.fullDate === selectedDate)?.isMonday;
 
   return (
@@ -42,25 +28,15 @@ const ProgramSection = ({
       <S.Container>
         <S.SectionTitle>프로그램 &amp; 일정</S.SectionTitle>
         <S.ProgramLayout>
-          {/* 체험 프로그램 카드 */}
           <S.ProgramCol>
             <h3>체험 프로그램</h3>
             <S.ExperienceList>
               <S.ExperienceItem>
                 <img src={vrImage} alt="VR" />
                 <h4>가상 심해 다이빙 (VR)</h4>
-                <p>
-                  실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR
-                  체험입니다.
-                </p>
+                <p>실제 물에 들어가지 않고도 심해 3,000m를 탐험하는 VR 체험입니다.</p>
                 <S.Btn1
-                  onClick={() =>
-                    onProgramClick({
-                      id: 101,
-                      title: "가상 심해 다이빙 (VR)",
-                      price: 15000,
-                    })
-                  }
+                  onClick={() => onProgramClick({ id: 101, title: "가상 심해 다이빙 (VR)", price: 15000 })}
                 >
                   예약하기
                 </S.Btn1>
@@ -68,18 +44,9 @@ const ProgramSection = ({
               <S.ExperienceItem>
                 <img src={feedingImage} alt="Feeding" />
                 <h4>아쿠아리스트 먹이 주기</h4>
-                <p>
-                  전문 아쿠아리스트와 함께 메인 수조의 물고기들에게 직접 먹이를
-                  줍니다.
-                </p>
+                <p>전문 아쿠아리스트와 함께 메인 수조의 물고기들에게 직접 먹이를 줍니다.</p>
                 <S.Btn1
-                  onClick={() =>
-                    onProgramClick({
-                      id: 102,
-                      title: "먹이주기 체험",
-                      price: 20000,
-                    })
-                  }
+                  onClick={() => onProgramClick({ id: 102, title: "먹이주기 체험", price: 20000 })}
                 >
                   예약하기
                 </S.Btn1>
@@ -87,7 +54,6 @@ const ProgramSection = ({
             </S.ExperienceList>
           </S.ProgramCol>
 
-          {/* 공연 시간표: 날짜 슬라이더 + 일정 목록 */}
           <S.ProgramCol>
             <h3 id="schedule-start">공연 시간표</h3>
             <S.DateSlider>
@@ -122,18 +88,12 @@ const ProgramSection = ({
                       className={`status ${item.status}`}
                       onClick={() => onScheduleClick(item)}
                     >
-                      {item.status === "closed"
-                        ? "마감"
-                        : item.status === "open"
-                          ? "예매가능"
-                          : "준비중"}
+                      {item.status === "closed" ? "마감" : item.status === "open" ? "예매가능" : "준비중"}
                     </div>
                   </S.ScheduleItem>
                 ))
               ) : (
-                <S.NoPerformances>
-                  해당 날짜에는 예정된 공연 일정이 없습니다.
-                </S.NoPerformances>
+                <S.NoPerformances>해당 날짜에는 예정된 공연 일정이 없습니다.</S.NoPerformances>
               )}
             </div>
           </S.ProgramCol>

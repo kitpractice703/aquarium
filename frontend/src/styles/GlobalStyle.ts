@@ -1,9 +1,4 @@
-/**
- * 전역 스타일 정의 (styled-components createGlobalStyle)
- * - CSS 변수: 다크 테마 색상 팔레트 (bg-dark, accent-cyan 등)
- * - 글꼴: Noto Sans KR (한국어 최적화)
- * - 스크롤바: 커스텀 디자인 (다크 배경 + 시안 호버)
- */
+/** 전역 스타일 - CSS 변수, 다크 테마 팔레트, 커스텀 스크롤바 */
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`

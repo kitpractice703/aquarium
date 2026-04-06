@@ -1,9 +1,4 @@
-/**
- * 프로그램 예약 로직 커스텀 훅
- * - programApi: 프로그램 목록/스케줄 조회
- * - reservationApi: 내 예약 조회, 관람권 보유 확인, 예약 생성
- * - 결제 완료 시 reserveProgram() 호출
- */
+/** 프로그램 예약 상태 관리 - 관람권 보유 확인, 스케줄 조회, 결제 처리 */
 import { useState, useEffect } from "react";
 import { getPrograms, getProgramSchedules } from "../../../../api/programApi";
 import { getMyReservations, reserveProgram } from "../../../../api/reservationApi";
@@ -122,7 +117,7 @@ export const useProgramBooking = (
             return;
           }
         }
-        // 기본: 첣 번째 프로그램 선택
+        // 기본: 첫 번째 프로그램 선택
         setSelectedProgramId(data[0].id);
       } else {
         useFallbackProgram();

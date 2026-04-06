@@ -1,8 +1,4 @@
-/**
- * 결제 모달 컴포넌트
- * - 3단계: INPUT(카드 입력) → PROCESSING(결제 승인) → SUCCESS(완료)
- * - 시뮬레이션 결제: 실제 결제 연동 없이 UI/UX 데모 용도
- */
+/** 결제 시뮬레이션 모달 - INPUT → PROCESSING → SUCCESS 단계 전환 */
 import * as S from "./style";
 import { usePayment } from "./hooks/usePayment";
 
@@ -32,14 +28,12 @@ const PaymentModal = ({
         </S.Header>
 
         <S.Content>
-          {/* 결제 금액 요약 */}
           <S.AmountBox>
             <div className="label">총 결제금액</div>
             <div className="amount">{amount.toLocaleString()}원</div>
             <div className="order-name">{orderName}</div>
           </S.AmountBox>
 
-          {/* Step 1: 카드 번호 입력 (시뮬레이션) */}
           {step === "INPUT" && (
             <S.CardForm>
               <div className="input-group">
@@ -55,7 +49,6 @@ const PaymentModal = ({
             </S.CardForm>
           )}
 
-          {/* Step 2: 결제 승인 중 (스피너 애니메이션) */}
           {step === "PROCESSING" && (
             <S.StatusView>
               <S.Spinner />
@@ -64,7 +57,6 @@ const PaymentModal = ({
             </S.StatusView>
           )}
 
-          {/* Step 3: 결제 완료 */}
           {step === "SUCCESS" && (
             <S.StatusView>
               <S.CheckIcon>✔</S.CheckIcon>

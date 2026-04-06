@@ -7,10 +7,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * 공연 일정 응답 DTO (홈 화면 스케줄 캘린더 표시용)
- * PerformanceSchedule 엔티티를 날짜/시간 문자열로 변환하여 프론트에 전달
- */
+/** 공연 일정 응답 DTO - PerformanceSchedule을 날짜/시간 문자열로 변환 */
 @Data
 public class ScheduleDto {
     private Long id;
@@ -22,7 +19,6 @@ public class ScheduleDto {
     private String place;
     private String status;
 
-    /** 공연 스케줄 엔티티 → DTO 변환 */
     public ScheduleDto(PerformanceSchedule schedule) {
         this.id = schedule.getId();
 

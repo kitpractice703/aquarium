@@ -1,18 +1,11 @@
-/**
- * 테마 상세 모달 로직 커스텀 훅
- * - 4개 테마의 영상 + 설명 데이터 관리
- * - 모달 열림 시 초기 테마 설정 + body 스크롤 잠금
- * - 탭 전환으로 현재 활성 테마 변경
- */
+/** 테마 상세 모달 - 4개 테마 영상/설명 데이터 및 탭 전환 상태 관리 */
 import { useState, useEffect } from "react";
-
 import lightSeaVideo from "../../../../assets/videos/light_sea.mp4";
 import balanceSeaVideo from "../../../../assets/videos/balance_sea.mp4";
 import deepSeaVideo from "../../../../assets/videos/deep_sea.mp4";
 import protectSeaVideo from "../../../../assets/videos/protect_sea.mp4";
 
 export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
-  /** 테마 데이터: 각 테마별 색상, 영상, 상세 설명 */
   const THEMES = [
     {
       id: 0,
@@ -45,24 +38,21 @@ export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
   ];
 
   const [activeTabId, setActiveTabId] = useState<number>(initialThemeId);
+  const [prevIsOpen, setPrevIsOpen] = useState(false);
 
-  /** 모달 열림 시 초기 테마 설정 + 스크롤 잠금 */
+  // 모달이 열릴 때 탭을 초기 테마로 리셋 (useEffect 대신 렌더 중 setState - React 권장 패턴)
+  if (isOpen && !prevIsOpen) {
+    setPrevIsOpen(true);
+    setActiveTabId(initialThemeId);
+  } else if (!isOpen && prevIsOpen) {
+    setPrevIsOpen(false);
+  }
+
   useEffect(() => {
-    if (isOpen) {
-      setActiveTabId(initialThemeId);
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [isOpen, initialThemeId]);
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+  }, [isOpen]);
 
-  /** 현재 활성 테마 (없으면 첫 번째 테마 폴백) */
   const currentTheme = THEMES.find((t) => t.id === activeTabId) || THEMES[0];
 
-  return {
-    THEMES,
-    activeTabId,
-    setActiveTabId,
-    currentTheme,
-  };
+  return { THEMES, activeTabId, setActiveTabId, currentTheme };
 };

@@ -1,17 +1,10 @@
-/**
- * 예매 모달 로직 커스텀 훅
- * - 달력 데이터 생성, 단계 진행, 인원/금액 계산, 결제 후 예약 API 호출
- * - 모달 열림 시 상태 초기화 + body 스크롤 잠금
- */
+/** 입장권 예약 모달 - 달력 생성, 인원/금액 계산, 결제 후 예약 API 호출 */
 import { useState, useEffect } from "react";
 import { createReservation } from "../../../../api/reservationApi";
 
-/** 해당 날짜가 월요일인지 확인 */
-const isMonday = (year: number, month: number, day: number): boolean => {
-  return new Date(year, month - 1, day).getDay() === 1;
-};
+const isMonday = (year: number, month: number, day: number): boolean =>
+  new Date(year, month - 1, day).getDay() === 1;
 
-/** 현재 월의 달력 데이터 생성 (요일 오프셋 포함) */
 const getCalendarDays = () => {
   const date = new Date();
   const year = date.getFullYear();
@@ -31,7 +24,6 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
   const [counts, setCounts] = useState({ adult: 0, teen: 0 });
   const [showPayment, setShowPayment] = useState(false);
 
-  /** 모달 열림 시 상태 초기화 + body 스크롤 잠금 */
   useEffect(() => {
     if (isOpen) {
       setCalendarData(getCalendarDays());
@@ -45,43 +37,32 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
     }
   }, [isOpen]);
 
-  /** 해당 날짜가 휴관일(월요일)인지 확인 */
   const isClosedDay = (day: number) =>
     calendarData ? isMonday(calendarData.year, calendarData.month, day) : false;
 
-  /** 총 금액 계산: 성인 35,000원 + 청소년 29,000원 */
+  // 성인 35,000원 + 청소년 29,000원
   const totalPrice = counts.adult * 35000 + counts.teen * 29000;
 
-  /** 인원 증감 */
   const handleCountChange = (type: "adult" | "teen", delta: number) => {
-    setCounts((prev) => ({
-      ...prev,
-      [type]: Math.max(0, prev[type] + delta),
-    }));
+    setCounts((prev) => ({ ...prev, [type]: Math.max(0, prev[type] + delta) }));
   };
 
-  /** 다음 단계 진행 (Step 2 시간 선택은 종일권으로 생략) */
+  // Step 2(시간 선택)는 종일권이므로 생략하고 Step 1 → Step 3으로 진행
   const handleNext = () => {
-    if (step === 1 && selectedDate) {
-      setStep(3);
-    } else if (step === 3 && totalPrice > 0) {
-      setStep(4);
-    } else if (step === 4) {
-      setShowPayment(true);
-    }
+    if (step === 1 && selectedDate) setStep(3);
+    else if (step === 3 && totalPrice > 0) setStep(4);
+    else if (step === 4) setShowPayment(true);
   };
 
   const handlePrev = () => {
     setStep(step === 3 ? 1 : step - 1);
   };
 
-  /** 결제 성공 → 예약 생성 */
   const handlePaymentSuccess = async () => {
     try {
       const year = calendarData.year;
       const month = String(calendarData.month).padStart(2, "0");
       const day = String(selectedDate).padStart(2, "0");
-
       await createReservation({
         visitDate: `${year}-${month}-${day}`,
         visitTime: "종일권",

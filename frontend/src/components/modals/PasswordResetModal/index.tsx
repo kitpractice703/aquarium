@@ -1,9 +1,4 @@
-/**
- * 비밀번호 재설정 모달
- * - 2단계 프로세스: VERIFY(본인 확인) → RESET(새 비밀번호 설정)
- * - 본인 확인: 이메일 + 전화번호 검증
- * - 완료 후 로그인 모달로 전환
- */
+/** 비밀번호 재설정 모달 - VERIFY(본인 확인) → RESET(새 비밀번호 설정) */
 import * as S from "./style";
 import CommonModal from "../Modal";
 import { usePasswordReset } from "./hooks/usePasswordReset";
@@ -37,7 +32,6 @@ const PasswordResetModal = ({
   return (
     <CommonModal isOpen={isOpen} onClose={handleClose} title="비밀번호 찾기">
       <S.Container>
-        {/* 1단계: 이메일 + 전화번호로 본인 확인 */}
         {step === "VERIFY" ? (
           <S.Form onSubmit={handleVerify}>
             <S.Description>
@@ -70,7 +64,6 @@ const PasswordResetModal = ({
             <S.SubmitButton type="submit">본인 확인</S.SubmitButton>
           </S.Form>
         ) : (
-          /* 2단계: 새 비밀번호 입력 및 확인 */
           <S.Form onSubmit={handleReset}>
             <S.Description>새로 사용할 비밀번호를 입력해주세요.</S.Description>
 

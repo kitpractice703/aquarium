@@ -15,22 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * Google OAuth2 소셜 로그인 사용자 처리 서비스
- * - Google 인증 후 사용자 정보(이메일, 이름)를 DB에 저장/갱신
- * - 신규 사용자: 자동 회원가입 (provider="google", password=null)
- * - 기존 사용자: 기존 정보 유지
- */
+/** Google OAuth2 사용자 처리 - 신규 사용자 자동 가입, 기존 사용자 조회 */
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
 
-    /**
-     * OAuth2 인증 성공 후 호출되는 메서드
-     * - Google에서 받은 사용자 정보(email, name)를 추출하여 DB에 저장/갱신
-     */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
@@ -46,7 +37,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
 
-        // DB에 사용자 저장 또는 기존 사용자 조회
         saveOrUpdate(email, name, registrationId);
 
         return new DefaultOAuth2User(
@@ -56,11 +46,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         );
     }
 
-    /**
-     * 사용자 저장 또는 조회
-     * - 이메일로 기존 사용자 존재 여부 확인
-     * - 미존재 시 신규 생성 (소셜 회원가입)
-     */
+    /** 이메일로 기존 사용자 조회, 미존재 시 신규 생성 */
     private User saveOrUpdate(String email, String name, String provider) {
         User user = userRepository.findByEmail(email)
                 .map(entity -> entity)

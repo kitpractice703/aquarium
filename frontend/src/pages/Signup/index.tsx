@@ -1,9 +1,3 @@
-/**
- * 회원가입 페이지 컴포넌트
- * - 이름, 이메일, 비밀번호, 전화번호 입력 폼
- * - 가입 완료 시 메인 페이지로 이동
- * - 로그인/비밀번호 찾기 모달 연결
- */
 import * as S from "./style";
 import LoginModal from "../../components/modals/LoginModal";
 import PasswordResetModal from "../../components/modals/PasswordResetModal";
@@ -29,7 +23,6 @@ const Signup = () => {
       <S.FormCard>
         <S.Title>회원가입</S.Title>
         <S.Form onSubmit={handleSubmit}>
-          {/* 이름 입력 */}
           <S.InputGroup>
             <S.Label>이름 (닉네임)</S.Label>
             <S.Input
@@ -40,7 +33,6 @@ const Signup = () => {
             />
           </S.InputGroup>
 
-          {/* 이메일 입력 */}
           <S.InputGroup>
             <S.Label>이메일</S.Label>
             <S.Input
@@ -52,7 +44,6 @@ const Signup = () => {
             />
           </S.InputGroup>
 
-          {/* 비밀번호 입력 (8자 이상) */}
           <S.InputGroup>
             <S.Label>비밀번호</S.Label>
             <S.Input
@@ -64,7 +55,6 @@ const Signup = () => {
             />
           </S.InputGroup>
 
-          {/* 비밀번호 확인 */}
           <S.InputGroup>
             <S.Label>비밀번호 확인</S.Label>
             <S.Input
@@ -76,7 +66,6 @@ const Signup = () => {
             />
           </S.InputGroup>
 
-          {/* 전화번호 입력 (자동 하이픈 포맷) */}
           <S.InputGroup>
             <S.Label>전화번호</S.Label>
             <S.Input
@@ -91,12 +80,10 @@ const Signup = () => {
           <S.SubmitButton type="submit">가입하기</S.SubmitButton>
         </S.Form>
 
-        {/* 로그인 페이지 링크 */}
         <S.LoginLink>
           이미 계정이 있으신가요? <span onClick={openLogin}>로그인</span>
         </S.LoginLink>
 
-        {/* 로그인 모달 */}
         <LoginModal
           isOpen={isLoginOpen}
           onClose={closeLogin}
@@ -104,7 +91,6 @@ const Signup = () => {
           onOpenReset={openReset}
         />
 
-        {/* 비밀번호 재설정 모달 */}
         <PasswordResetModal
           isOpen={isResetOpen}
           onClose={closeReset}

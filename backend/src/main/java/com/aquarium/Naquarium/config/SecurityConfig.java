@@ -18,11 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-/**
- * Spring Security 보안 설정
- * - CORS, CSRF, 인증/인가 정책, OAuth2 소셜 로그인 설정 담당
- * - 세션 기반 인증 사용 (JWT 미사용)
- */
+/** Spring Security 설정 - CORS, 세션 기반 인증, Google OAuth2 */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -33,12 +29,6 @@ public class SecurityConfig {
     @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins}")
     private String corsAllowedOrigins;
 
-    /**
-     * HTTP 보안 필터 체인 구성
-     * - CSRF 비활성화: REST API 서버이므로 토큰 기반 CSRF 보호 불필요
-     * - formLogin/httpBasic 비활성화: 프론트엔드(React)에서 직접 로그인 폼 제공
-     * - 인증 실패 시 401 응답 반환 (리다이렉트 대신 JSON 응답 처리를 위함)
-     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -52,7 +42,6 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
 
-                // URL별 접근 권한 설정: permitAll = 비로그인 접근 허용
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
@@ -70,7 +59,6 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                // Google OAuth2 소셜 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .defaultSuccessUrl("https://aquarium-livid.vercel.app", true)
@@ -79,11 +67,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * CORS 정책 설정
-     * - 허용된 Origin: 로컬 개발서버(5173), Vercel 배포 도메인
-     * - credentials: true → 세션 쿠키 전송 허용 (withCredentials)
-     */
+    /** credentials: true — 세션 쿠키 전송을 위해 withCredentials와 함께 동작 */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

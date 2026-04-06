@@ -1,9 +1,4 @@
-/**
- * 커뮤니티 섹션 컴포넌트
- * - 홈 페이지 내 FAQ 미리보기 + 관람 후기 미리보기 (2열 그리드)
- * - FAQ: 3개 항목 아코디언, "+" 클릭 시 전체 FAQ 모달 열기
- * - 후기: 최근 5개 표시, "more" 클릭 시 전체 후기 모달 열기
- */
+/** 커뮤니티 섹션 - FAQ 미리보기 + 관람 후기 미리보기 */
 import * as S from "./style";
 import type { ReviewData } from "../../../types/api";
 
@@ -43,7 +38,6 @@ const CommunitySection = ({
       <S.Container>
         <S.SectionTitle>커뮤니티</S.SectionTitle>
         <S.CommunityGrid>
-          {/* FAQ 미리보기 */}
           <S.CommBox>
             <S.CommTitle>
               자주 묻는 질문 <span onClick={onOpenFaq}>+</span>
@@ -60,7 +54,6 @@ const CommunitySection = ({
             ))}
           </S.CommBox>
 
-          {/* 관람 후기 미리보기 */}
           <S.CommBox>
             <S.CommTitle>
               관람 후기 <span onClick={onOpenReview}>more</span>

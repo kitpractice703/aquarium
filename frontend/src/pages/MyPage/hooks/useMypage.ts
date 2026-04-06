@@ -1,9 +1,4 @@
-/**
- * 마이페이지 로직 커스텀 훅
- * - reservationApi: 내 예약 목록 조회 (당일 이후만 표시)
- * - authApi: 회원정보 수정 (비밀번호 변경 + 전화번호 수정)
- * - 비밀번호 변경 시 자동 로그아웃 처리
- */
+/** 마이페이지 - 예약 내역 조회 및 회원정보 수정 처리 */
 import { useState, useEffect } from "react";
 import { getMyReservations } from "../../../api/reservationApi";
 import { useAuth } from "../../../context/AuthContext";
@@ -15,7 +10,6 @@ export const useMyPage = () => {
   const [reservations, setReservations] = useState<ReservationDto[]>([]);
   const [loading, setLoading] = useState(true);
 
-  /** 회원정보 수정 폼 상태 */
   const [form, setForm] = useState({
     currentPassword: "",
     password: "",
@@ -23,18 +17,13 @@ export const useMyPage = () => {
     phone: "",
   });
 
-  /** 마운트 시 내 예약 목록 조회 */
   useEffect(() => {
     const fetchReservations = async () => {
       try {
         const data = await getMyReservations();
-
-        // 당일 이후 예매건만 표시 (과거 예매 제외)
-        const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-        const filtered = data.filter(
-          (r) => r.visitDate >= today
-        );
-        setReservations(filtered);
+        // 당일 이후 예매건만 표시
+        const today = new Date().toISOString().slice(0, 10);
+        setReservations(data.filter((r) => r.visitDate >= today));
       } catch (err) {
         console.error("내역 조회 실패:", err);
       } finally {
@@ -44,7 +33,7 @@ export const useMyPage = () => {
     fetchReservations();
   }, []);
 
-  /** 전화번호 자동 하이픈 포맷팅 (010-0000-0000) */
+  /** 숫자 입력 시 자동으로 010-0000-0000 형식으로 포맷 */
   const formatPhoneNumber = (value: string) => {
     const raw = value.replace(/[^0-9]/g, "");
     if (raw.length <= 3) return raw;
@@ -57,15 +46,12 @@ export const useMyPage = () => {
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhoneNumber(e.target.value);
-    setForm((prev) => ({ ...prev, phone: formatted }));
+    setForm((prev) => ({ ...prev, phone: formatPhoneNumber(e.target.value) }));
   };
 
   /**
-   * 회원정보 수정 처리
-   * - 현재 비밀번호 필수 (본인 확인)
-   * - 새 비밀번호 입력 시 비밀번호 변경 + 자동 로그아웃
-   * - 비밀번호 미입력 시 전화번호만 수정
+   * 비밀번호 변경 시 보안상 자동 로그아웃 처리.
+   * 비밀번호 미입력 시 전화번호만 수정.
    */
   const handleUpdateInfo = async () => {
     if (!form.currentPassword) {
@@ -89,20 +75,10 @@ export const useMyPage = () => {
         await logout();
       } else {
         alert("회원정보가 성공적으로 수정되었습니다.");
-        setForm((prev) => ({
-          ...prev,
-          currentPassword: "",
-          password: "",
-          confirmPassword: "",
-        }));
+        setForm((prev) => ({ ...prev, currentPassword: "", password: "", confirmPassword: "" }));
       }
     } catch (error: any) {
-      console.error("수정 실패:", error);
-      if (error.response && error.response.data) {
-        alert(error.response.data);
-      } else {
-        alert("정보 수정 중 오류가 발생했습니다.");
-      }
+      alert(error.response?.data || "정보 수정 중 오류가 발생했습니다.");
     }
   };
 

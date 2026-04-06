@@ -1,9 +1,5 @@
-/**
- * API 통신에 사용되는 TypeScript 인터페이스 정의
- * - 백엔드 DTO와 1:1 대응하는 프론트엔드 타입
- */
+/** 백엔드 DTO와 1:1 대응하는 API 타입 정의 */
 
-/** 프로그램 일정 데이터 (ScheduleDto 대응) */
 export interface ScheduleData {
   id: number;
   programId: number;
@@ -15,7 +11,6 @@ export interface ScheduleData {
   status: string; // "open" | "closed"
 }
 
-/** 후기 응답 데이터 */
 export interface ReviewData {
   id: number;
   title: string;
@@ -25,14 +20,12 @@ export interface ReviewData {
   date: string;
 }
 
-/** 후기 작성 요청 */
 export interface ReviewRequest {
   title: string;
   content: string;
   rating: number;
 }
 
-/** 예약 응답 데이터 (ReservationDto 대응) */
 export interface ReservationDto {
   id: number;
   ticketNumber?: string;
@@ -46,7 +39,6 @@ export interface ReservationDto {
   imageUrl?: string;
 }
 
-/** 입장권 예약 요청 */
 export interface ReservationRequest {
   visitDate: string;
   visitTime: string;
@@ -54,7 +46,6 @@ export interface ReservationRequest {
   teenCount: number;
 }
 
-/** 회원가입 요청 */
 export interface SignupRequest {
   username: string;
   email: string;
@@ -62,13 +53,11 @@ export interface SignupRequest {
   phone: string;
 }
 
-/** 로그인 요청 */
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-/** 프로그램 정보 */
 export interface Program {
   id: number;
   title: string;
@@ -78,7 +67,6 @@ export interface Program {
   type: "EXPERIENCE" | "PERFORMANCE";
 }
 
-/** 프로그램 일정 (ProgramSchedule 엔티티 대응) */
 export interface ProgramSchedule {
   id: number;
   programId: number;
@@ -87,7 +75,6 @@ export interface ProgramSchedule {
   isClosed: boolean;
 }
 
-/** FAQ 데이터 */
 export interface FaqData {
   id: number;
   category: string;
@@ -95,13 +82,11 @@ export interface FaqData {
   answer: string;
 }
 
-/** 결제 정보 */
 export interface Payment {
   amount: number;
   orderName: string;
 }
 
-/** 테마 전시관 데이터 (Exhibition 엔티티 대응) */
 export interface ThemeItem {
   id: number;
   title: string;

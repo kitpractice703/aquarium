@@ -24,12 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 예약 컨트롤러
- * - 입장권 예약: POST /api/reservations
- * - 프로그램 예약: POST /api/reservations/programs (입장권 보유 필수)
- * - 내 예약 조회: GET /api/reservations/me
- */
+/** 예약 컨트롤러 - 입장권 예약, 프로그램 예약(입장권 보유 필수), 내 예약 조회 */
 @RestController
 @RequestMapping("/api/reservations")
 @RequiredArgsConstructor
@@ -49,11 +44,7 @@ public class ReservationController {
         return auth.getName();
     }
 
-    /**
-     * 입장권 예약 (관람권만 구매)
-     * - 가격 계산: 대인 35,000원, 소인 29,000원
-     * - schedule 없이 예약 (입장권은 프로그램과 무관)
-     */
+    /** 입장권 예약 - 대인 35,000원, 소인 29,000원, program/schedule 없음 */
     @PostMapping
     public ResponseEntity<String> createReservation(@RequestBody ReservationRequest request) {
         try {
@@ -105,12 +96,7 @@ public class ReservationController {
         }
     }
 
-    /**
-     * 프로그램(공연/체험) 예약
-     * - 선행 조건: 해당 날짜에 입장권(관람권)이 이미 예매되어 있어야 함
-     * - Program을 직접 조회하여 가격 계산 (count × 단가)
-     * - 공연이면 schedule 연결, 체험이면 schedule null
-     */
+    /** 프로그램(공연/체험) 예약 - 당일 입장권 보유 선행 조건, 공연은 schedule 연결 */
     @PostMapping("/programs")
     @Transactional
     public ResponseEntity<?> reserveProgram(@RequestBody ProgramReservationRequest request) {
@@ -133,11 +119,9 @@ public class ReservationController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("유저 정보 없음"));
 
-        // Program 직접 조회
         Program program = programRepository.findById(request.getProgramId())
                 .orElseThrow(() -> new RuntimeException("프로그램을 찾을 수 없습니다."));
 
-        // 프로그램 가격 계산 (인원수 × 단가)
         int price = program.getPrice() * request.getCount();
 
         // 공연이면 선택한 날짜+시간에 맞는 schedule 연결, 체험이면 null

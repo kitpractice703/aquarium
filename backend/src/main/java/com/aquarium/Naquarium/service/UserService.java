@@ -10,11 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 사용자 서비스
- * - 회원정보 수정, 비밀번호 재설정 로직 처리
- * - 소셜 로그인 사용자(google)는 비밀번호 관련 기능 제한
- */
+/** 사용자 서비스 - 회원정보 수정, 비밀번호 재설정 (소셜 회원 비밀번호 기능 제한) */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -22,11 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * 회원정보 수정
-     * - 일반 회원(local): 현재 비밀번호 확인 후 변경 허용
-     * - 소셜 회원(google): 비밀번호 확인 없이 전화번호만 변경 가능
-     */
+    /** local 회원은 현재 비밀번호 필수, google 회원은 전화번호만 변경 가능 */
     @Transactional
     public void updateUser(String email, UserUpdateRequest request) {
         User user = userRepository.findByEmail(email)
@@ -51,11 +43,7 @@ public class UserService {
         user.updateInfo(encodedNewPw, request.getPhone());
     }
 
-    /**
-     * 비밀번호 재설정 자격 확인 (이메일 + 전화번호 일치 검증)
-     * - 소셜 로그인 사용자는 비밀번호 재설정 불가
-     * - 전화번호 비교 시 숫자만 추출하여 하이픈 유무와 무관하게 비교
-     */
+    /** 비밀번호 재설정 자격 확인 - 소셜 회원 제외, 전화번호 하이픈 무관 비교 */
     public void validateUserForPasswordReset(PasswordResetCheckRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
@@ -77,10 +65,7 @@ public class UserService {
         }
     }
 
-    /**
-     * 비밀번호 재설정 실행
-     * - 최소 8자 이상 검증 후 BCrypt로 암호화하여 저장
-     */
+    /** 비밀번호 재설정 - 최소 8자 검증 후 BCrypt 암호화 */
     @Transactional
     public void resetPassword(PasswordResetRequest request) {
         if (request.getNewPassword() == null || request.getNewPassword().length() < 8) {

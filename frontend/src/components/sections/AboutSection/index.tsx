@@ -1,8 +1,4 @@
-/**
- * 소개 섹션 컴포넌트
- * - 아쿠아리움 설명, 이용 안내(요금/운영 시간), 카카오 지도 표시
- * - anchor id="about"으로 헤더 네비게이션 스크롤 대상
- */
+/** 소개 섹션 - 이용 안내(요금/운영 시간) 및 카카오 지도 */
 import KakaoMap from "../../common/KakaoMap";
 import * as S from "./style";
 
@@ -24,7 +20,6 @@ const AboutSection = () => {
         </S.IntroDesc>
 
         <S.AboutGrid>
-          {/* 이용 안내: 요금 및 운영 시간 */}
           <div>
             <S.SubTitle>이용 안내</S.SubTitle>
             <S.InfoBox>
@@ -42,7 +37,6 @@ const AboutSection = () => {
               </S.InfoItem>
             </S.InfoBox>
           </div>
-          {/* 카카오 지도 + 주소 안내 */}
           <div>
             <S.SubTitle>찾아오시는 길</S.SubTitle>
             <S.MapWrapper>

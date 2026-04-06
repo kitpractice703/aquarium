@@ -5,11 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 사용자 엔티티
- * - 일반 회원가입(provider="local")과 Google OAuth2(provider="google") 모두 지원
- * - 소셜 로그인 사용자는 password가 null일 수 있음
- */
+/** 사용자 엔티티 - local/google provider 지원, 소셜 회원은 password null */
 @Entity
 @Table(name = "users")
 @Getter
@@ -21,7 +17,6 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    /** 로그인 식별자 (이메일 주소, unique) */
     @Column(nullable = false, unique = true)
     private String email;
 

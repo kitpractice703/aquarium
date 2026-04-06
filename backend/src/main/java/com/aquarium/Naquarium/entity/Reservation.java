@@ -23,7 +23,6 @@ public class Reservation {
     @Column(name = "reservation_id")
     private Long id;
 
-    /** 예약한 사용자 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -44,11 +43,8 @@ public class Reservation {
     @Column(name = "visit_time")
     private String visitTime;
 
-    /** 대인(만 13세 이상) 인원수 */
     private int adultCount;
-    /** 소인(만 12세 이하) 인원수 */
     private int teenCount;
-    /** 최종 결제 금액 (원) */
     private int totalPrice;
 
     /** 예약 상태: CONFIRMED(확정), CANCELLED(취소) */

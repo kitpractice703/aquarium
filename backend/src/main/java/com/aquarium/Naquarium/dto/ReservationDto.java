@@ -7,11 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * 예약 응답 DTO (마이페이지 예약 내역 표시용)
- * Reservation 엔티티를 프론트엔드에 필요한 형태로 변환
- * 프로그램 정보 조회 우선순위: program 직접 참조 → schedule 경유 → 기본 입장권
- */
+/** 예약 응답 DTO - program 직접 참조 → schedule 경유 → 기본 입장권 우선순위로 변환 */
 @Getter
 public class ReservationDto {
     private static final Logger log = LoggerFactory.getLogger(ReservationDto.class);
@@ -28,11 +24,6 @@ public class ReservationDto {
     private String status;
     private String imageUrl;
 
-    /**
-     * Reservation 엔티티 → DTO 변환 생성자
-     * - 티켓 번호: 예약일 + 예약ID로 자동 생성
-     * - program 직접 참조 우선, 없으면 schedule 경유, 없으면 관람권
-     */
     public ReservationDto(Reservation reservation) {
         this.id = reservation.getId();
         this.status = reservation.getStatus() != null ? reservation.getStatus().name() : "CONFIRMED";

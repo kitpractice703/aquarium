@@ -1,8 +1,4 @@
-/**
- * FAQ 모달 컴포넌트
- * - 아코디언 UI: 질문 클릭 시 답변 토글
- * - 카테고리별 질문 리스트 (예매/환불, 시설이용, 관람, 할인, 기타)
- */
+/** FAQ 모달 - 카테고리별 아코디언 */
 import * as S from "./style";
 import { useFaq } from "./hooks/useFaq";
 
@@ -29,7 +25,6 @@ const FaqModal = ({ isOpen, onClose }: Props) => {
         <S.Content>
           {faqList.map((item) => (
             <S.AccordionItem key={item.id}>
-              {/* 질문 헤더: 클릭 시 답변 토글, 열림 시 아이콘 회전 */}
               <S.Question
                 $isOpen={openIndex === item.id}
                 onClick={() => handleToggle(item.id)}
@@ -50,7 +45,6 @@ const FaqModal = ({ isOpen, onClose }: Props) => {
                 <div className="icon">▼</div>
               </S.Question>
 
-              {/* 답변: max-height 애니메이션으로 펼침/접힘 */}
               <S.Answer $isOpen={openIndex === item.id}>
                 <p>{item.answer}</p>
               </S.Answer>

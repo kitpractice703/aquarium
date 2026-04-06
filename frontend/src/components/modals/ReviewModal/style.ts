@@ -1,7 +1,4 @@
-/**
- * 관람 후기 모달 스타일
- * - LIST(목록), DETAIL(상세), WRITE(작성) 뷰 스타일 포함
- */
+/** 관람 후기 모달 스타일 */
 import styled, { keyframes } from "styled-components";
 
 const fadeIn = keyframes`

@@ -17,11 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 게시글 API 컨트롤러 (후기 CRUD)
- * - 후기 목록 조회: 비로그인 접근 가능 (permitAll)
- * - 후기 작성: 로그인 필요
- */
+/** 후기 API 컨트롤러 - 목록 조회(공개), 작성(로그인 필요) */
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor

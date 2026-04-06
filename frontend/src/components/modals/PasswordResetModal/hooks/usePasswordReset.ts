@@ -1,34 +1,22 @@
-/**
- * 비밀번호 재설정 로직 커스텀 훅
- * - step: "VERIFY"(본인 확인) → "RESET"(비밀번호 변경)
- * - 전화번호 자동 포맷팅 (010-0000-0000)
- * - RESET 단계 진입 시 새 비밀번호 입력 필드 자동 포커스
- */
+/** 비밀번호 재설정 - VERIFY(본인 확인) → RESET(새 비밀번호 설정) 2단계 처리 */
 import { useState, useEffect, useRef } from "react";
 import { checkUserForReset, resetPassword } from "../../../../api/authApi";
 
-export const usePasswordReset = (
-  onClose: () => void,
-  onSwitchToLogin: () => void,
-) => {
+export const usePasswordReset = (onClose: () => void, onSwitchToLogin: () => void) => {
   const [step, setStep] = useState<"VERIFY" | "RESET">("VERIFY");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  /** RESET 단계 진입 시 비밀번호 입력 필드 자동 포커스 */
   const newPasswordRef = useRef<HTMLInputElement>(null);
 
+  // RESET 단계 진입 시 새 비밀번호 입력 필드 자동 포커스
   useEffect(() => {
     if (step === "RESET" && newPasswordRef.current) {
-      setTimeout(() => {
-        newPasswordRef.current?.focus();
-      }, 50);
+      setTimeout(() => newPasswordRef.current?.focus(), 50);
     }
   }, [step]);
 
-  /** 모달 닫기: 모든 상태 초기화 */
   const handleClose = () => {
     setStep("VERIFY");
     setEmail("");
@@ -38,28 +26,22 @@ export const usePasswordReset = (
     onClose();
   };
 
-  /** 전화번호 입력 시 자동 하이픈 포맷팅 (010-0000-0000) */
+  /** 숫자 입력 시 자동으로 010-0000-0000 형식으로 포맷 */
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/[^0-9]/g, "");
     let formattedValue = rawValue;
-
     if (rawValue.length > 3 && rawValue.length <= 7) {
       formattedValue = `${rawValue.slice(0, 3)}-${rawValue.slice(3)}`;
     } else if (rawValue.length > 7) {
       formattedValue = `${rawValue.slice(0, 3)}-${rawValue.slice(3, 7)}-${rawValue.slice(7, 11)}`;
     }
-
-    if (formattedValue.length <= 13) {
-      setPhone(formattedValue);
-    }
+    if (formattedValue.length <= 13) setPhone(formattedValue);
   };
 
-  /** 1단계: 이메일 + 전화번호로 본인 확인 API 호출 */
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !phone) return alert("이메일과 전화번호를 입력해주세요.");
     if (phone.length < 13) return alert("전화번호를 올바르게 입력해주세요.");
-
     try {
       await checkUserForReset(email, phone);
       alert("본인 확인되었습니다. 새 비밀번호를 설정해주세요.");
@@ -69,14 +51,10 @@ export const usePasswordReset = (
     }
   };
 
-  /** 2단계: 새 비밀번호 설정 (8자 이상, 확인 일치 검증) */
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword !== confirmPassword)
-      return alert("비밀번호가 일치하지 않습니다.");
-    if (newPassword.length < 8)
-      return alert("비밀번호는 8자 이상이어야 합니다.");
-
+    if (newPassword !== confirmPassword) return alert("비밀번호가 일치하지 않습니다.");
+    if (newPassword.length < 8) return alert("비밀번호는 8자 이상이어야 합니다.");
     try {
       await resetPassword(email, newPassword);
       alert("비밀번호가 변경되었습니다! 로그인해주세요.");
@@ -86,16 +64,13 @@ export const usePasswordReset = (
       alert("비밀번호 변경 실패: " + (error.response?.data || "오류 발생"));
     }
   };
+
   return {
     step,
-    email,
-    setEmail,
-    phone,
-    setPhone,
-    newPassword,
-    setNewPassword,
-    confirmPassword,
-    setConfirmPassword,
+    email, setEmail,
+    phone, setPhone,
+    newPassword, setNewPassword,
+    confirmPassword, setConfirmPassword,
     newPasswordRef,
     handleClose,
     handlePhoneChange,

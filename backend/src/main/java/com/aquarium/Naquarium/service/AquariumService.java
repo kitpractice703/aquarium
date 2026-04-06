@@ -12,10 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * 아쿠아리움 공개 데이터 서비스
- * 전시관, 공연 프로그램 일정 등 인증 없이 접근 가능한 데이터 조회 담당
- */
+/** 공개 데이터 서비스 - 전시관 목록, 공연 일정 조회 */
 @Service
 @RequiredArgsConstructor
 public class AquariumService {

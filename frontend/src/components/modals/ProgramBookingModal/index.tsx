@@ -1,9 +1,4 @@
-/**
- * 프로그램 예약 모달 컴포넌트
- * - 프로그램 선택 → 날짜 → 시간 → 인원 → 결제
- * - 당일 관람권 미보유 시 TicketNoticeModal로 안내
- * - fixedDate/fixedTime: 공연 시간표에서 진입 시 사전 설정
- */
+/** 프로그램 예약 모달 - 관람권 보유 확인 후 날짜/시간/인원 선택 및 결제 */
 import { useEffect } from "react";
 import * as S from "./style";
 import CommonModal from "../Modal";
@@ -93,7 +88,6 @@ const ProgramBookingModal = ({
     <>
       <CommonModal isOpen={isOpen} onClose={onClose} title="프로그램 예약">
         <S.Container>
-          {/* 프로그램 선택 (외부에서 지정 시 잠금) */}
           <S.Section>
             <S.Label>프로그램 선택</S.Label>
             <S.Select
@@ -109,7 +103,6 @@ const ProgramBookingModal = ({
             </S.Select>
           </S.Section>
 
-          {/* 날짜 선택 (고정일 시 읽기 전용) */}
           <S.Section>
             <S.Label>날짜 선택</S.Label>
             {fixedDate ? (
@@ -127,7 +120,6 @@ const ProgramBookingModal = ({
             )}
           </S.Section>
 
-          {/* 시간 선택 (고정 시간 시 읽기 전용) */}
           <S.Section>
             <S.Label>시간 선택</S.Label>
             {fixedTime ? (
@@ -144,7 +136,6 @@ const ProgramBookingModal = ({
             )}
           </S.Section>
 
-          {/* 인원 카운터 (최소 1명) */}
           <S.CounterRow>
             <div className="label">예약 인원</div>
             <div className="controls">
@@ -154,7 +145,6 @@ const ProgramBookingModal = ({
             </div>
           </S.CounterRow>
 
-          {/* 하단: 총 금액 + 결제 버튼 */}
           <S.Footer>
             <div className="price">총 {totalPrice.toLocaleString()}원</div>
             <S.Button
@@ -168,7 +158,6 @@ const ProgramBookingModal = ({
         </S.Container>
       </CommonModal>
 
-      {/* 결제 모달 */}
       {showPayment && (
         <PaymentModal
           amount={totalPrice}

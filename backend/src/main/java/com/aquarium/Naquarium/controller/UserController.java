@@ -10,10 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 사용자 정보 관리 컨트롤러
- * - 회원정보 수정, 비밀번호 재설정 (본인 확인 → 비밀번호 변경 2단계)
- */
+/** 사용자 정보 컨트롤러 - 회원정보 수정, 비밀번호 재설정(2단계) */
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor

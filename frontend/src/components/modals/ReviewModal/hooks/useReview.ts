@@ -1,15 +1,9 @@
-/**
- * 후기 로직 커스텀 훅
- * - reviewApi: 후기 목록 조회, 후기 작성
- * - 로그인 필요: 비로그인 시 LoginRequestModal 표시
- * - 페이지네이션: 5건씩 분할
- */
+/** 후기 모달 - 목록 조회, 상세 보기, 작성 3가지 뷰 상태 관리 */
 import { useState, useEffect } from "react";
 import { getAllReviews, createReview } from "../../../../api/reviewApi";
 import { useAuth } from "../../../../context/AuthContext";
 import type { ReviewData, ReviewRequest } from "../../../../types/api";
 
-/** 한 페이지당 표시할 후기 수 */
 const ITEMS_PER_PAGE = 5;
 
 export const useReview = (isOpen: boolean) => {
@@ -22,13 +16,8 @@ export const useReview = (isOpen: boolean) => {
 
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [selectedReview, setSelectedReview] = useState<ReviewData | null>(null);
-  const [writeForm, setWriteForm] = useState<ReviewRequest>({
-    title: "",
-    content: "",
-    rating: 5,
-  });
+  const [writeForm, setWriteForm] = useState<ReviewRequest>({ title: "", content: "", rating: 5 });
 
-  /** 모달 열림 시 후기 목록 조회 + 상태 초기화 */
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -40,7 +29,6 @@ export const useReview = (isOpen: boolean) => {
     }
   }, [isOpen]);
 
-  /** 후기 목록 API 호출 */
   const fetchReviews = async () => {
     try {
       const data = await getAllReviews();
@@ -50,7 +38,6 @@ export const useReview = (isOpen: boolean) => {
     }
   };
 
-  /** 글쓰기 버튼: 로그인 상태 확인 후 작성 뷰 또는 로그인 안내 */
   const handleWriteClick = () => {
     if (isLoggedIn) {
       setWriteForm({ title: "", content: "", rating: 5 });
@@ -60,18 +47,16 @@ export const useReview = (isOpen: boolean) => {
     }
   };
 
-  /** 후기 등록: 제목/내용 필수 검증 후 API 호출 */
   const handleSubmitReview = async () => {
     if (!writeForm.title || !writeForm.content) {
       alert("제목과 내용을 모두 입력해주세요.");
       return;
     }
-
     try {
       await createReview(writeForm as any);
       alert("후기가 등록되었습니다!");
       setView("LIST");
-      fetchReviews(); // 목록 새로고침
+      fetchReviews();
     } catch (error: any) {
       if (error.response?.status === 401) {
         setIsLoginNoticeOpen(true);
@@ -81,7 +66,6 @@ export const useReview = (isOpen: boolean) => {
     }
   };
 
-  /** 페이지네이션 계산 */
   const totalPages = Math.ceil(reviews.length / ITEMS_PER_PAGE);
   const currentItems = reviews.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -89,22 +73,13 @@ export const useReview = (isOpen: boolean) => {
   );
 
   return {
-    view,
-    setView,
-    currentPage,
-    setCurrentPage,
-    reviews,
-    currentItems,
-    totalPages,
-    selectedReview,
-    setSelectedReview,
-    writeForm,
-    setWriteForm,
-    handleWriteClick,
-    handleSubmitReview,
-    isLoginNoticeOpen,
-    setIsLoginNoticeOpen,
-    isLoginModalOpen,
-    setIsLoginModalOpen,
+    view, setView,
+    currentPage, setCurrentPage,
+    reviews, currentItems, totalPages,
+    selectedReview, setSelectedReview,
+    writeForm, setWriteForm,
+    handleWriteClick, handleSubmitReview,
+    isLoginNoticeOpen, setIsLoginNoticeOpen,
+    isLoginModalOpen, setIsLoginModalOpen,
   };
 };
