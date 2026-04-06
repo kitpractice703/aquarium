@@ -107,8 +107,8 @@ const ProgramSection = ({
             <div>
               {isMonday ? (
                 <S.ClosedNotice>
-                  <h3>오늘은 정기 휴관일입니다.</h3>
-                  <p>매월 첫째 주 월요일은 시설 점검을 위해 쉽니다.</p>
+                  <h3>정기 휴관일입니다.</h3>
+                  <p>매주 월요일은 시설 점검을 위해 쉽니다.</p>
                 </S.ClosedNotice>
               ) : filteredSchedules.length > 0 ? (
                 filteredSchedules.map((item) => (
