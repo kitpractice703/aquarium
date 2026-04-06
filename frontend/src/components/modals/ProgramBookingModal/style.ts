@@ -74,6 +74,12 @@ export const Select = styled.select`
   }
 `;
 
+export const ClosedNotice = styled.p`
+  font-size: 12px;
+  color: #ff6b6b;
+  margin: 4px 0 0;
+`;
+
 /** 고정된 날짜/시간 표시 (읽기 전용) */
 export const FixedInfo = styled.div`
   color: #fff;

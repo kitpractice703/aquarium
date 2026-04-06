@@ -115,12 +115,15 @@ const ProgramBookingModal = ({
             {fixedDate ? (
               <S.FixedInfo>{fixedDate} (지정일)</S.FixedInfo>
             ) : (
-              <S.Input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                min={getTodayString()}
-              />
+              <>
+                <S.Input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  min={getTodayString()}
+                />
+                <S.ClosedNotice>* 매주 월요일은 휴관일입니다.</S.ClosedNotice>
+              </>
             )}
           </S.Section>
 
