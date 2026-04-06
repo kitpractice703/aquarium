@@ -76,35 +76,26 @@ export const useProgramBooking = (
     }
   }, [date, selectedProgramId]);
 
-  /** 월요일 선택 시 날짜 초기화 + 안내 */
+  /** 날짜 변경 시: 월요일이면 초기화, 아니면 관람권 보유 확인 */
   useEffect(() => {
-    if (date && isMonday(date)) {
-      setDate("");
-      setTime("");
-      alert("매주 월요일은 휴관일입니다. 다른 날짜를 선택해주세요.");
-    }
-  }, [date]);
-
-  /** 날짜 변경 시 당일 관람권 보유 여부 확인 (ADMISSION 타입 예약) */
-  useEffect(() => {
-    if (!isReservationsLoaded) return;
     if (!date) {
       setRequireTicket(false);
       return;
     }
-    if (date) {
-      const hasAdmission = myReservations.some(
-        (res) =>
-          res.visitDate === date &&
-          res.status === "CONFIRMED" &&
-          (res.programType === "ADMISSION" || !res.programType),
-      );
-      if (!hasAdmission) {
-        setRequireTicket(true);
-      } else {
-        setRequireTicket(false);
-      }
+    if (isMonday(date)) {
+      setDate("");
+      setTime("");
+      alert("매주 월요일은 휴관일입니다. 다른 날짜를 선택해주세요.");
+      return;
     }
+    if (!isReservationsLoaded) return;
+    const hasAdmission = myReservations.some(
+      (res) =>
+        res.visitDate === date &&
+        res.status === "CONFIRMED" &&
+        (res.programType === "ADMISSION" || !res.programType),
+    );
+    setRequireTicket(!hasAdmission);
   }, [date, myReservations, isReservationsLoaded]);
 
   /** 프로그램 목록 조회: 초기 프로그램 매칭 (제목 → ID → 첫 번째) */
