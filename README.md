@@ -10,24 +10,23 @@
 
 ## 1. 프로젝트 개요
 
-| 항목 | 내용 |
-|------|------|
-| 프로젝트명 | Naquarium Archive |
-| 개발 기간 | 2025.12 ~ 2026.04 |
-| 배포 URL | https://aquarium-livid.vercel.app |
-| GitHub | https://github.com/intaekim-3e/aquarium |
+| 항목       | 내용                              |
+| ---------- | --------------------------------- |
+| 프로젝트명 | Naquarium Archive                 |
+| 개발 기간  | 2025.12 ~ 2026.02 (지속 수정중)   |
+| 배포 URL   | https://aquarium-livid.vercel.app |
 
 <br/>
 
 ## 2. 주요 기능
 
-| 기능 | 설명 |
-|------|------|
-| 회원 관리 | 이메일/비밀번호 회원가입·로그인, Google OAuth 2.0 소셜 로그인, 비밀번호 재설정 |
-| 예매 시스템 | 관람권(입장권) 날짜·인원별 예매, 프로그램(공연/체험) 예약, 마이페이지 예약 내역 |
+| 기능            | 설명                                                                             |
+| --------------- | -------------------------------------------------------------------------------- |
+| 회원 관리       | 이메일/비밀번호 회원가입·로그인, Google OAuth 2.0 소셜 로그인, 비밀번호 재설정   |
+| 예매 시스템     | 관람권(입장권) 날짜·인원별 예매, 프로그램(공연/체험) 예약, 마이페이지 예약 내역  |
 | 결제 시뮬레이션 | 카드 입력 UI → 결제 승인 → 완료의 3단계 상태 전환 애니메이션 (실제 PG 연동 없음) |
-| 커뮤니티 | 관람 후기 작성·조회·별점 평가, FAQ 아코디언 |
-| 지도 | Kakao Map API를 활용한 아쿠아리움 위치 표시 |
+| 커뮤니티        | 관람 후기 작성·조회·별점 평가, FAQ 아코디언                                      |
+| 지도            | Kakao Map API를 활용한 아쿠아리움 위치 표시                                      |
 
 <br/>
 
@@ -35,22 +34,22 @@
 
 ### Frontend
 
-| 분류 | 기술 |
-|------|------|
-| Core | React 19, TypeScript, Vite |
-| Styling | Styled-components 6 |
-| Routing | React Router DOM v7 |
-| HTTP | Axios |
+| 분류    | 기술                       |
+| ------- | -------------------------- |
+| Core    | React 19, TypeScript, Vite |
+| Styling | Styled-components 6        |
+| Routing | React Router DOM v7        |
+| HTTP    | Axios                      |
 
 ### Backend
 
-| 분류 | 기술 |
-|------|------|
-| Core | Java 21, Spring Boot 3.5.10 |
-| Security | Spring Security 6, OAuth2 Client |
-| Data | Spring Data JPA (Hibernate), MySQL 8.0 |
-| Test | JUnit 5, Mockito, H2 (in-memory) |
-| Infra | AWS Elastic Beanstalk, AWS RDS |
+| 분류     | 기술                                   |
+| -------- | -------------------------------------- |
+| Core     | Java 21, Spring Boot 3.5.10            |
+| Security | Spring Security 6, OAuth2 Client       |
+| Data     | Spring Data JPA (Hibernate), MySQL 8.0 |
+| Test     | JUnit 5, Mockito, H2 (in-memory)       |
+| Infra    | AWS Elastic Beanstalk, AWS RDS         |
 
 <br/>
 
@@ -134,6 +133,7 @@ erDiagram
 ```
 
 > **예약 타입별 nullable 관계**
+>
 > - 입장권: `program_id = null`, `schedule_id = null`
 > - 체험 프로그램: `program_id = 프로그램 ID`, `schedule_id = null`
 > - 공연 프로그램: `program_id = 프로그램 ID`, `schedule_id = 공연 회차 ID`
@@ -144,14 +144,14 @@ erDiagram
 
 레포지토리 → 서비스 → 컨트롤러 3계층으로 테스트를 구성했습니다.
 
-| 계층 | 클래스 | 방식 | 주요 검증 |
-|------|--------|------|----------|
-| Repository | `UserRepositoryTest` | `@DataJpaTest` + H2 | 이메일 조회, 중복 이메일 예외, 소셜 회원 null password |
-| Repository | `ReservationRepositoryTest` | `@DataJpaTest` + H2 | 관람권 보유 확인 쿼리 (`program IS NULL` 조건) |
-| Service | `UserServiceTest` | `@ExtendWith(MockitoExtension)` | 비밀번호 불일치 예외, 소셜 회원 제한 |
-| Controller | `AuthControllerTest` | `@WebMvcTest` + MockMvc | 회원가입 409 중복, 로그인 인증, 비인증 401 |
-| Controller | `ReservationControllerTest` | `@WebMvcTest` + MockMvc | 가격 계산(대인×35000 + 소인×29000), 비인증 401 |
-| Controller | `PostApiControllerTest` | `@WebMvcTest` + MockMvc | 후기 목록 공개 접근, 후기 작성 인증 필요 |
+| 계층       | 클래스                      | 방식                            | 주요 검증                                              |
+| ---------- | --------------------------- | ------------------------------- | ------------------------------------------------------ |
+| Repository | `UserRepositoryTest`        | `@DataJpaTest` + H2             | 이메일 조회, 중복 이메일 예외, 소셜 회원 null password |
+| Repository | `ReservationRepositoryTest` | `@DataJpaTest` + H2             | 관람권 보유 확인 쿼리 (`program IS NULL` 조건)         |
+| Service    | `UserServiceTest`           | `@ExtendWith(MockitoExtension)` | 비밀번호 불일치 예외, 소셜 회원 제한                   |
+| Controller | `AuthControllerTest`        | `@WebMvcTest` + MockMvc         | 회원가입 409 중복, 로그인 인증, 비인증 401             |
+| Controller | `ReservationControllerTest` | `@WebMvcTest` + MockMvc         | 가격 계산(대인×35000 + 소인×29000), 비인증 401         |
+| Controller | `PostApiControllerTest`     | `@WebMvcTest` + MockMvc         | 후기 목록 공개 접근, 후기 작성 인증 필요               |
 
 <br/>
 
