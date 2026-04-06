@@ -11,7 +11,7 @@
 ## 1. 프로젝트 개요
 
 - **프로젝트명:** Naquarium Archive
-- **개발 기간:** 2026.01 ~
+- **개발 기간:** 2025.12 ~
 - **배포 URL:** https://aquarium-livid.vercel.app
 
 <br/>

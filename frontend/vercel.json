@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://Naquarium-env.eba-j3aqscqy.ap-northeast-2.elasticbeanstalk.com/api/:path*"
+      "destination": "http://Naquarium-env.eba-j3aqscqy.ap-northeast-2.elasticbeanstalk.com/api/:path*"
     },
     {
       "source": "/oauth2/:path*",
-      "destination": "https://Naquarium-env.eba-j3aqscqy.ap-northeast-2.elasticbeanstalk.com/oauth2/:path*"
+      "destination": "http://Naquarium-env.eba-j3aqscqy.ap-northeast-2.elasticbeanstalk.com/oauth2/:path*"
     },
     {
       "source": "/login/oauth2/:path*",
-      "destination": "https://Naquarium-env.eba-j3aqscqy.ap-northeast-2.elasticbeanstalk.com/login/oauth2/:path*"
+      "destination": "http://Naquarium-env.eba-j3aqscqy.ap-northeast-2.elasticbeanstalk.com/login/oauth2/:path*"
     },
     {
       "source": "/(.*)",
