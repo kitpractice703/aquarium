@@ -6,7 +6,7 @@
  */
 import { useState, useEffect } from "react";
 
-import lightSeaVideo from "../../../../assets/videos/light_sea.mp4";
+// import lightSeaVideo from "../../../../assets/videos/light_sea.mp4";
 import balanceSeaVideo from "../../../../assets/videos/balance_sea.mp4";
 import deepSeaVideo from "../../../../assets/videos/deep_sea.mp4";
 import protectSeaVideo from "../../../../assets/videos/protect_sea.mp4";
@@ -18,7 +18,7 @@ export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
       id: 0,
       title: "빛의 바다",
       color: "#ffdd57",
-      video: lightSeaVideo,
+      video: " ",
       desc: `햇빛이 수면 위에서 부서지며 만들어내는 찬란한 빛의 파동.\n그 파동 아래에서 형형색색의 생명들이 태어나고, 바다를 아름답게 꾸며 줍니다.\n찬란한 바다의 한 가운데, 빛의 바다로 여러분을 초대합니다.`,
     },
     {
