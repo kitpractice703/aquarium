@@ -1,4 +1,3 @@
-/** 테마 상세 모달 - 4개 테마 탭 전환, 영상 + 설명 표시 */
 import * as S from "./style";
 import { useThemeDetail } from "./hooks/useThemeDetail";
 

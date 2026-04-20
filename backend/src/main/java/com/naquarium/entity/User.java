@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/** 사용자 엔티티 - local/google provider 지원, 소셜 회원은 password null */
 @Entity
 @Table(name = "users")
 @Getter
@@ -23,7 +22,6 @@ public class User {
     @Column(nullable = false)
     private String username;
 
-    /** 암호화된 비밀번호 (소셜 로그인 시 null) */
     @Column
     private String password;
 
@@ -33,7 +31,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    /** 인증 제공자: "local"(일반 회원가입), "google"(소셜 로그인) */
     private String provider;
 
     @Builder
@@ -50,7 +47,6 @@ public class User {
         USER, ADMIN
     }
 
-    /** 회원정보 수정 (비밀번호, 전화번호 - 값이 있는 경우에만 갱신) */
     public void updateInfo(String newPassword, String newPhone) {
         if (newPassword != null && !newPassword.isBlank()) {
             this.password = newPassword;
@@ -60,7 +56,6 @@ public class User {
         }
     }
 
-    /** 비밀번호 재설정 전용 setter */
     public void setPassword(String password) {
         this.password = password;
     }

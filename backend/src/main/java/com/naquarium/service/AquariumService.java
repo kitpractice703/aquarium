@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/** 공개 데이터 서비스 - 전시관 목록, 공연 일정 조회 */
 @Service
 @RequiredArgsConstructor
 public class AquariumService {
@@ -20,19 +19,16 @@ public class AquariumService {
     private final ExhibitionRepository exhibitionRepository;
     private final PerformanceScheduleRepository performanceScheduleRepository;
 
-    /** 전체 전시관 목록 조회 */
     @Transactional(readOnly = true)
     public List<Exhibition> getAllExhibitions() {
         return exhibitionRepository.findAll();
     }
 
-    /** 전체 공연 일정 조회 */
     @Transactional(readOnly = true)
     public List<PerformanceSchedule> getAllPerformanceSchedules() {
         return performanceScheduleRepository.findAll();
     }
 
-    /** 특정 날짜의 공연 일정 조회 */
     @Transactional(readOnly = true)
     public List<PerformanceSchedule> getPerformanceSchedulesByDate(LocalDate date) {
         LocalDateTime startOfDay = date.atStartOfDay();

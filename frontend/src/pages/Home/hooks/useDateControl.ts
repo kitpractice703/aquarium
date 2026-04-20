@@ -1,4 +1,3 @@
-/** 공연 시간표 날짜 슬라이더 - 현재 주(월~일) 날짜 생성 및 선택 상태 관리 */
 import { useState } from "react";
 
 const getLocalYMD = (d: Date): string => {

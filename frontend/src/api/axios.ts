@@ -1,4 +1,3 @@
-/** Axios 공통 인스턴스 - 세션 기반 인증(JSESSIONID 쿠키) 및 API 기본 설정 */
 import axios from "axios";
 
 export const api = axios.create({

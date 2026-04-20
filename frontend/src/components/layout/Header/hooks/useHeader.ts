@@ -1,4 +1,3 @@
-/** 헤더 네비게이션 및 모달 상태 관리 */
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../../context/AuthContext";
@@ -39,7 +38,6 @@ export const useHeaderLogic = () => {
     setModalType("LOGIN");
   };
 
-  /** 고정 헤더 높이만큼 오프셋을 보정하여 정확한 섹션 위치로 스크롤 */
   const SCROLL_OFFSET = -30;
   const scrollToElement = (id: string) => {
     const element = document.getElementById(id);
@@ -49,7 +47,6 @@ export const useHeaderLogic = () => {
     }
   };
 
-  /** 다른 페이지에서 네비 클릭 시 홈으로 이동 후 해당 섹션으로 스크롤 */
   const handleNavClick = (id: string) => {
     closeMobileMenu();
     if (location.pathname !== "/") {

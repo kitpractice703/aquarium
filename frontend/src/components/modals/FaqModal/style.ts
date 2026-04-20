@@ -104,12 +104,6 @@ export const Question = styled.div<{ $isOpen: boolean }>`
     background: rgba(255, 255, 255, 0.05);
   }
 
-  .q-text {
-    font-size: 16px;
-    font-weight: bold;
-    color: ${(props) => (props.$isOpen ? "var(--accent-cyan)" : "#fff")};
-  }
-
   .icon {
     font-size: 20px;
     color: #888;
@@ -133,5 +127,14 @@ export const Answer = styled.div<{ $isOpen: boolean }>`
     margin: 10px 0 20px 20px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 0 10px 10px 0;
+  }
+`;
+
+export const QuestionText = styled.div<{ $isOpen: boolean }>`
+  span {
+    color: ${(props) => (props.$isOpen ? "var(--accent-cyan)" : "#fff")};
+    font-weight: normal;
+    margin-right: 10px;
+    font-size: 14px;
   }
 `;

@@ -7,15 +7,12 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/** 예약 응답 DTO - program 직접 참조 → schedule 경유 → 기본 입장권 우선순위로 변환 */
 @Getter
 public class ReservationDto {
     private static final Logger log = LoggerFactory.getLogger(ReservationDto.class);
     private Long id;
-    /** 티켓 번호 (예: T20260212-00001) */
     private String ticketNumber;
     private String programTitle;
-    /** 프로그램 유형: ADMISSION(입장권), PERFORMANCE(공연), EXPERIENCE(체험) */
     private String programType;
     private LocalDateTime startTime;
     private String visitDate;

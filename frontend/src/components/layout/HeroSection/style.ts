@@ -1,13 +1,10 @@
-/** 히어로 섹션 스타일 */
 import styled, { keyframes } from "styled-components";
 
-/** 페이드인 애니메이션: 아래에서 위로 등장 */
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-/** 히어로 섹션 컨테이너: 풀스크린 (100vh) */
 export const Hero = styled.section`
   width: 100%;
   height: 100vh;
@@ -21,7 +18,6 @@ export const Hero = styled.section`
   background-color: #000;
 `;
 
-/** 배경 영상: 절대 위치로 전체 영역 커버, 60% 투명도 */
 export const VideoBg = styled.video`
   width: 100%;
   height: 100%;
@@ -33,7 +29,6 @@ export const VideoBg = styled.video`
   opacity: 0.6;
 `;
 
-/** 히어로 콘텐츠: 영상 위에 표시, 페이드인 애니메이션 */
 export const Content = styled.div`
   z-index: 1;
   position: relative;
@@ -61,7 +56,6 @@ export const Desc = styled.p`
   }
 `;
 
-/** CTA 버튼: 시안 테두리, 호버 시 배경 채움 + 글로우 효과 */
 export const BtnMain = styled.button`
   padding: 15px 40px;
   background: transparent;
@@ -80,7 +74,6 @@ export const BtnMain = styled.button`
 
 /* ── 볼륨 컨트롤 (우측 하단) ── */
 
-/** 볼륨 컨트롤 컨테이너: 우측 하단 고정 */
 export const VolumeControl = styled.div`
   position: absolute;
   bottom: 30px;
@@ -96,7 +89,6 @@ export const VolumeControl = styled.div`
   }
 `;
 
-/** 볼륨 토글 버튼: 글래스모피즘 원형 */
 export const VolumeBtn = styled.button`
   width: 44px;
   height: 44px;
@@ -119,7 +111,6 @@ export const VolumeBtn = styled.button`
   }
 `;
 
-/** 볼륨 슬라이더 래퍼: 호버 시 나타나는 수평 슬라이더 */
 export const VolumeSliderWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -131,7 +122,6 @@ export const VolumeSliderWrapper = styled.div`
   animation: ${fadeIn} 0.2s ease-out;
 `;
 
-/** 볼륨 슬라이더: 시안 컬러 커스텀 */
 export const VolumeSlider = styled.input`
   -webkit-appearance: none;
   appearance: none;

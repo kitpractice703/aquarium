@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Map;
 
-/** Google OAuth2 사용자 처리 - 신규 사용자 자동 가입, 기존 사용자 조회 */
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -46,7 +45,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         );
     }
 
-    /** 이메일로 기존 사용자 조회, 미존재 시 신규 생성 */
     private User saveOrUpdate(String email, String name, String provider) {
         User user = userRepository.findByEmail(email)
                 .map(entity -> entity)

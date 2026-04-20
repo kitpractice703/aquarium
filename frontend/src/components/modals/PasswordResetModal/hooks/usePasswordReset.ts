@@ -1,4 +1,3 @@
-/** 비밀번호 재설정 - VERIFY(본인 확인) → RESET(새 비밀번호 설정) 2단계 처리 */
 import { useState, useEffect, useRef } from "react";
 import { checkUserForReset, resetPassword } from "../../../../api/authApi";
 
@@ -26,7 +25,6 @@ export const usePasswordReset = (onClose: () => void, onSwitchToLogin: () => voi
     onClose();
   };
 
-  /** 숫자 입력 시 자동으로 010-0000-0000 형식으로 포맷 */
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/[^0-9]/g, "");
     let formattedValue = rawValue;

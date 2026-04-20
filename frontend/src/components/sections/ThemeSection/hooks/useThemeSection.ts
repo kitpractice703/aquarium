@@ -1,4 +1,3 @@
-/** 테마 전시관 섹션 - 4개 테마 데이터 및 상세 모달 상태 관리 */
 import { useState } from "react";
 import lightSeaImg from "../../../../assets/images/light_sea.jpg";
 import balanceSeaImg from "../../../../assets/images/balance_sea.jpg";

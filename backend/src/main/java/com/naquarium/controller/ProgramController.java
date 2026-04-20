@@ -18,7 +18,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** 프로그램 API 컨트롤러 - 목록 조회, 유형별(PERFORMANCE/EXPERIENCE) 스케줄 조회 */
 @RestController
 @RequestMapping("/api/programs")
 @RequiredArgsConstructor
@@ -28,13 +27,11 @@ public class ProgramController {
     private final PerformanceScheduleRepository performanceScheduleRepository;
     private final ExperienceScheduleRepository experienceScheduleRepository;
 
-    /** 전체 프로그램 목록 반환 (공연 + 체험 통합) */
     @GetMapping
     public List<Program> getAllPrograms() {
         return programRepository.findAll();
     }
 
-    /** 특정 프로그램의 날짜별 스케줄 조회 - 유형에 따라 적절한 스케줄 테이블 분기 */
     @GetMapping("/{id}/schedules")
     public ResponseEntity<?> getSchedulesByProgramAndDate(
             @PathVariable Long id,
@@ -64,7 +61,6 @@ public class ProgramController {
         return ResponseEntity.ok(result);
     }
 
-    /** 스케줄 응답 DTO - startTime은 "yyyy-MM-dd HH:mm:ss" 형식 */
     @Data
     static class ScheduleResponse {
         private Long id;

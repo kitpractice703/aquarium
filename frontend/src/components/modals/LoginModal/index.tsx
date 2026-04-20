@@ -1,4 +1,3 @@
-/** 로그인 모달 - 이메일/비밀번호 및 Google OAuth2 로그인 */
 import CommonModal from "../Modal";
 import { useLogin } from "./hooks/useLogin";
 

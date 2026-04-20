@@ -1,4 +1,3 @@
-/** 회원가입 폼 상태 관리 및 제출 처리 */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
@@ -29,7 +28,6 @@ export const useSignup = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  /** 숫자 입력 시 자동으로 010-0000-0000 형식으로 포맷 */
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/[^0-9]/g, "");
     let formattedValue = rawValue;

@@ -1,4 +1,3 @@
-/** 예약 API - 내 예약 조회, 입장권 예매, 프로그램 예매 */
 import { api } from "./axios";
 import type { ReservationDto } from "../types/api";
 

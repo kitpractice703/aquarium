@@ -1,4 +1,3 @@
-/** 로그인 폼 상태 관리 - 이메일/비밀번호 입력, Google OAuth2 리다이렉트 */
 import { useAuth } from "../../../../context/AuthContext";
 import React, { useState } from "react";
 
@@ -25,7 +24,6 @@ export const useLogin = (onClose: () => void, onOpenSignup: () => void) => {
     }
   };
 
-  /** Spring Security OAuth2 엔드포인트로 리다이렉트하여 Google 로그인 시작 */
   const handleGoogleLogin = () => {
     window.location.href = "/oauth2/authorization/google";
   };

@@ -39,7 +39,6 @@ const Home = () => {
     fixedTime?: string;
   } | null>(null);
 
-  /** 비로그인 시 로그인 안내 모달 표시 후 false 반환 */
   const checkLogin = () => {
     if (!isLoggedIn) {
       setIsLoginNoticeOpen(true);

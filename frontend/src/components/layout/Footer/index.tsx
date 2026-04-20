@@ -1,4 +1,3 @@
-/** 푸터 컴포넌트 - 저작권 및 사업자 정보 표시 */
 import * as S from "./style";
 
 const Footer = () => {

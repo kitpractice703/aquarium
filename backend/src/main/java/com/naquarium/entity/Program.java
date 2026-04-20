@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** 프로그램 엔티티 - PERFORMANCE(공연), EXPERIENCE(체험) */
 @Entity
 @Table(name = "programs")
 @Getter @Setter

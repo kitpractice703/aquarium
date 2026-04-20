@@ -1,4 +1,3 @@
-/** 전역 스타일 - CSS 변수, 다크 테마 팔레트, 커스텀 스크롤바 */
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`

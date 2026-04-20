@@ -1,4 +1,3 @@
-/** 날짜별 공연 스케줄 API */
 import { api } from "./axios";
 
 export const getSchedulesByDate = async (date: string) => {

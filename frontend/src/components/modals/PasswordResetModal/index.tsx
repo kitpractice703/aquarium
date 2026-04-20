@@ -1,4 +1,3 @@
-/** 비밀번호 재설정 모달 - VERIFY(본인 확인) → RESET(새 비밀번호 설정) */
 import * as S from "./style";
 import CommonModal from "../Modal";
 import { usePasswordReset } from "./hooks/usePasswordReset";

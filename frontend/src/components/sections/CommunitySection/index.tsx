@@ -1,4 +1,3 @@
-/** 커뮤니티 섹션 - FAQ 미리보기 + 관람 후기 미리보기 */
 import * as S from "./style";
 import type { ReviewData } from "../../../types/api";
 
@@ -10,7 +9,6 @@ interface Props {
   onToggleFaq: (idx: number) => void;
 }
 
-/** 홈 페이지용 FAQ 요약 데이터 */
 const HOME_FAQ_DATA = [
   {
     q: "Q. 예매 취소는 언제까지 가능한가요?",

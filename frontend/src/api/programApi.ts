@@ -1,4 +1,3 @@
-/** 프로그램 및 공연 스케줄 API */
 import { api } from "./axios";
 
 export const getPrograms = async () => {

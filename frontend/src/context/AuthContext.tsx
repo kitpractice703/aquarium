@@ -1,4 +1,3 @@
-/** 전역 인증 상태 관리 컨텍스트 - 세션 기반 로그인/로그아웃 처리 */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { api } from "../api/axios";
 
@@ -74,7 +73,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-/** AuthProvider 외부에서 호출 시 에러를 던져 컨텍스트 누락을 조기에 감지 */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within an AuthProvider");

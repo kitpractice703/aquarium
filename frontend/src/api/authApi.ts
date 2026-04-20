@@ -1,4 +1,3 @@
-/** 인증 및 사용자 관리 API */
 import { api } from "./axios";
 import type { SignupRequest, LoginRequest } from "../types/api";
 
@@ -12,7 +11,6 @@ export const login = async (data: LoginRequest) => {
   return response.data;
 };
 
-/** 프론트엔드 'password' 필드를 백엔드 'newPassword'로 매핑하여 전송 */
 export const updateUserInfo = async (data: {
   currentPassword: string;
   password?: string;

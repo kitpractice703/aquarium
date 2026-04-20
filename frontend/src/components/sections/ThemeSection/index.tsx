@@ -1,4 +1,3 @@
-/** 테마 전시 섹션 - 4개 테마 카드, 클릭 시 상세 모달 표시 */
 import * as S from "./style";
 import ThemeDetailModal from "../../modals/ThemeDetailModal";
 import { useThemeSection } from "./hooks/useThemeSection";

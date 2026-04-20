@@ -1,4 +1,3 @@
-/** 로그인 필요 안내 모달 - 비로그인 사용자가 예매/마이페이지 접근 시 표시 */
 import CommonModal from "../Modal";
 import * as S from "./style";
 

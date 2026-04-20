@@ -7,7 +7,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/** 공연 일정 응답 DTO - PerformanceSchedule을 날짜/시간 문자열로 변환 */
 @Data
 public class ScheduleDto {
     private Long id;

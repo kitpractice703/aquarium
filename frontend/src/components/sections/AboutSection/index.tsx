@@ -1,4 +1,3 @@
-/** 소개 섹션 - 이용 안내(요금/운영 시간) 및 카카오 지도 */
 import KakaoMap from "../../common/KakaoMap";
 import * as S from "./style";
 

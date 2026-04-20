@@ -1,4 +1,3 @@
-/** 관람권 미보유 안내 모달 - 프로그램 예약 전 관람권 확인 필요 시 표시 */
 import CommonModal from "../Modal";
 import * as S from "./style";
 

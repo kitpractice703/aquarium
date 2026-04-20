@@ -1,4 +1,3 @@
-/** 마이페이지 - 예약 내역 조회 및 회원정보 수정 처리 */
 import { useState, useEffect } from "react";
 import { getMyReservations } from "../../../api/reservationApi";
 import { useAuth } from "../../../context/AuthContext";
@@ -33,7 +32,6 @@ export const useMyPage = () => {
     fetchReservations();
   }, []);
 
-  /** 숫자 입력 시 자동으로 010-0000-0000 형식으로 포맷 */
   const formatPhoneNumber = (value: string) => {
     const raw = value.replace(/[^0-9]/g, "");
     if (raw.length <= 3) return raw;
@@ -49,10 +47,6 @@ export const useMyPage = () => {
     setForm((prev) => ({ ...prev, phone: formatPhoneNumber(e.target.value) }));
   };
 
-  /**
-   * 비밀번호 변경 시 보안상 자동 로그아웃 처리.
-   * 비밀번호 미입력 시 전화번호만 수정.
-   */
   const handleUpdateInfo = async () => {
     if (!form.currentPassword) {
       alert("본인 확인을 위해 현재 비밀번호를 입력해주세요.");

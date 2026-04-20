@@ -1,4 +1,3 @@
-/** 테마 상세 모달 - 4개 테마 영상/설명 데이터 및 탭 전환 상태 관리 */
 import { useState, useEffect } from "react";
 import lightSeaVideo from "../../../../assets/videos/light_sea.mp4";
 import balanceSeaVideo from "../../../../assets/videos/balance_sea.mp4";

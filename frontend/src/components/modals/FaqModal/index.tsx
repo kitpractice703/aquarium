@@ -1,4 +1,3 @@
-/** FAQ 모달 - 카테고리별 아코디언 */
 import * as S from "./style";
 import { useFaq } from "./hooks/useFaq";
 
@@ -29,19 +28,10 @@ const FaqModal = ({ isOpen, onClose }: Props) => {
                 $isOpen={openIndex === item.id}
                 onClick={() => handleToggle(item.id)}
               >
-                <div className="q-text">
-                  <span
-                    style={{
-                      color: "#888",
-                      fontWeight: "normal",
-                      marginRight: "10px",
-                      fontSize: "14px",
-                    }}
-                  >
-                    [{item.category}]
-                  </span>
+                <S.QuestionText $isOpen={openIndex === item.id}>
+                  <span>[{item.category}]</span>
                   {item.question}
-                </div>
+                </S.QuestionText>
                 <div className="icon">▼</div>
               </S.Question>
 

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** 테마 전시관 엔티티 */
 @Entity
 @Table(name = "exhibitions")
 @Getter @Setter
@@ -29,7 +28,6 @@ public class Exhibition {
     @Column(name = "image_url")
     private String imageUrl;
 
-    /** 전시관별 고유 테마 색상 (HEX 코드) */
     @Column(name = "theme_color")
     private String themeColor;
 }

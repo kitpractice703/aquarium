@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 사용자 서비스 - 회원정보 수정, 비밀번호 재설정 (소셜 회원 비밀번호 기능 제한) */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -18,7 +17,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    /** local 회원은 현재 비밀번호 필수, google 회원은 전화번호만 변경 가능 */
     @Transactional
     public void updateUser(String email, UserUpdateRequest request) {
         User user = userRepository.findByEmail(email)
@@ -43,7 +41,6 @@ public class UserService {
         user.updateInfo(encodedNewPw, request.getPhone());
     }
 
-    /** 비밀번호 재설정 자격 확인 - 소셜 회원 제외, 전화번호 하이픈 무관 비교 */
     public void validateUserForPasswordReset(PasswordResetCheckRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
@@ -65,7 +62,6 @@ public class UserService {
         }
     }
 
-    /** 비밀번호 재설정 - 최소 8자 검증 후 BCrypt 암호화 */
     @Transactional
     public void resetPassword(PasswordResetRequest request) {
         if (request.getNewPassword() == null || request.getNewPassword().length() < 8) {

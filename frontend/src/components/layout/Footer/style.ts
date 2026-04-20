@@ -1,7 +1,5 @@
-/** 푸터 스타일 */
 import styled from "styled-components";
 
-/** 푸터 컨테이너: 최하단 고정, 어두운 남색 배경 */
 export const FooterContainer = styled.footer`
   width: 100%;
   padding: 50px 20px;

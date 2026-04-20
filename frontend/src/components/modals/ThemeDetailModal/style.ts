@@ -1,4 +1,3 @@
-/** 테마 상세 모달 스타일 */
 import styled, { keyframes } from "styled-components";
 
 const fadeIn = keyframes`

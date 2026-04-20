@@ -1,4 +1,3 @@
-/** 결제 시뮬레이션 - INPUT → PROCESSING(1.5s) → SUCCESS 상태 전이 */
 import { useState, useEffect } from "react";
 
 export const usePayment = (isOpen: boolean, onSuccess: () => void) => {

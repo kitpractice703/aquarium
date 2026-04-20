@@ -1,4 +1,3 @@
-/** 결제 시뮬레이션 모달 - INPUT → PROCESSING → SUCCESS 단계 전환 */
 import * as S from "./style";
 import { usePayment } from "./hooks/usePayment";
 

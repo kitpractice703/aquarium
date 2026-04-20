@@ -1,7 +1,5 @@
-/** 소개 섹션 스타일 */
 import styled from "styled-components";
 
-/** 2열 그리드: 이용 안내(좌) + 지도(우), 모바일 900px 이하 1열 */
 export const AboutGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -20,7 +18,6 @@ export const SubTitle = styled.h4`
   font-weight: bold;
 `;
 
-/** 이용 안내 박스: 다크 카드 스타일, min-height로 컨텐츠 유동 대응 */
 export const InfoBox = styled.div`
   background: var(--bg-card);
   padding: 30px;
@@ -33,7 +30,6 @@ export const InfoBox = styled.div`
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 `;
 
-/** 카카오 지도 래퍼: 고정 높이 320px */
 export const MapWrapper = styled.div`
   width: 100%;
   height: 320px;
@@ -79,7 +75,6 @@ export const DescArea = styled.div`
   }
 `;
 
-/** 정보 항목: $isWarning 시 빨간색으로 강조 (휴관일 등) */
 export const InfoItem = styled.div<{ $isWarning?: boolean }>`
   display: flex;
   justify-content: space-between;
