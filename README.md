@@ -78,26 +78,30 @@ erDiagram
     USER {
         Long id PK
         String email
-        String name
+        String username
         String role
+        String provider
     }
 
     PROGRAM {
         Long id PK
         String title
         String type
+        int price
     }
 
     PERFORMANCE_SCHEDULE {
         Long id PK
         Long program_id FK
         DateTime start_time
+        boolean is_closed
     }
 
     EXPERIENCE_SCHEDULE {
         Long id PK
         Long program_id FK
         DateTime start_time
+        boolean is_closed
     }
 
     RESERVATION {
@@ -105,6 +109,8 @@ erDiagram
         Long user_id FK
         Long program_id FK
         Long schedule_id FK
+        String visit_date
+        int total_price
         String status
     }
 
@@ -113,6 +119,8 @@ erDiagram
         Long user_id FK
         String title
         String content
+        String category
+        Double rating
     }
 
     USER ||--o{ RESERVATION : "1:N"
@@ -123,7 +131,6 @@ erDiagram
     PROGRAM ||--o{ RESERVATION : "1:N"
 
     PERFORMANCE_SCHEDULE ||--o{ RESERVATION : "1:N"
-    EXPERIENCE_SCHEDULE ||--o{ RESERVATION : "1:N"
 ```
 
 > **예약 타입별 nullable 관계**
