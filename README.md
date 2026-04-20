@@ -69,67 +69,61 @@ graph LR
 
 ```mermaid
 erDiagram
-    USERS ||--o{ RESERVATIONS : makes
-    USERS ||--o{ POSTS : writes
-    PROGRAMS ||--o{ PERFORMANCE_SCHEDULES : has
-    PROGRAMS ||--o{ EXPERIENCE_SCHEDULES : has
-    RESERVATIONS }o--|| PROGRAMS : "references (nullable)"
-    RESERVATIONS }o--|| PERFORMANCE_SCHEDULES : "references (nullable)"
-
-    USERS {
-        bigint user_id PK
-        string email UK
-        string username
-        string password "nullable (소셜 회원)"
-        string phone
-        string role
-        string provider "local / google"
+    EXHIBITION {
+        Long id PK
+        String title
+        String description
     }
 
-    PROGRAMS {
-        bigint program_id PK
-        string title
-        string type "PERFORMANCE / EXPERIENCE"
-        int price
+    USER {
+        Long id PK
+        String email
+        String name
+        String role
     }
 
-    RESERVATIONS {
-        bigint reservation_id PK
-        bigint user_id FK
-        bigint program_id FK "nullable (입장권은 null)"
-        bigint schedule_id FK "nullable (체험/입장권은 null)"
-        string visit_date
-        string visit_time
-        int adult_count
-        int teen_count
-        int total_price
-        string status "CONFIRMED / CANCELLED"
+    PROGRAM {
+        Long id PK
+        String title
+        String type
     }
 
-    POSTS {
-        bigint post_id PK
-        bigint user_id FK
-        string title
-        text content
-        string category "REVIEW / FREE"
-        double rating "nullable"
+    PERFORMANCE_SCHEDULE {
+        Long id PK
+        Long program_id FK
+        DateTime start_time
     }
 
-    PERFORMANCE_SCHEDULES {
-        bigint schedule_id PK
-        bigint program_id FK
-        datetime start_time
-        string location
-        boolean is_closed
+    EXPERIENCE_SCHEDULE {
+        Long id PK
+        Long program_id FK
+        DateTime start_time
     }
 
-    EXPERIENCE_SCHEDULES {
-        bigint schedule_id PK
-        bigint program_id FK
-        datetime start_time
-        string location
-        boolean is_closed
+    RESERVATION {
+        Long id PK
+        Long user_id FK
+        Long program_id FK
+        Long schedule_id FK
+        String status
     }
+
+    POST {
+        Long id PK
+        Long user_id FK
+        String title
+        String content
+    }
+
+    USER ||--o{ RESERVATION : "1:N"
+    USER ||--o{ POST : "1:N"
+
+    PROGRAM ||--o{ PERFORMANCE_SCHEDULE : "1:N"
+    PROGRAM ||--o{ EXPERIENCE_SCHEDULE : "1:N"
+    PROGRAM ||--o{ RESERVATION : "1:N"
+
+    PERFORMANCE_SCHEDULE ||--o{ RESERVATION : "1:N"
+    EXPERIENCE_SCHEDULE ||--o{ RESERVATION : "1:N"
 ```
 
 > **예약 타입별 nullable 관계**
