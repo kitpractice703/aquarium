@@ -36,7 +36,7 @@ export const useHomeData = (isLoggedIn: boolean, selectedDate: string) => {
         // 백엔드 응답 필드명 차이를 프론트엔드 ScheduleData 형식으로 정규화
         const mappedSchedules: ScheduleData[] = safeSchedules.map((item: RawScheduleItem) => ({
           id: item.scheduleId ?? item.id ?? 0,
-          programId: item.programId,
+          programId: item.programId ?? 0,
           title: item.programTitle || item.title || "프로그램",
           place: item.location || item.place || "메인홀",
           time: item.time || (item.startTime
