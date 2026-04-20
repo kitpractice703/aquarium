@@ -29,6 +29,9 @@ public class SecurityConfig {
     @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins}")
     private String corsAllowedOrigins;
 
+    @org.springframework.beans.factory.annotation.Value("${oauth2.success-url}")
+    private String oauth2SuccessUrl;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -61,13 +64,12 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .defaultSuccessUrl("https://aquarium-livid.vercel.app", true)
+                        .defaultSuccessUrl(oauth2SuccessUrl, true)
                 );
 
         return http.build();
     }
 
-    /** credentials: true — 세션 쿠키 전송을 위해 withCredentials와 함께 동작 */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -83,7 +85,6 @@ public class SecurityConfig {
         return source;
     }
 
-    /** 로그인 인증 처리를 위한 AuthenticationManager Bean 등록 */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

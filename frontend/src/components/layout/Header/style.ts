@@ -1,7 +1,6 @@
 /** Header 컴포넌트 스타일 */
 import styled from "styled-components";
 
-/** 고정 헤더 배경: 상단 고정, 반투명 블러 효과 */
 export const HeaderWrapper = styled.header`
   position: fixed;
   top: 0;
@@ -20,7 +19,6 @@ export const HeaderWrapper = styled.header`
   align-items: center;
 `;
 
-/** 헤더 내부 콘텐츠 (최대 1200px, 좌우 정렬) */
 export const HeaderContent = styled.div`
   width: 100%;
   max-width: 1200px;
@@ -39,7 +37,6 @@ export const Logo = styled.div`
   cursor: pointer;
 `;
 
-/** 메인 내비게이션 (모바일 768px 이하에서 숨김 처리) */
 export const Gnb = styled.nav`
   display: flex;
   gap: 30px;
@@ -63,7 +60,17 @@ export const Gnb = styled.nav`
   }
 `;
 
-/** 사용자 메뉴 영역 (로그인/회원가입 또는 사용자명/로그아웃) */
+export const UserNameSpan = styled.span`
+  color: var(--accent-cyan);
+`;
+
+export const TicketLink = styled.span`
+  color: var(--accent-cyan);
+  font-weight: bold;
+  margin-left: 10px;
+  cursor: pointer;
+`;
+
 export const UserMenu = styled.div`
   display: flex;
   gap: 15px;
@@ -85,7 +92,6 @@ export const UserMenu = styled.div`
   }
 `;
 
-/** 모달용 입력 그룹 스타일 */
 export const InputGroup = styled.div`
   margin-bottom: 20px;
   text-align: left;
@@ -109,7 +115,6 @@ export const InputBox = styled.input`
     border-color: var(--accent-cyan);
   }
 `;
-/** 시안 컬러 액션 버튼 (로그인, 회원가입 등) */
 export const BtnAction = styled.button`
   width: 100%;
   padding: 15px;
@@ -126,7 +131,6 @@ export const BtnAction = styled.button`
   }
 `;
 
-/** Google OAuth2 소셜 로그인 버튼 */
 export const GoogleBtn = styled.button`
   width: 100%;
   padding: 15px;
@@ -148,7 +152,6 @@ export const GoogleBtn = styled.button`
   }
 `;
 
-/** GNB 예매하기 버튼 (라운드형 시안 버튼) */
 export const BookingButton = styled.button`
   background: var(--accent-cyan);
   color: #000;
@@ -170,7 +173,6 @@ export const BookingButton = styled.button`
 
 /* ──────────── 모바일 반응형 컴포넌트 ──────────── */
 
-/** 햄버거 버튼: 768px 이하에서만 표시, 3줄 → X 애니메이션 */
 export const HamburgerButton = styled.button<{ $isOpen: boolean }>`
   display: none;
   background: none;
@@ -214,7 +216,6 @@ export const HamburgerButton = styled.button<{ $isOpen: boolean }>`
   }
 `;
 
-/** 모바일 배경 오버레이: 메뉴 열림 시 뒤 화면 어둡게 */
 export const MobileOverlay = styled.div<{ $isOpen: boolean }>`
   display: none;
 
@@ -230,7 +231,6 @@ export const MobileOverlay = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
-/** 모바일 슬라이드 메뉴: 우측에서 슬라이드 인 */
 export const MobileMenu = styled.nav<{ $isOpen: boolean }>`
   display: none;
 
@@ -274,14 +274,12 @@ export const MobileMenu = styled.nav<{ $isOpen: boolean }>`
   }
 `;
 
-/** 모바일 메뉴 내 구분선 */
 export const MobileNavDivider = styled.div`
   height: 1px;
   background: rgba(255, 255, 255, 0.1);
   margin: 12px 0;
 `;
 
-/** 모바일 메뉴 내 X 닫기 버튼 */
 export const MobileCloseButton = styled.button`
   position: absolute;
   top: 22px;

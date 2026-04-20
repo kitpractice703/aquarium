@@ -22,16 +22,20 @@ const slideUp = keyframes`
   to { transform: translateY(0); opacity: 1; }
 `;
 
-/** 모달 컨테이너: 최대 450px, 다크 카드 스타일 */
-export const Container = styled.div`
+/** 모달 컨테이너: 기본 450px, maxWidth/height props로 확장 가능 */
+export const Container = styled.div<{ $maxWidth?: string; $height?: string }>`
   background-color: var(--bg-card);
   width: 90%;
-  max-width: 450px;
+  max-width: ${(props) => props.$maxWidth ?? "450px"};
+  ${(props) => props.$height && `height: ${props.$height};`}
   border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
   animation: ${slideUp} 0.3s ease-out;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 `;
 
 export const Header = styled.div`
@@ -62,4 +66,20 @@ export const CloseBtn = styled.button`
 
 export const Content = styled.div`
   padding: 30px 25px;
+  flex: 1;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+  }
+`;
+
+export const Footer = styled.div`
+  padding: 20px 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  gap: 10px;
 `;

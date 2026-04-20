@@ -6,6 +6,7 @@ import com.naquarium.repository.PostRepository;
 import com.naquarium.repository.UserRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** 후기 API 컨트롤러 - 목록 조회(공개), 작성(로그인 필요) */
+@Slf4j
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -26,7 +28,6 @@ public class PostApiController {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    /** 인증 정보에서 이메일 추출 (일반 로그인 / OAuth2 분기 처리) */
     private String getEmail(Authentication auth) {
         if (auth instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
@@ -35,7 +36,6 @@ public class PostApiController {
         return auth.getName();
     }
 
-    /** 후기 목록 조회 (최신순, @EntityGraph로 user 즉시 로딩) */
     @GetMapping("/reviews")
     @Transactional(readOnly = true)
     public List<PostDto> getReviews() {
@@ -45,7 +45,6 @@ public class PostApiController {
                 .collect(Collectors.toList());
     }
 
-    /** 후기 작성 (로그인 필요) */
     @PostMapping("/reviews")
     public ResponseEntity<String> createReview(@RequestBody WriteDto request) {
         try {
@@ -71,12 +70,11 @@ public class PostApiController {
             return ResponseEntity.ok("후기가 등록되었습니다.");
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("후기 등록 실패: " + e.getMessage());
+            log.error("Failed to create review", e);
+            return ResponseEntity.status(500).body("후기 등록 중 오류가 발생했습니다.");
         }
     }
 
-    /** 후기 응답 DTO (내부 클래스) */
     @Data
     static class PostDto {
         private Long id;
@@ -107,7 +105,6 @@ public class PostApiController {
         }
     }
 
-    /** 후기 작성 요청 DTO (내부 클래스) */
     @Data
     static class WriteDto {
         private String title;

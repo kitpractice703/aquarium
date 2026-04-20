@@ -47,7 +47,7 @@ const Header = () => {
           <S.UserMenu>
             {isLoggedIn ? (
               <>
-                <span style={{ color: "var(--accent-cyan)" }}>{username}님</span>
+                <S.UserNameSpan>{username}님</S.UserNameSpan>
                 <span onClick={logout}>로그아웃</span>
               </>
             ) : (
@@ -56,12 +56,9 @@ const Header = () => {
                 <span onClick={() => navigate("/signup")}>회원가입</span>
               </>
             )}
-            <span
-              onClick={handleTicketCheck}
-              style={{ color: "var(--accent-cyan)", fontWeight: "bold", marginLeft: "10px", cursor: "pointer" }}
-            >
+            <S.TicketLink onClick={handleTicketCheck}>
               {isLoggedIn ? "마이페이지" : "예매확인"}
-            </span>
+            </S.TicketLink>
           </S.UserMenu>
 
           <S.HamburgerButton $isOpen={mobileMenuOpen} onClick={toggleMobileMenu}>

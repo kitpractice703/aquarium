@@ -1,6 +1,11 @@
-/** 입장권 예약 모달 - 달력 생성, 인원/금액 계산, 결제 후 예약 API 호출 */
 import { useState, useEffect } from "react";
 import { createReservation } from "../../../../api/reservationApi";
+
+interface CalendarData {
+  year: number;
+  month: number;
+  days: (number | null)[];
+}
 
 const isMonday = (year: number, month: number, day: number): boolean =>
   new Date(year, month - 1, day).getDay() === 1;
@@ -17,9 +22,9 @@ const getCalendarDays = () => {
   return { year, month: month + 1, days };
 };
 
-export const useBooking = (isOpen: boolean, _onClose: () => void) => {
+export const useBooking = (isOpen: boolean) => {
   const [step, setStep] = useState(1);
-  const [calendarData, setCalendarData] = useState<any>(null);
+  const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [counts, setCounts] = useState({ adult: 0, teen: 0 });
   const [showPayment, setShowPayment] = useState(false);
@@ -59,6 +64,7 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
   };
 
   const handlePaymentSuccess = async () => {
+    if (!calendarData || !selectedDate) return;
     try {
       const year = calendarData.year;
       const month = String(calendarData.month).padStart(2, "0");
@@ -69,8 +75,9 @@ export const useBooking = (isOpen: boolean, _onClose: () => void) => {
         adultCount: counts.adult,
         teenCount: counts.teen,
       });
-    } catch (error: any) {
-      if (error.response?.status === 401) alert("로그인이 필요합니다.");
+    } catch (error: unknown) {
+      const err = error as { response?: { status?: number } };
+      if (err.response?.status === 401) alert("로그인이 필요합니다.");
       else alert("예매 처리 중 오류가 발생했습니다.");
     }
   };

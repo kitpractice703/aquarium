@@ -1,4 +1,3 @@
-/** 프로그램 예약 상태 관리 - 관람권 보유 확인, 스케줄 조회, 결제 처리 */
 import { useState, useEffect } from "react";
 import { getPrograms, getProgramSchedules } from "../../../../api/programApi";
 import { getMyReservations, reserveProgram } from "../../../../api/reservationApi";
@@ -8,10 +7,8 @@ import type {
   ReservationDto,
 } from "../../../../types/api";
 
-/** 기본 시간 슬롯 (API 실패 시 폴백) */
 const DEFAULT_TIME_SLOTS = ["10:00", "11:00", "13:00", "14:00", "15:00"];
 
-/** 해당 날짜가 월요일(휴관일)인지 확인 */
 const isMonday = (dateStr: string): boolean => {
   if (!dateStr) return false;
   return new Date(dateStr + "T00:00:00").getDay() === 1;
@@ -19,7 +16,6 @@ const isMonday = (dateStr: string): boolean => {
 
 export const useProgramBooking = (
   isOpen: boolean,
-  _onClose: () => void,
   fixedDate?: string,
   fixedTime?: string,
   initialProgramId?: number,
@@ -27,7 +23,6 @@ export const useProgramBooking = (
   initialPrice?: number,
   parentReservations?: ReservationDto[],
 ) => {
-  const [step, setStep] = useState(1);
   const [date, setDate] = useState(fixedDate || "");
   const [time, setTime] = useState(fixedTime || "");
   const [count, setCount] = useState(1);
@@ -35,14 +30,12 @@ export const useProgramBooking = (
   const [selectedProgramId, setSelectedProgramId] = useState<number | null>(
     null,
   );
-  const [_schedules, setSchedules] = useState<ProgramSchedule[]>([]);
   const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
   const [showPayment, setShowPayment] = useState(false);
   const [requireTicket, setRequireTicket] = useState(false);
   const [isReservationsLoaded, setIsReservationsLoaded] = useState(false);
   const [timeSlots, setTimeSlots] = useState<string[]>(DEFAULT_TIME_SLOTS);
 
-  /** 모달 열림 시 초기화: 프로그램 목록 + 예약 정보 조회 */
   useEffect(() => {
     if (isOpen) {
       fetchPrograms();
@@ -64,14 +57,12 @@ export const useProgramBooking = (
     }
   }, [isOpen, fixedDate, fixedTime]);
 
-  /** 날짜 또는 프로그램 변경 시 해당 스케줄 조회 */
   useEffect(() => {
     if (date && selectedProgramId) {
       fetchSchedules(selectedProgramId, date);
     }
   }, [date, selectedProgramId]);
 
-  /** 날짜 변경 시: 월요일이면 초기화, 아니면 관람권 보유 확인 */
   useEffect(() => {
     if (!date) {
       setRequireTicket(false);
@@ -93,7 +84,6 @@ export const useProgramBooking = (
     setRequireTicket(!hasAdmission);
   }, [date, myReservations, isReservationsLoaded]);
 
-  /** 프로그램 목록 조회: 초기 프로그램 매칭 (제목 → ID → 첫 번째) */
   const fetchPrograms = async () => {
     try {
       const data = await getPrograms() as Program[];
@@ -128,7 +118,6 @@ export const useProgramBooking = (
     }
   };
 
-  /** API 실패 시 부모에서 전달받은 프로그램 정보로 폴백 */
   const useFallbackProgram = () => {
     if (initialProgramTitle) {
       const fallbackId = initialProgramId || 1;
@@ -146,28 +135,23 @@ export const useProgramBooking = (
     }
   };
 
-  /** 특정 프로그램의 날짜별 스케줄 조회 → 시간 슬롯 갱신 */
   const fetchSchedules = async (programId: number, dateStr: string) => {
     try {
       const data = await getProgramSchedules(programId, dateStr);
       if (data && data.length > 0) {
-        setSchedules(data as any);
-        const apiTimes = data.map((sch: any) => {
+        const apiTimes = data.map((sch: ProgramSchedule) => {
           return sch.startTime.split(" ")[1].substring(0, 5);
         });
         setTimeSlots(apiTimes.sort());
       } else {
-        setSchedules([]);
         setTimeSlots(DEFAULT_TIME_SLOTS);
       }
     } catch (err) {
       console.error("스케줄 로딩 실패", err);
-      setSchedules([]);
       setTimeSlots(DEFAULT_TIME_SLOTS);
     }
   };
 
-  /** 내 예약 목록 조회 (관람권 보유 확인용) */
   const fetchMyReservations = async () => {
     try {
       const data = await getMyReservations();
@@ -179,7 +163,6 @@ export const useProgramBooking = (
     }
   };
 
-  /** 프로그램 변경 시 날짜/시간 초기화 */
   const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newId = Number(e.target.value);
     setSelectedProgramId(newId);
@@ -187,12 +170,10 @@ export const useProgramBooking = (
     if (!fixedTime) setTime("");
   };
 
-  /** 인원 증감 (최소 1명) */
   const handleCountChange = (delta: number) => {
     setCount((prev) => Math.max(1, prev + delta));
   };
 
-  /** 결제 성공 콜백: 백엔드 예약 API 호출 */
   const handlePaymentSuccess = async () => {
     try {
       await reserveProgram({
@@ -201,13 +182,12 @@ export const useProgramBooking = (
         visitTime: time,
         count: count,
       });
-      /** alert 미사용: PaymentModal SUCCESS 화면의 확인 버튼으로 모달 닫힘 처리 */
-    } catch (err: any) {
-      alert(err?.response?.data || "예약 처리 중 오류가 발생했습니다.");
+    } catch (err: unknown) {
+      const e = err as { response?: { data?: string } };
+      alert(e?.response?.data || "예약 처리 중 오류가 발생했습니다.");
     }
   };
 
-  /** 결제하기 클릭: 필수 입력 검증 후 결제 모달 표시 */
   const handleBookingClick = () => {
     if (!date || !time) {
       alert("날짜와 시간을 선택해주세요.");
@@ -220,10 +200,8 @@ export const useProgramBooking = (
     setShowPayment(true);
   };
 
-  /** 현재 선택된 프로그램 및 총 금액 계산 */
   const selectedProgram = programs.find((p) => p.id === selectedProgramId);
   const totalPrice = selectedProgram ? selectedProgram.price * count : 0;
-  /** 외부에서 프로그램 지정 시 선택 잠금 */
   const isProgramLocked = !!initialProgramTitle || !!initialProgramId;
 
   return {

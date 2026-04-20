@@ -7,6 +7,7 @@ import com.naquarium.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.web.bind.annotation.*;
 
 /** 인증 컨트롤러 - 회원가입, 로그인(세션), 로그아웃, 현재 사용자 조회 */
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -28,7 +30,6 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    /** 회원가입 (이메일 중복 시 409 Conflict 반환) */
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -46,7 +47,6 @@ public class AuthController {
         return ResponseEntity.ok("회원가입이 완료되었습니다!");
     }
 
-    /** 이메일/비밀번호 검증 후 SecurityContext를 세션에 바인딩 */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         try {
@@ -60,12 +60,11 @@ public class AuthController {
             session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
             return ResponseEntity.ok("로그인 성공");
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(401).body("로그인 실패: " + e.getMessage());
+            log.error("Login failed for email: {}", loginRequest.getEmail(), e);
+            return ResponseEntity.status(401).body("아이디 또는 비밀번호가 올바르지 않습니다.");
         }
     }
 
-    /** 현재 인증 사용자 이메일 반환 (일반 로그인 / OAuth2 분기) */
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -83,7 +82,6 @@ public class AuthController {
         return ResponseEntity.ok(auth.getName());
     }
 
-    /** 로그아웃 (세션 무효화) */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

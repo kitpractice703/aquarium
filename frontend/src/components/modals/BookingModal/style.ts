@@ -1,82 +1,5 @@
-/** 예매 모달 스타일 */
-import styled, { keyframes } from "styled-components";
-
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-/** 모달 오버레이: 어두운 배경 + 블러 */
-export const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(5px);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: ${fadeIn} 0.3s ease-out;
-`;
-
-/** 모달 컨테이너: 최대 600px, 시안 글로우 그림자 */
-export const Container = styled.div`
-  background-color: #151e32;
-  width: 90%;
-  max-width: 600px;
-  height: auto;
-  max-height: 85vh;
-  overflow-y: auto;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 50px rgba(0, 242, 255, 0.15);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  color: #fff;
-`;
-
-export const Header = styled.div`
-  padding: 20px 25px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h2 {
-    color: #fff;
-    font-size: 20px;
-    span {
-      color: var(--accent-cyan);
-      margin-left: 5px;
-    }
-  }
-`;
-
-/** 닫기 버튼: 호버 시 90도 회전 애니메이션 */
-export const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 24px;
-  cursor: pointer;
-  transition: 0.3s;
-  &:hover {
-    color: #fff;
-    transform: rotate(90deg);
-  }
-`;
-
-export const Content = styled.div`
-  flex: 1;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-`;
+/** 관람 예매 모달 스타일 - 달력/인원/확인 단계 */
+import styled from "styled-components";
 
 export const StepTitle = styled.h3`
   font-size: 22px;
@@ -237,14 +160,6 @@ export const SummaryBox = styled.div`
   }
 `;
 
-export const Footer = styled.div`
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  gap: 10px;
-`;
-
-/** 이전/다음 버튼: $primary 시 시안 배경 */
 export const Button = styled.button<{ $primary?: boolean }>`
   flex: 1;
   padding: 15px;

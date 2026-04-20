@@ -1,9 +1,24 @@
-/** 홈 페이지 데이터 로딩 - 날짜별 공연 스케줄, 최근 후기, 내 예약 목록 조회 */
 import { useState, useEffect } from "react";
 import { getSchedulesByDate } from "../../../api/exhibitionApi";
 import { getReviews } from "../../../api/reviewApi";
 import { getMyReservations } from "../../../api/reservationApi";
 import type { ReviewData, ReservationDto, ScheduleData } from "../../../types/api";
+
+interface RawScheduleItem {
+  scheduleId?: number;
+  id?: number;
+  programId?: number;
+  programTitle?: string;
+  title?: string;
+  location?: string;
+  place?: string;
+  time?: string;
+  startTime?: string;
+  status?: string;
+  isClosed?: boolean;
+  date?: string;
+  price?: number;
+}
 
 export const useHomeData = (isLoggedIn: boolean, selectedDate: string) => {
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
@@ -19,7 +34,7 @@ export const useHomeData = (isLoggedIn: boolean, selectedDate: string) => {
         const safeSchedules = Array.isArray(rawSchedules) ? rawSchedules : [];
 
         // 백엔드 응답 필드명 차이를 프론트엔드 ScheduleData 형식으로 정규화
-        const mappedSchedules: ScheduleData[] = safeSchedules.map((item: any) => ({
+        const mappedSchedules: ScheduleData[] = safeSchedules.map((item: RawScheduleItem) => ({
           id: item.scheduleId || item.id,
           programId: item.programId,
           title: item.programTitle || item.title || "프로그램",

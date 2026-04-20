@@ -12,6 +12,7 @@ import com.naquarium.repository.ProgramRepository;
 import com.naquarium.repository.ReservationRepository;
 import com.naquarium.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** 예약 컨트롤러 - 입장권 예약, 프로그램 예약(입장권 보유 필수), 내 예약 조회 */
+@Slf4j
 @RestController
 @RequestMapping("/api/reservations")
 @RequiredArgsConstructor
@@ -35,7 +37,6 @@ public class ReservationController {
     private final PerformanceScheduleRepository performanceScheduleRepository;
     private final ProgramRepository programRepository;
 
-    /** 인증 정보에서 이메일 추출 (일반/OAuth2 분기) */
     private String getEmail(Authentication auth) {
         if (auth instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
@@ -44,7 +45,6 @@ public class ReservationController {
         return auth.getName();
     }
 
-    /** 입장권 예약 - 대인 35,000원, 소인 29,000원, program/schedule 없음 */
     @PostMapping
     public ResponseEntity<String> createReservation(@RequestBody ReservationRequest request) {
         try {
@@ -71,11 +71,11 @@ public class ReservationController {
             reservationRepository.save(reservation);
             return ResponseEntity.ok("예약이 성공적으로 완료되었습니다!");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error");
+            log.error("Failed to create reservation", e);
+            return ResponseEntity.status(500).body("예약 처리 중 오류가 발생했습니다.");
         }
     }
 
-    /** 내 예약 내역 조회 (마이페이지용, 최신순) */
     @GetMapping("/me")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getMyReservations() {
@@ -86,17 +86,16 @@ public class ReservationController {
             }
             String email = getEmail(auth);
             List<Reservation> reservations = reservationRepository.findByUser_EmailOrderByReservedAtDesc(email);
-            List<ReservationDto> dtos = reservations.stream()
+            List<ReservationDto> dto = reservations.stream()
                     .map(ReservationDto::new)
                     .collect(Collectors.toList());
-            return ResponseEntity.ok(dtos);
+            return ResponseEntity.ok(dto);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("예매 조회 실패: " + e.getMessage());
+            log.error("Failed to fetch reservations for user", e);
+            return ResponseEntity.status(500).body("예매 조회 중 오류가 발생했습니다.");
         }
     }
 
-    /** 프로그램(공연/체험) 예약 - 당일 입장권 보유 선행 조건, 공연은 schedule 연결 */
     @PostMapping("/programs")
     @Transactional
     public ResponseEntity<?> reserveProgram(@RequestBody ProgramReservationRequest request) {

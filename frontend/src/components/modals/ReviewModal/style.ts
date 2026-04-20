@@ -1,87 +1,5 @@
-/** 관람 후기 모달 스타일 */
-import styled, { keyframes } from "styled-components";
-
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-export const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(5px);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: ${fadeIn} 0.3s ease-out;
-`;
-
-export const Container = styled.div`
-  background: var(--bg-card);
-  width: 90%;
-  max-width: 1000px;
-  height: 85vh;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 50px rgba(0, 242, 255, 0.15);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-`;
-
-export const Header = styled.div`
-  padding: 25px 30px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h2 {
-    color: #fff;
-    font-size: 24px;
-    span {
-      color: var(--accent-cyan);
-      font-size: 16px;
-      margin-left: 10px;
-    }
-  }
-`;
-
-export const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 28px;
-  cursor: pointer;
-  transition: 0.3s;
-  &:hover {
-    color: #fff;
-    transform: rotate(90deg);
-  }
-`;
-
-export const Content = styled.div`
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 4px;
-  }
-`;
+/** 관람 후기 모달 스타일 - 목록/상세/작성 뷰 */
+import styled from "styled-components";
 
 /* ========== [1] 목록 (List) 스타일 ========== */
 
@@ -278,6 +196,12 @@ export const WriteForm = styled.div`
 `;
 
 /** 액션 버튼: $outline 시 투명 배경 + 테두리 */
+export const FormActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;
+
 export const ActionBtn = styled.button<{ $outline?: boolean }>`
   padding: 10px 25px;
   border-radius: 5px;

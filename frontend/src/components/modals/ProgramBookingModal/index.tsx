@@ -1,4 +1,3 @@
-/** 프로그램 예약 모달 - 관람권 보유 확인 후 날짜/시간/인원 선택 및 결제 */
 import { useEffect } from "react";
 import * as S from "./style";
 import CommonModal from "../Modal";
@@ -7,7 +6,6 @@ import TicketNoticeModal from "../TicketNoticeModal";
 import { useProgramBooking } from "./hooks/useProgramBooking";
 import type { ReservationDto } from "../../../types/api";
 
-/** 오늘 날짜를 YYYY-MM-DD 형식으로 반환 (날짜 선택 최소값) */
 const getTodayString = (): string => {
   const today = new Date();
   const yyyy = today.getFullYear();
@@ -59,16 +57,14 @@ const ProgramBookingModal = ({
     totalPrice,
     selectedProgram,
     isProgramLocked,
-  } = useProgramBooking(isOpen, onClose, fixedDate, fixedTime, programId, programTitle, price, parentReservations);
+  } = useProgramBooking(isOpen, fixedDate, fixedTime, programId, programTitle, price, parentReservations);
 
-  /** 관람권 필요 시 부모 컴포넌트에 알림 */
   useEffect(() => {
     if (requireTicket && onRequireTicket) {
       onRequireTicket();
     }
   }, [requireTicket]);
 
-  /** 관람권 미보유 + 부모 핸들러 없음 → 자체 안내 모달 표시 */
   if (requireTicket && !onRequireTicket) {
     return (
       <TicketNoticeModal

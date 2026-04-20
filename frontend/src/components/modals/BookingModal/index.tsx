@@ -1,3 +1,4 @@
+import CommonModal from "../Modal";
 import PaymentModal from "../PaymentModal";
 import * as S from "./style";
 import { useBooking } from "./hooks/useBooking";
@@ -22,103 +23,17 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
     handleNext,
     handlePrev,
     handlePaymentSuccess,
-  } = useBooking(isOpen, onClose);
-
-  if (!isOpen) return null;
+  } = useBooking(isOpen);
 
   return (
     <>
-      <S.Overlay onClick={onClose}>
-        <S.Container onClick={(e) => e.stopPropagation()}>
-          <S.Header>
-            <h2>관람 예매 <span>Booking</span></h2>
-            <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
-          </S.Header>
-
-          <S.Content>
-            {/* Step 2(시간 선택)는 종일권으로 생략 — Step 1 → Step 3 순서로 진행 */}
-            {step === 1 && (
-              <>
-                <S.StepTitle>{calendarData?.month}월, 언제 방문하시나요?</S.StepTitle>
-                <S.CalendarGrid>
-                  {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
-                    <S.DayHeader key={d}>{d}</S.DayHeader>
-                  ))}
-                  {calendarData?.days.map((day: number | null, idx: number) => {
-                    const isClosed = day ? isClosedDay(day) : false;
-                    const isPast = !day || day < new Date().getDate();
-                    const isDisabled = isPast || isClosed;
-                    return (
-                      <S.DateBtn
-                        key={idx}
-                        $disabled={isDisabled}
-                        $selected={selectedDate === day}
-                        onClick={() => !isDisabled && day && setSelectedDate(day)}
-                        title={isClosed ? "휴관일 (매주 월요일)" : undefined}
-                      >
-                        {day}
-                        {isClosed && <S.ClosedLabel>휴관</S.ClosedLabel>}
-                      </S.DateBtn>
-                    );
-                  })}
-                </S.CalendarGrid>
-              </>
-            )}
-
-            {step === 3 && (
-              <>
-                <S.StepTitle>인원을 선택해주세요</S.StepTitle>
-                <S.CounterRow>
-                  <div>
-                    <div className="label">성인</div>
-                    <div className="price">35,000원</div>
-                  </div>
-                  <div className="controls">
-                    <button onClick={() => handleCountChange("adult", -1)}>-</button>
-                    <span>{counts.adult}</span>
-                    <button onClick={() => handleCountChange("adult", 1)}>+</button>
-                  </div>
-                </S.CounterRow>
-                <S.CounterRow>
-                  <div>
-                    <div className="label">청소년/소인</div>
-                    <div className="price">29,000원</div>
-                  </div>
-                  <div className="controls">
-                    <button onClick={() => handleCountChange("teen", -1)}>-</button>
-                    <span>{counts.teen}</span>
-                    <button onClick={() => handleCountChange("teen", 1)}>+</button>
-                  </div>
-                </S.CounterRow>
-              </>
-            )}
-
-            {step === 4 && (
-              <>
-                <S.StepTitle>예매 정보를 확인해주세요</S.StepTitle>
-                <S.SummaryBox>
-                  <div>
-                    <span>날짜</span>
-                    <span>{calendarData?.month}월 {selectedDate}일</span>
-                  </div>
-                  <div>
-                    <span>티켓</span>
-                    <span>종일 관람권</span>
-                  </div>
-                  <div>
-                    <span>인원</span>
-                    <span>성인 {counts.adult}, 소인 {counts.teen}</span>
-                  </div>
-                  <div className="total">
-                    <span>결제금액</span>
-                    <span>{totalPrice.toLocaleString()}원</span>
-                  </div>
-                </S.SummaryBox>
-              </>
-            )}
-          </S.Content>
-
-          <S.Footer>
+      <CommonModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="관람 예매"
+        maxWidth="600px"
+        footer={
+          <>
             {step > 1 && <S.Button onClick={handlePrev}>이전</S.Button>}
             <S.Button
               $primary
@@ -127,9 +42,89 @@ const BookingModal = ({ isOpen, onClose }: Props) => {
             >
               {step === 4 ? "결제하기" : "다음"}
             </S.Button>
-          </S.Footer>
-        </S.Container>
-      </S.Overlay>
+          </>
+        }
+      >
+        {step === 1 && (
+          <>
+            <S.StepTitle>{calendarData?.month}월, 언제 방문하시나요?</S.StepTitle>
+            <S.CalendarGrid>
+              {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
+                <S.DayHeader key={d}>{d}</S.DayHeader>
+              ))}
+              {calendarData?.days.map((day: number | null, idx: number) => {
+                const isClosed = day ? isClosedDay(day) : false;
+                const isPast = !day || day < new Date().getDate();
+                const isDisabled = isPast || isClosed;
+                return (
+                  <S.DateBtn
+                    key={idx}
+                    $disabled={isDisabled}
+                    $selected={selectedDate === day}
+                    onClick={() => !isDisabled && day && setSelectedDate(day)}
+                    title={isClosed ? "휴관일 (매주 월요일)" : undefined}
+                  >
+                    {day}
+                    {isClosed && <S.ClosedLabel>휴관</S.ClosedLabel>}
+                  </S.DateBtn>
+                );
+              })}
+            </S.CalendarGrid>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <S.StepTitle>인원을 선택해주세요</S.StepTitle>
+            <S.CounterRow>
+              <div>
+                <div className="label">성인</div>
+                <div className="price">35,000원</div>
+              </div>
+              <div className="controls">
+                <button onClick={() => handleCountChange("adult", -1)}>-</button>
+                <span>{counts.adult}</span>
+                <button onClick={() => handleCountChange("adult", 1)}>+</button>
+              </div>
+            </S.CounterRow>
+            <S.CounterRow>
+              <div>
+                <div className="label">청소년/소인</div>
+                <div className="price">29,000원</div>
+              </div>
+              <div className="controls">
+                <button onClick={() => handleCountChange("teen", -1)}>-</button>
+                <span>{counts.teen}</span>
+                <button onClick={() => handleCountChange("teen", 1)}>+</button>
+              </div>
+            </S.CounterRow>
+          </>
+        )}
+
+        {step === 4 && (
+          <>
+            <S.StepTitle>예매 정보를 확인해주세요</S.StepTitle>
+            <S.SummaryBox>
+              <div>
+                <span>날짜</span>
+                <span>{calendarData?.month}월 {selectedDate}일</span>
+              </div>
+              <div>
+                <span>티켓</span>
+                <span>종일 관람권</span>
+              </div>
+              <div>
+                <span>인원</span>
+                <span>성인 {counts.adult}, 소인 {counts.teen}</span>
+              </div>
+              <div className="total">
+                <span>결제금액</span>
+                <span>{totalPrice.toLocaleString()}원</span>
+              </div>
+            </S.SummaryBox>
+          </>
+        )}
+      </CommonModal>
 
       {showPayment && (
         <PaymentModal

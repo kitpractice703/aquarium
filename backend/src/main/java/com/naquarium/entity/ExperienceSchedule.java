@@ -18,7 +18,7 @@ public class ExperienceSchedule {
     @Column(name = "schedule_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
@@ -28,7 +28,6 @@ public class ExperienceSchedule {
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    /** 마감 여부 (기본값: false) */
     @Column(name = "is_closed")
-    private Boolean isClosed = false;
+    private boolean isClosed = false;
 }

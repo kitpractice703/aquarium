@@ -1,5 +1,3 @@
-/** 백엔드 DTO와 1:1 대응하는 API 타입 정의 */
-
 export interface ScheduleData {
   id: number;
   programId: number;

@@ -1,4 +1,3 @@
-/** 후기 모달 - 목록 조회, 상세 보기, 작성 3가지 뷰 상태 관리 */
 import { useState, useEffect } from "react";
 import { getAllReviews, createReview } from "../../../../api/reviewApi";
 import { useAuth } from "../../../../context/AuthContext";
@@ -53,12 +52,13 @@ export const useReview = (isOpen: boolean) => {
       return;
     }
     try {
-      await createReview(writeForm as any);
+      await createReview(writeForm);
       alert("후기가 등록되었습니다!");
       setView("LIST");
       fetchReviews();
-    } catch (error: any) {
-      if (error.response?.status === 401) {
+    } catch (error: unknown) {
+      const err = error as { response?: { status?: number } };
+      if (err.response?.status === 401) {
         setIsLoginNoticeOpen(true);
       } else {
         alert("후기 등록 중 오류가 발생했습니다.");
