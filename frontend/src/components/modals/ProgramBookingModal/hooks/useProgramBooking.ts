@@ -46,7 +46,6 @@ export const useProgramBooking = (
       } else {
         fetchMyReservations();
       }
-      setStep(1);
       setCount(1);
       setShowPayment(false);
       setRequireTicket(false);
@@ -205,7 +204,6 @@ export const useProgramBooking = (
   const isProgramLocked = !!initialProgramTitle || !!initialProgramId;
 
   return {
-    step,
     date,
     setDate,
     time,
