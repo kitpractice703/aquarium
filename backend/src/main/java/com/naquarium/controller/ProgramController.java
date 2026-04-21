@@ -74,7 +74,7 @@ public class ProgramController {
             this.programId = s.getProgram().getId();
             this.location = s.getLocation();
             this.startTime = s.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            this.isClosed = Boolean.TRUE.equals(s.getIsClosed());
+            this.isClosed = s.isClosed();
         }
 
         ScheduleResponse(ExperienceSchedule s) {
@@ -82,7 +82,7 @@ public class ProgramController {
             this.programId = s.getProgram().getId();
             this.location = s.getLocation();
             this.startTime = s.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            this.isClosed = Boolean.TRUE.equals(s.getIsClosed());
+            this.isClosed = s.isClosed();
         }
     }
 }

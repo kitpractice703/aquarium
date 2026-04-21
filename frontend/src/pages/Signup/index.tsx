@@ -1,21 +1,13 @@
 import * as S from "./style";
-import LoginModal from "../../components/modals/LoginModal";
-import PasswordResetModal from "../../components/modals/PasswordResetModal";
 import { useSignup } from "./hooks/useSignup";
 
 const Signup = () => {
   const {
     form,
-    isLoginOpen,
-    isResetOpen,
     handleChange,
     handlePhoneChange,
     handleSubmit,
-    openLogin,
-    closeLogin,
-    openReset,
-    closeReset,
-    switchResetToLogin,
+    openLoginModal,
   } = useSignup();
 
   return (
@@ -81,21 +73,8 @@ const Signup = () => {
         </S.Form>
 
         <S.LoginLink>
-          이미 계정이 있으신가요? <span onClick={openLogin}>로그인</span>
+          이미 계정이 있으신가요? <span onClick={openLoginModal}>로그인</span>
         </S.LoginLink>
-
-        <LoginModal
-          isOpen={isLoginOpen}
-          onClose={closeLogin}
-          onOpenSignup={closeLogin}
-          onOpenReset={openReset}
-        />
-
-        <PasswordResetModal
-          isOpen={isResetOpen}
-          onClose={closeReset}
-          onSwitchToLogin={switchResetToLogin}
-        />
       </S.FormCard>
     </S.SignupContainer>
   );

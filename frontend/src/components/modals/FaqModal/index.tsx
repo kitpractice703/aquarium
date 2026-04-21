@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import * as S from "./style";
 import { useFaq } from "./hooks/useFaq";
 
@@ -9,11 +10,22 @@ interface Props {
 const FaqModal = ({ isOpen, onClose }: Props) => {
   const { faqList, openIndex, handleToggle } = useFaq(isOpen);
 
+  const mouseDownOnOverlay = useRef(false);
+
   if (!isOpen) return null;
 
   return (
-    <S.Overlay onClick={onClose}>
-      <S.Container onClick={(e) => e.stopPropagation()}>
+    <S.Overlay
+      onMouseDown={() => { mouseDownOnOverlay.current = true; }}
+      onMouseUp={() => {
+        if (mouseDownOnOverlay.current) onClose();
+        mouseDownOnOverlay.current = false;
+      }}
+    >
+      <S.Container
+        onMouseDown={(e) => { e.stopPropagation(); mouseDownOnOverlay.current = false; }}
+        onMouseUp={(e) => e.stopPropagation()}
+      >
         <S.Header>
           <h2>
             자주 묻는 질문 <span>FAQ</span>

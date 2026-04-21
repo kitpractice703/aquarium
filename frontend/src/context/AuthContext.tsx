@@ -6,11 +6,21 @@ interface LoginData {
   password?: string;
 }
 
+type ModalType = "LOGIN" | "NOTICE" | null;
+
 interface AuthContextType {
   isLoggedIn: boolean;
   username: string | null;
   login: (data: LoginData) => Promise<void>;
   logout: () => void;
+  modalType: ModalType;
+  setModalType: (type: ModalType) => void;
+  isResetOpen: boolean;
+  openLoginModal: () => void;
+  closeLoginModal: () => void;
+  openResetModal: () => void;
+  closeResetModal: () => void;
+  switchResetToLogin: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -18,6 +28,14 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
+  const [modalType, setModalType] = useState<ModalType>(null);
+  const [isResetOpen, setIsResetOpen] = useState(false);
+
+  const openLoginModal = () => setModalType("LOGIN");
+  const closeLoginModal = () => setModalType(null);
+  const openResetModal = () => { setModalType(null); setIsResetOpen(true); };
+  const closeResetModal = () => setIsResetOpen(false);
+  const switchResetToLogin = () => { setIsResetOpen(false); setModalType("LOGIN"); };
 
   const checkLoginStatus = async () => {
     try {
@@ -67,7 +85,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, username, login, logout }}>
+    <AuthContext.Provider value={{
+      isLoggedIn, username, login, logout,
+      modalType, setModalType,
+      isResetOpen,
+      openLoginModal, closeLoginModal,
+      openResetModal, closeResetModal,
+      switchResetToLogin,
+    }}>
       {children}
     </AuthContext.Provider>
   );

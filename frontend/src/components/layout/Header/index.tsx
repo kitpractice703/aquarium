@@ -15,7 +15,7 @@ const Header = () => {
     isBookingOpen,
     setIsBookingOpen,
     isResetOpen,
-    setIsResetOpen,
+    closeResetModal,
     closeModal,
     handleBookingClick,
     handleTicketCheck,
@@ -103,7 +103,7 @@ const Header = () => {
 
       <PasswordResetModal
         isOpen={isResetOpen}
-        onClose={() => setIsResetOpen(false)}
+        onClose={closeResetModal}
         onSwitchToLogin={switchResetToLogin}
       />
 

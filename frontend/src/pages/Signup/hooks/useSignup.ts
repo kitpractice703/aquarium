@@ -5,7 +5,7 @@ import { signup } from "../../../api/authApi";
 
 export const useSignup = () => {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, openLoginModal } = useAuth();
 
   const [form, setForm] = useState({
     username: "",
@@ -14,10 +14,6 @@ export const useSignup = () => {
     passwordConfirm: "",
     phone: "",
   });
-
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isResetOpen, setIsResetOpen] = useState(false);
-
   // 이미 로그인된 상태라면 홈으로 리다이렉트
   useEffect(() => {
     if (isLoggedIn) navigate("/");
@@ -66,31 +62,11 @@ export const useSignup = () => {
     }
   };
 
-  const openLogin = () => setIsLoginOpen(true);
-  const closeLogin = () => setIsLoginOpen(false);
-
-  const openReset = () => {
-    setIsLoginOpen(false);
-    setIsResetOpen(true);
-  };
-  const closeReset = () => setIsResetOpen(false);
-
-  const switchResetToLogin = () => {
-    setIsResetOpen(false);
-    setIsLoginOpen(true);
-  };
-
   return {
     form,
-    isLoginOpen,
-    isResetOpen,
     handleChange,
     handlePhoneChange,
     handleSubmit,
-    openLogin,
-    closeLogin,
-    openReset,
-    closeReset,
-    switchResetToLogin,
+    openLoginModal,
   };
 };

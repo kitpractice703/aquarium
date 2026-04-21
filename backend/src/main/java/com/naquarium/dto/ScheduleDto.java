@@ -41,6 +41,6 @@ public class ScheduleDto {
         }
 
         this.place = schedule.getLocation();
-        this.status = Boolean.TRUE.equals(schedule.getIsClosed()) ? "closed" : "open";
+        this.status = schedule.isClosed() ? "closed" : "open";
     }
 }

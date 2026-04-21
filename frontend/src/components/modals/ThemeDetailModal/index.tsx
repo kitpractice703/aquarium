@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import * as S from "./style";
 import { useThemeDetail } from "./hooks/useThemeDetail";
 
@@ -13,10 +14,21 @@ const ThemeDetailModal = ({ isOpen, onClose, initialThemeId }: Props) => {
     initialThemeId,
   );
 
+  const mouseDownOnOverlay = useRef(false);
+
   if (!isOpen) return null;
   return (
-    <S.Overlay onClick={onClose}>
-      <S.Container onClick={(e) => e.stopPropagation()}>
+    <S.Overlay
+      onMouseDown={() => { mouseDownOnOverlay.current = true; }}
+      onMouseUp={() => {
+        if (mouseDownOnOverlay.current) onClose();
+        mouseDownOnOverlay.current = false;
+      }}
+    >
+      <S.Container
+        onMouseDown={(e) => { e.stopPropagation(); mouseDownOnOverlay.current = false; }}
+        onMouseUp={(e) => e.stopPropagation()}
+      >
         <S.CloseButton onClick={onClose}>&times;</S.CloseButton>
 
         <S.Tabs>

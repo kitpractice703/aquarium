@@ -2,19 +2,19 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../../context/AuthContext";
 
-type ModalType = "LOGIN" | "NOTICE" | null;
-
 export const useHeaderLogic = () => {
-  const { isLoggedIn, username, logout } = useAuth();
+  const {
+    isLoggedIn, username, logout,
+    modalType, setModalType,
+    isResetOpen,
+    closeLoginModal: closeModal, openResetModal, closeResetModal, switchResetToLogin,
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [modalType, setModalType] = useState<ModalType>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [isResetOpen, setIsResetOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const closeModal = () => setModalType(null);
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
@@ -26,16 +26,6 @@ export const useHeaderLogic = () => {
   const handleTicketCheck = () => {
     closeMobileMenu();
     isLoggedIn ? navigate("/mypage") : setModalType("NOTICE");
-  };
-
-  const openResetModal = () => {
-    setModalType(null);
-    setIsResetOpen(true);
-  };
-
-  const switchResetToLogin = () => {
-    setIsResetOpen(false);
-    setModalType("LOGIN");
   };
 
   const SCROLL_OFFSET = -30;
@@ -66,7 +56,7 @@ export const useHeaderLogic = () => {
     isBookingOpen,
     setIsBookingOpen,
     isResetOpen,
-    setIsResetOpen,
+    closeResetModal,
     closeModal,
     handleBookingClick,
     handleTicketCheck,
