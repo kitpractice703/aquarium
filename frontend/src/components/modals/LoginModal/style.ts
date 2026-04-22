@@ -67,8 +67,8 @@ export const GoogleBtn = styled.button`
   }
 `;
 
-/** 비밀번호 재설정 링크 */
-export const ResetLink = styled.div`
+/** 비밀번호 재설정 */
+export const Reset = styled.div`
   text-align: center;
   margin-top: 10px;
   font-size: 12px;
@@ -78,17 +78,6 @@ export const ResetLink = styled.div`
 
   &:hover {
     color: var(--accent-cyan);
-  }
-
-  span {
-    font-size: 12px;
-    color: #666;
-    cursor: pointer;
-    text-decoration: underline;
-
-    &:hover {
-      color: #333;
-    }
   }
 `;
 

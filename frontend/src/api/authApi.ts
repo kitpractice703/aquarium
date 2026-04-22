@@ -11,6 +11,16 @@ export const login = async (data: LoginRequest) => {
   return response.data;
 };
 
+export const me = async () => {
+  const response = await api.get("/auth/me");
+  return response.data;
+};
+
+export const logout = async () => {
+  const response = await api.post("/auth/logout");
+  return response.data;
+};
+
 export const updateUserInfo = async (data: {
   currentPassword: string;
   password?: string;

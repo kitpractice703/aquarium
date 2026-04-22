@@ -3,8 +3,7 @@ package com.naquarium.controller;
 import com.naquarium.config.TestSecurityConfig;
 import com.naquarium.entity.Post;
 import com.naquarium.entity.User;
-import com.naquarium.repository.PostRepository;
-import com.naquarium.repository.UserRepository;
+import com.naquarium.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,9 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -36,8 +36,7 @@ class PostApiControllerTest {
     @Autowired MockMvc mockMvc;
     @Autowired ObjectMapper objectMapper;
 
-    @MockitoBean PostRepository postRepository;
-    @MockitoBean UserRepository userRepository;
+    @MockitoBean PostService postService;
 
     // ─────────────────────────────────────────────
     // GET /api/posts/reviews
@@ -54,8 +53,7 @@ class PostApiControllerTest {
                 .category(Post.Category.REVIEW)
                 .user(user)
                 .build();
-        given(postRepository.findByCategoryOrderByCreatedAtDesc(Post.Category.REVIEW))
-                .willReturn(List.of(post));
+        given(postService.getReviews()).willReturn(List.of(post));
 
         mockMvc.perform(get("/api/posts/reviews"))
                 .andExpect(status().isOk())
@@ -67,8 +65,7 @@ class PostApiControllerTest {
     @Test
     @DisplayName("후기 목록 조회 - 후기가 없으면 빈 배열 반환")
     void getReviews_empty_returnsEmptyArray() throws Exception {
-        given(postRepository.findByCategoryOrderByCreatedAtDesc(Post.Category.REVIEW))
-                .willReturn(List.of());
+        given(postService.getReviews()).willReturn(List.of());
 
         mockMvc.perform(get("/api/posts/reviews"))
                 .andExpect(status().isOk())
@@ -83,8 +80,7 @@ class PostApiControllerTest {
     @WithMockUser(username = "user@test.com")
     @DisplayName("후기 작성 성공 - 로그인 상태면 200 반환")
     void createReview_authenticated_returns200() throws Exception {
-        User user = buildUser("user@test.com", "테스터");
-        given(userRepository.findByEmail("user@test.com")).willReturn(Optional.of(user));
+        willDoNothing().given(postService).createReview(any(), any(), any(), any());
 
         Map<String, Object> body = Map.of(
                 "title", "멋진 아쿠아리움",

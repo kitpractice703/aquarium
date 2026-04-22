@@ -2,8 +2,7 @@ package com.naquarium.controller;
 
 import com.naquarium.dto.LoginRequest;
 import com.naquarium.dto.SignupRequest;
-import com.naquarium.entity.User;
-import com.naquarium.repository.UserRepository;
+import com.naquarium.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,25 +24,17 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 가입된 아이디(이메일)입니다.");
+        try {
+            authService.signup(request);
+            return ResponseEntity.ok("회원가입이 완료되었습니다!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-        User user = User.builder()
-                .email(request.getEmail())
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .phone(request.getPhone())
-                .role(User.Role.USER)
-                .provider("local")
-                .build();
-        userRepository.save(user);
-        return ResponseEntity.ok("회원가입이 완료되었습니다!");
     }
 
     @PostMapping("/login")

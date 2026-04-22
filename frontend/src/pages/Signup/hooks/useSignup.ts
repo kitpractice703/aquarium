@@ -14,6 +14,7 @@ export const useSignup = () => {
     passwordConfirm: "",
     phone: "",
   });
+
   // 이미 로그인된 상태라면 홈으로 리다이렉트
   useEffect(() => {
     if (isLoggedIn) navigate("/");
@@ -42,9 +43,12 @@ export const useSignup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.email.includes("@")) return alert("올바른 이메일 형식이 아닙니다.");
-    if (form.password.length < 8) return alert("비밀번호는 8자 이상이어야 합니다.");
-    if (form.password !== form.passwordConfirm) return alert("비밀번호가 일치하지 않습니다.");
+    if (!form.email.includes("@"))
+      return alert("올바른 이메일 형식이 아닙니다.");
+    if (form.password.length < 8)
+      return alert("비밀번호는 8자 이상이어야 합니다.");
+    if (form.password !== form.passwordConfirm)
+      return alert("비밀번호가 일치하지 않습니다.");
     if (!form.username) return alert("이름을 입력해주세요.");
     if (!form.phone) return alert("전화번호를 입력해주세요.");
 

@@ -1,8 +1,7 @@
 package com.naquarium.controller;
 
 import com.naquarium.config.TestSecurityConfig;
-import com.naquarium.entity.User;
-import com.naquarium.repository.UserRepository;
+import com.naquarium.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,15 +12,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -29,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * AuthController 단위 테스트 (@WebMvcTest)
  * - 실제 DB 없이 MockMvc + Mockito로 HTTP 요청/응답 검증
  * - TestSecurityConfig: CSRF 비활성 + anyRequest().permitAll()
- *   (컨트롤러 자체의 auth null 체크로 401 반환)
  * - 테스트 대상: 회원가입, 로그인, 내 정보 조회, 로그아웃
  */
 @WebMvcTest(AuthController.class)
@@ -39,8 +36,7 @@ class AuthControllerTest {
     @Autowired MockMvc mockMvc;
     @Autowired ObjectMapper objectMapper;
 
-    @MockitoBean UserRepository userRepository;
-    @MockitoBean PasswordEncoder passwordEncoder;
+    @MockitoBean AuthService authService;
     @MockitoBean AuthenticationManager authenticationManager;
 
     // ─────────────────────────────────────────────
@@ -48,10 +44,9 @@ class AuthControllerTest {
     // ─────────────────────────────────────────────
 
     @Test
-    @DisplayName("회원가입 성공 - 이메일 중복 없으면 200 반환")
+    @DisplayName("회원가입 성공 - 정상 요청 시 200 반환")
     void signup_success() throws Exception {
-        given(userRepository.findByEmail("new@test.com")).willReturn(Optional.empty());
-        given(passwordEncoder.encode("password123")).willReturn("encodedPw");
+        willDoNothing().given(authService).signup(any());
 
         String body = objectMapper.writeValueAsString(
                 new SignupRequestDto("new@test.com", "password123", "신규유저", "010-1234-5678"));
@@ -66,10 +61,8 @@ class AuthControllerTest {
     @Test
     @DisplayName("회원가입 실패 - 이메일 중복 시 409 반환")
     void signup_duplicateEmail_returns409() throws Exception {
-        User existing = User.builder()
-                .email("exist@test.com").username("기존유저")
-                .password("pw").role(User.Role.USER).provider("local").build();
-        given(userRepository.findByEmail("exist@test.com")).willReturn(Optional.of(existing));
+        willThrow(new IllegalArgumentException("이미 가입된 아이디(이메일)입니다."))
+                .given(authService).signup(any());
 
         String body = objectMapper.writeValueAsString(
                 new SignupRequestDto("exist@test.com", "pw", "기존유저", null));

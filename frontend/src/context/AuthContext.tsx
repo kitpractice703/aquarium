@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { api } from "../api/axios";
+import { login as loginApi, logout as logoutApi, me } from "../api/authApi";
 
 interface LoginData {
   email: string;
-  password?: string;
+  password: string;
 }
 
 type ModalType = "LOGIN" | "NOTICE" | null;
@@ -39,16 +39,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const checkLoginStatus = async () => {
     try {
-      const response = await api.get("/auth/me");
-      if (response.status === 200) {
-        setIsLoggedIn(true);
-        const data = response.data;
-        // 응답이 이메일 문자열이거나 사용자 객체인 경우 모두 처리
-        if (typeof data === "string") {
-          setUsername(data);
-        } else if (typeof data === "object" && data !== null) {
-          setUsername(data.username || data.name || data.email || "회원");
-        }
+      const data = await me();
+      setIsLoggedIn(true);
+      if (typeof data === "string") {
+        setUsername(data);
+      } else if (typeof data === "object" && data !== null) {
+        setUsername(data.username || data.name || data.email || "회원");
       }
     } catch {
       setIsLoggedIn(false);
@@ -63,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (loginData: LoginData) => {
     try {
-      await api.post("/auth/login", loginData);
+      await loginApi(loginData);
       await checkLoginStatus();
       alert("로그인되었습니다!");
     } catch (error) {
@@ -74,7 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      await api.post("/auth/logout");
+      await logoutApi();
       setIsLoggedIn(false);
       setUsername(null);
       alert("로그아웃 되었습니다.");

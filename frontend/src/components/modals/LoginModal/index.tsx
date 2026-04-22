@@ -51,16 +51,15 @@ const LoginModal = ({ isOpen, onClose, onOpenReset, onOpenSignup }: Props) => {
         Google로 로그인하기
       </S.GoogleBtn>
 
-      <div style={{ textAlign: "center", marginTop: "10px" }}>
-        <S.ResetLink
-          onClick={() => {
-            onClose();
-            onOpenReset();
-          }}
-        >
-          비밀번호를 잊으셨나요?
-        </S.ResetLink>
-      </div>
+      <S.Reset
+        onClick={() => {
+          onClose();
+          onOpenReset();
+        }}
+      >
+        비밀번호를 잊으셨나요?
+      </S.Reset>
+
       <S.SignupLink>
         계정이 없으신가요?{" "}
         <span

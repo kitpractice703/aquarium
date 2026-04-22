@@ -1,9 +1,7 @@
 package com.naquarium.controller;
 
 import com.naquarium.entity.Post;
-import com.naquarium.entity.User;
-import com.naquarium.repository.PostRepository;
-import com.naquarium.repository.UserRepository;
+import com.naquarium.service.PostService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -25,8 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostApiController {
 
-    private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final PostService postService;
 
     private String getEmail(Authentication auth) {
         if (auth instanceof OAuth2AuthenticationToken) {
@@ -37,9 +33,8 @@ public class PostApiController {
     }
 
     @GetMapping("/reviews")
-    @Transactional(readOnly = true)
     public List<PostDto> getReviews() {
-        return postRepository.findByCategoryOrderByCreatedAtDesc(Post.Category.REVIEW)
+        return postService.getReviews()
                 .stream()
                 .map(PostDto::new)
                 .collect(Collectors.toList());
@@ -52,23 +47,8 @@ public class PostApiController {
             if (auth == null || auth.getName().equals("anonymousUser")) {
                 return ResponseEntity.status(401).body("로그인이 필요합니다.");
             }
-
-            String email = getEmail(auth);
-
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("사용자 정보 없음"));
-
-            Post post = Post.builder()
-                    .user(user)
-                    .title(request.getTitle())
-                    .content(request.getContent())
-                    .rating(request.getRating())
-                    .category(Post.Category.REVIEW)
-                    .build();
-
-            postRepository.save(post);
+            postService.createReview(getEmail(auth), request.getTitle(), request.getContent(), request.getRating());
             return ResponseEntity.ok("후기가 등록되었습니다.");
-
         } catch (Exception e) {
             log.error("Failed to create review", e);
             return ResponseEntity.status(500).body("후기 등록 중 오류가 발생했습니다.");
@@ -88,20 +68,11 @@ public class PostApiController {
             this.id = post.getId();
             this.title = post.getTitle();
             this.content = post.getContent();
-
-            if (post.getUser() != null) {
-                this.writerName = post.getUser().getUsername();
-            } else {
-                this.writerName = "알 수 없음";
-            }
-
-            this.rating = (post.getRating() != null) ? post.getRating() : 0.0;
-
-            if (post.getCreatedAt() != null) {
-                this.date = post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            } else {
-                this.date = "";
-            }
+            this.writerName = post.getUser() != null ? post.getUser().getUsername() : "알 수 없음";
+            this.rating = post.getRating() != null ? post.getRating() : 0.0;
+            this.date = post.getCreatedAt() != null
+                    ? post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    : "";
         }
     }
 
