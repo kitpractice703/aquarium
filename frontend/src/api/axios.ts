@@ -6,11 +6,16 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // 크로스 오리진 요청 시 세션 쿠키 포함
 });
 
 api.interceptors.request.use(
-  (config) => config,
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
   (error) => Promise.reject(error),
 );
 

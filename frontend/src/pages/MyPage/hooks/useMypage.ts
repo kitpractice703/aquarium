@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { getMyReservations } from "../../../api/reservationApi";
-import { useAuth } from "../../../context/AuthContext";
-import { updateUserInfo } from "../../../api/authApi";
-import type { ReservationDto } from "../../../types/api";
+import {useState, useEffect} from "react";
+import {getMyReservations} from "../../../api/reservationApi";
+import {useAuth} from "../../../context/AuthContext";
+import {updateUserInfo} from "../../../api/authApi";
+import type {ReservationDto} from "../../../types/api";
 
 export const useMyPage = () => {
-  const { username, logout } = useAuth();
+  const {username, logout} = useAuth();
   const [reservations, setReservations] = useState<ReservationDto[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,11 +40,11 @@ export const useMyPage = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({...form, [e.target.name]: e.target.value});
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((prev) => ({ ...prev, phone: formatPhoneNumber(e.target.value) }));
+    setForm((prev) => ({...prev, phone: formatPhoneNumber(e.target.value)}));
   };
 
   const handleUpdateInfo = async () => {
@@ -69,7 +69,7 @@ export const useMyPage = () => {
         await logout();
       } else {
         alert("회원정보가 성공적으로 수정되었습니다.");
-        setForm((prev) => ({ ...prev, currentPassword: "", password: "", confirmPassword: "" }));
+        setForm((prev) => ({...prev, currentPassword: "", password: "", confirmPassword: ""}));
       }
     } catch (error: any) {
       alert(error.response?.data || "정보 수정 중 오류가 발생했습니다.");

@@ -1,5 +1,6 @@
 package com.naquarium.controller;
 
+import com.naquarium.config.JwtProvider;
 import com.naquarium.config.TestSecurityConfig;
 import com.naquarium.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
@@ -27,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * AuthController 단위 테스트 (@WebMvcTest)
  * - 실제 DB 없이 MockMvc + Mockito로 HTTP 요청/응답 검증
  * - TestSecurityConfig: CSRF 비활성 + anyRequest().permitAll()
- * - 테스트 대상: 회원가입, 로그인, 내 정보 조회, 로그아웃
+ * - 테스트 대상: 회원가입, 로그인(JWT), 내 정보 조회, 로그아웃
  */
 @WebMvcTest(AuthController.class)
 @Import(TestSecurityConfig.class)
@@ -38,6 +40,7 @@ class AuthControllerTest {
 
     @MockitoBean AuthService authService;
     @MockitoBean AuthenticationManager authenticationManager;
+    @MockitoBean JwtProvider jwtProvider;
 
     // ─────────────────────────────────────────────
     // POST /api/auth/signup
@@ -79,11 +82,12 @@ class AuthControllerTest {
     // ─────────────────────────────────────────────
 
     @Test
-    @DisplayName("로그인 성공 - 인증 완료 시 200 반환")
+    @DisplayName("로그인 성공 - JWT 토큰 반환")
     void login_success() throws Exception {
         UsernamePasswordAuthenticationToken mockAuth =
                 new UsernamePasswordAuthenticationToken("user@test.com", null);
         given(authenticationManager.authenticate(any())).willReturn(mockAuth);
+        given(jwtProvider.generateToken("user@test.com")).willReturn("mocked.jwt.token");
 
         String body = objectMapper.writeValueAsString(
                 new LoginRequestDto("user@test.com", "correctPw"));
@@ -92,7 +96,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk())
-                .andExpect(content().string("로그인 성공"));
+                .andExpect(jsonPath("$.token").value("mocked.jwt.token"));
     }
 
     @Test
@@ -136,7 +140,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    @DisplayName("로그아웃 - 세션 무효화 후 200 반환")
+    @DisplayName("로그아웃 - 200 반환")
     void logout_success() throws Exception {
         mockMvc.perform(post("/api/auth/logout"))
                 .andExpect(status().isOk())

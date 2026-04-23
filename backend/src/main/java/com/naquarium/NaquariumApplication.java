@@ -10,13 +10,13 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class NaquariumApplication {
 
-    public static void main(String[] args) {
-        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-        SpringApplication.run(NaquariumApplication.class, args);
-    }
+  public static void main(String[] args) {
+    TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    SpringApplication.run(NaquariumApplication.class, args);
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 }

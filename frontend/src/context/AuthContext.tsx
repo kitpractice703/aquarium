@@ -38,6 +38,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const switchResetToLogin = () => { setIsResetOpen(false); setModalType("LOGIN"); };
 
   const checkLoginStatus = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsLoggedIn(false);
+      setUsername(null);
+      return;
+    }
     try {
       const data = await me();
       setIsLoggedIn(true);
@@ -47,19 +53,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUsername(data.username || data.name || data.email || "회원");
       }
     } catch {
+      localStorage.removeItem("token");
       setIsLoggedIn(false);
       setUsername(null);
     }
   };
 
-  // 새로고침 후 세션 유지를 위해 마운트 시 인증 상태 확인
   useEffect(() => {
+    // Google OAuth2 로그인 후 ?token= 파라미터로 JWT 전달됨
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    if (token) {
+      localStorage.setItem("token", token);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
     checkLoginStatus();
   }, []);
 
   const login = async (loginData: LoginData) => {
     try {
-      await loginApi(loginData);
+      const data = await loginApi(loginData);
+      localStorage.setItem("token", data.token);
       await checkLoginStatus();
       alert("로그인되었습니다!");
     } catch (error) {
@@ -71,6 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     try {
       await logoutApi();
+      localStorage.removeItem("token");
       setIsLoggedIn(false);
       setUsername(null);
       alert("로그아웃 되었습니다.");

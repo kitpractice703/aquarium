@@ -54,7 +54,6 @@ export const useHomeData = (isLoggedIn: boolean, selectedDate: string) => {
         console.error("스케줄 로드 실패:", e);
       }
     };
-
     fetchSchedules();
   }, [selectedDate]);
 
@@ -81,7 +80,6 @@ export const useHomeData = (isLoggedIn: boolean, selectedDate: string) => {
         }
       }
     };
-
     fetchOtherData();
   }, [isLoggedIn]);
 
