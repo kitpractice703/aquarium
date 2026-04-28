@@ -62,7 +62,7 @@ const CommunitySection = ({
               ) : (
                 reviews.slice(0, 5).map((review) => (
                   <li key={review.id} onClick={onOpenReview}>
-                    <div className="review-title">{review.title}</div>
+                    <div>{review.title}</div>
                     <span className="rating">{"★".repeat(review.rating)}</span>
                   </li>
                 ))

@@ -55,7 +55,7 @@ const ProgramSection = ({
           </S.ProgramCol>
 
           <S.ProgramCol>
-            <h3 id="schedule-start">공연 시간표</h3>
+            <h3>공연 시간표</h3>
             <S.DateSlider>
               {dates.map((d) => (
                 <S.DateItem

@@ -106,7 +106,7 @@ const MyPage = () => {
                         </div>
                         <div className="details">
                           <span className="location">{ticket.location || "Naquarium 본관"}</span>
-                          <span className="date-time">
+                          <span>
                             {ticket.visitDate}
                             {ticket.visitTime && ticket.visitTime !== "종일권"
                               ? ` ${ticket.visitTime}`

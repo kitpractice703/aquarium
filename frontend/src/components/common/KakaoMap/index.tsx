@@ -3,7 +3,7 @@ import * as S from "./style";
 
 const KakaoMap = () => {
   const { containerRef } = useKakaoMap();
-  return <S.MapContainer ref={containerRef} id="map" />;
+  return <S.MapContainer ref={containerRef} />;
 };
 
 export default KakaoMap;
