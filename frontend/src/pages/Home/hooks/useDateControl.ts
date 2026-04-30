@@ -9,16 +9,13 @@ const getLocalYMD = (d: Date): string => {
 
 const buildWeekDays = () => {
   const today = new Date();
-  const dayOfWeek = today.getDay();
-  // 일요일(0)은 6일 전이 월요일, 나머지는 (요일 - 1)일 전
-  const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - diffToMonday);
+  const sunday = new Date(today);
+  sunday.setDate(today.getDate() - today.getDay());
 
   const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
   return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
+    const d = new Date(sunday);
+    d.setDate(sunday.getDate() + i);
     return {
       fullDate: getLocalYMD(d),
       date: d.getDate(),
