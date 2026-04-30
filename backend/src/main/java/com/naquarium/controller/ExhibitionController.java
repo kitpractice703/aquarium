@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -31,10 +30,8 @@ public class ExhibitionController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
         if (date != null) {
-            return aquariumService.getPerformanceSchedulesByDate(date).stream()
-                    .map(ScheduleDto::new).collect(Collectors.toList());
+            return aquariumService.getPerformanceSchedulesByDate(date);
         }
-        return aquariumService.getAllPerformanceSchedules().stream()
-                .map(ScheduleDto::new).collect(Collectors.toList());
+        return aquariumService.getAllPerformanceSchedules();
     }
 }
