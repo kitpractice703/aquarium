@@ -1,5 +1,6 @@
 package com.naquarium.service;
 
+import com.naquarium.dto.ProgramDto;
 import com.naquarium.dto.ProgramScheduleDto;
 import com.naquarium.entity.Program;
 import com.naquarium.repository.ExperienceScheduleRepository;
@@ -23,8 +24,9 @@ public class ProgramService {
     private final ExperienceScheduleRepository experienceScheduleRepository;
 
     @Transactional(readOnly = true)
-    public List<Program> getAllPrograms() {
-        return programRepository.findAll();
+    public List<ProgramDto> getAllPrograms() {
+        return programRepository.findAll().stream()
+                .map(ProgramDto::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

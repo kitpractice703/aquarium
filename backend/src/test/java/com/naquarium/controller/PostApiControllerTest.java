@@ -1,6 +1,7 @@
 package com.naquarium.controller;
 
 import com.naquarium.config.TestSecurityConfig;
+import com.naquarium.dto.ReviewDto;
 import com.naquarium.entity.Post;
 import com.naquarium.entity.User;
 import com.naquarium.service.PostService;
@@ -53,7 +54,8 @@ class PostApiControllerTest {
                 .category(Post.Category.REVIEW)
                 .user(user)
                 .build();
-        given(postService.getReviews()).willReturn(List.of(post));
+        ReviewDto reviewDto = new ReviewDto(post);
+        given(postService.getReviews()).willReturn(List.of(reviewDto));
 
         mockMvc.perform(get("/api/posts/reviews"))
                 .andExpect(status().isOk())

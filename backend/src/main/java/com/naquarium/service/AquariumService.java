@@ -1,7 +1,7 @@
 package com.naquarium.service;
 
+import com.naquarium.dto.ExhibitionDto;
 import com.naquarium.dto.ScheduleDto;
-import com.naquarium.entity.Exhibition;
 import com.naquarium.repository.ExhibitionRepository;
 import com.naquarium.repository.PerformanceScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,9 @@ public class AquariumService {
     private final PerformanceScheduleRepository performanceScheduleRepository;
 
     @Transactional(readOnly = true)
-    public List<Exhibition> getAllExhibitions() {
-        return exhibitionRepository.findAll();
+    public List<ExhibitionDto> getAllExhibitions() {
+        return exhibitionRepository.findAll().stream()
+                .map(ExhibitionDto::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

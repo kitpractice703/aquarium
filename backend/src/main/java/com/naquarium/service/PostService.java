@@ -1,5 +1,6 @@
 package com.naquarium.service;
 
+import com.naquarium.dto.ReviewDto;
 import com.naquarium.entity.Post;
 import com.naquarium.entity.User;
 import com.naquarium.repository.PostRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +20,9 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<Post> getReviews() {
-        return postRepository.findByCategoryOrderByCreatedAtDesc(Post.Category.REVIEW);
+    public List<ReviewDto> getReviews() {
+        return postRepository.findByCategoryOrderByCreatedAtDesc(Post.Category.REVIEW)
+                .stream().map(ReviewDto::new).collect(Collectors.toList());
     }
 
     @Transactional

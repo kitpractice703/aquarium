@@ -4,7 +4,7 @@ import { getMyReservations, reserveProgram } from "../../../../api/reservationAp
 import type {
   Program,
   ProgramSchedule,
-  ReservationDto,
+  ReservationData,
 } from "../../../../types/api";
 
 const DEFAULT_TIME_SLOTS = ["10:00", "11:00", "13:00", "14:00", "15:00"];
@@ -21,7 +21,7 @@ export const useProgramBooking = (
   initialProgramId?: number,
   initialProgramTitle?: string,
   initialPrice?: number,
-  parentReservations?: ReservationDto[],
+  parentReservations?: ReservationData[],
 ) => {
   const [date, setDate] = useState(fixedDate || "");
   const [time, setTime] = useState(fixedTime || "");
@@ -30,7 +30,7 @@ export const useProgramBooking = (
   const [selectedProgramId, setSelectedProgramId] = useState<number | null>(
     null,
   );
-  const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
+  const [myReservations, setMyReservations] = useState<ReservationData[]>([]);
   const [showPayment, setShowPayment] = useState(false);
   const [requireTicket, setRequireTicket] = useState(false);
   const [isReservationsLoaded, setIsReservationsLoaded] = useState(false);

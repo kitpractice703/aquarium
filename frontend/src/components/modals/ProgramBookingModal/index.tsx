@@ -4,7 +4,7 @@ import CommonModal from "../Modal";
 import PaymentModal from "../PaymentModal";
 import TicketNoticeModal from "../TicketNoticeModal";
 import { useProgramBooking } from "./hooks/useProgramBooking";
-import type { ReservationDto } from "../../../types/api";
+import type { ReservationData } from "../../../types/api";
 
 const getTodayString = (): string => {
   const today = new Date();
@@ -22,7 +22,7 @@ interface Props {
   price?: number;
   fixedDate?: string;
   fixedTime?: string;
-  myReservations?: ReservationDto[];
+  myReservations?: ReservationData[];
   onRequireTicket?: () => void;
 }
 

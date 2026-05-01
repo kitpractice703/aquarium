@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getSchedulesByDate } from "../../../api/exhibitionApi";
 import { getReviews } from "../../../api/reviewApi";
 import { getMyReservations } from "../../../api/reservationApi";
-import type { ReviewData, ReservationDto, ScheduleData } from "../../../types/api";
+import type { ReviewData, ReservationData, ScheduleData } from "../../../types/api";
 
 interface RawScheduleItem {
   scheduleId?: number;
@@ -23,7 +23,7 @@ interface RawScheduleItem {
 export const useHomeData = (isLoggedIn: boolean, selectedDate: string) => {
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [recentReviews, setRecentReviews] = useState<ReviewData[]>([]);
-  const [myReservations, setMyReservations] = useState<ReservationDto[]>([]);
+  const [myReservations, setMyReservations] = useState<ReservationData[]>([]);
 
   useEffect(() => {
     if (!selectedDate) return;

@@ -1,7 +1,7 @@
 package com.naquarium.controller;
 
+import com.naquarium.dto.ProgramDto;
 import com.naquarium.dto.ProgramScheduleDto;
-import com.naquarium.entity.Program;
 import com.naquarium.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,7 +19,7 @@ public class ProgramController {
     private final ProgramService programService;
 
     @GetMapping
-    public List<Program> getAllPrograms() {
+    public List<ProgramDto> getAllPrograms() {
         return programService.getAllPrograms();
     }
 

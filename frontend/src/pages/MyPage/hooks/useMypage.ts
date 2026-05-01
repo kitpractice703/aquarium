@@ -2,11 +2,11 @@ import {useState, useEffect} from "react";
 import {getMyReservations} from "../../../api/reservationApi";
 import {useAuth} from "../../../context/AuthContext";
 import {updateUserInfo} from "../../../api/authApi";
-import type {ReservationDto} from "../../../types/api";
+import type {ReservationData} from "../../../types/api";
 
 export const useMyPage = () => {
   const {username, logout} = useAuth();
-  const [reservations, setReservations] = useState<ReservationDto[]>([]);
+  const [reservations, setReservations] = useState<ReservationData[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({

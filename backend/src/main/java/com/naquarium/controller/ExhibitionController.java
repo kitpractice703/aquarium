@@ -1,7 +1,7 @@
 package com.naquarium.controller;
 
+import com.naquarium.dto.ExhibitionDto;
 import com.naquarium.dto.ScheduleDto;
-import com.naquarium.entity.Exhibition;
 import com.naquarium.service.AquariumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,7 +21,7 @@ public class ExhibitionController {
     private final AquariumService aquariumService;
 
     @GetMapping("/exhibitions")
-    public List<Exhibition> getExhibitions() {
+    public List<ExhibitionDto> getExhibitions() {
         return aquariumService.getAllExhibitions();
     }
 

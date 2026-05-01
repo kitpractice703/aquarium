@@ -1,8 +1,8 @@
 import { api } from "./axios";
-import type { ReservationDto } from "../types/api";
+import type { ReservationData } from "../types/api";
 
 export const getMyReservations = async () => {
-  const res = await api.get<ReservationDto[]>("/reservations/me");
+  const res = await api.get<ReservationData[]>("/reservations/me");
   return res.data;
 };
 

@@ -24,7 +24,7 @@ export interface ReviewRequest {
   rating: number;
 }
 
-export interface ReservationDto {
+export interface ReservationData {
   id: number;
   ticketNumber?: string;
   visitDate: string;

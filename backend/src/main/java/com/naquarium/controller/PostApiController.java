@@ -1,6 +1,6 @@
 package com.naquarium.controller;
 
-import com.naquarium.entity.Post;
+import com.naquarium.dto.ReviewDto;
 import com.naquarium.service.PostService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /** 후기 API 컨트롤러 - 목록 조회(공개), 작성(로그인 필요) */
 @Slf4j
@@ -33,11 +31,8 @@ public class PostApiController {
     }
 
     @GetMapping("/reviews")
-    public List<PostDto> getReviews() {
-        return postService.getReviews()
-                .stream()
-                .map(PostDto::new)
-                .collect(Collectors.toList());
+    public List<ReviewDto> getReviews() {
+        return postService.getReviews();
     }
 
     @PostMapping("/reviews")
@@ -52,27 +47,6 @@ public class PostApiController {
         } catch (Exception e) {
             log.error("Failed to create review", e);
             return ResponseEntity.status(500).body("후기 등록 중 오류가 발생했습니다.");
-        }
-    }
-
-    @Data
-    static class PostDto {
-        private Long id;
-        private String title;
-        private String content;
-        private String writerName;
-        private Double rating;
-        private String date;
-
-        public PostDto(Post post) {
-            this.id = post.getId();
-            this.title = post.getTitle();
-            this.content = post.getContent();
-            this.writerName = post.getUser() != null ? post.getUser().getUsername() : "알 수 없음";
-            this.rating = post.getRating() != null ? post.getRating() : 0.0;
-            this.date = post.getCreatedAt() != null
-                    ? post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                    : "";
         }
     }
 
