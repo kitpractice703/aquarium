@@ -2,6 +2,8 @@ package com.naquarium.controller;
 
 import com.naquarium.config.JwtProvider;
 import com.naquarium.config.TestSecurityConfig;
+import com.naquarium.entity.User;
+import com.naquarium.repository.UserRepository;
 import com.naquarium.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -41,6 +45,7 @@ class AuthControllerTest {
     @MockitoBean AuthService authService;
     @MockitoBean AuthenticationManager authenticationManager;
     @MockitoBean JwtProvider jwtProvider;
+    @MockitoBean UserRepository userRepository;
 
     // ─────────────────────────────────────────────
     // POST /api/auth/signup
@@ -87,7 +92,7 @@ class AuthControllerTest {
         UsernamePasswordAuthenticationToken mockAuth =
                 new UsernamePasswordAuthenticationToken("user@test.com", null);
         given(authenticationManager.authenticate(any())).willReturn(mockAuth);
-        given(jwtProvider.generateToken("user@test.com")).willReturn("mocked.jwt.token");
+        given(jwtProvider.generateToken(anyString(), anyString())).willReturn("mocked.jwt.token");
 
         String body = objectMapper.writeValueAsString(
                 new LoginRequestDto("user@test.com", "correctPw"));
@@ -120,11 +125,21 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser(username = "user@test.com")
-    @DisplayName("내 정보 조회 - 로그인 상태면 이메일 반환")
-    void getMyInfo_authenticated_returnsEmail() throws Exception {
+    @DisplayName("내 정보 조회 - 로그인 상태면 UserInfoDto 반환")
+    void getMyInfo_authenticated_returnsUserInfo() throws Exception {
+        User mockUser = User.builder()
+                .email("user@test.com")
+                .username("테스트유저")
+                .role(User.Role.USER)
+                .provider("local")
+                .build();
+        given(userRepository.findByEmail("user@test.com")).willReturn(Optional.of(mockUser));
+
         mockMvc.perform(get("/api/auth/me"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("user@test.com"));
+                .andExpect(jsonPath("$.email").value("user@test.com"))
+                .andExpect(jsonPath("$.username").value("테스트유저"))
+                .andExpect(jsonPath("$.role").value("USER"));
     }
 
     @Test
