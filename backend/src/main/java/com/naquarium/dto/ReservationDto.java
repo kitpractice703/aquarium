@@ -19,7 +19,6 @@ public class ReservationDto {
     private String visitTime;
     private String location;
     private String status;
-    private String imageUrl;
 
     public ReservationDto(Reservation reservation) {
         this.id = reservation.getId();
@@ -40,7 +39,6 @@ public class ReservationDto {
             // 1순위: Program 직접 참조 (체험/공연 모두 지원)
             if (reservation.getProgram() != null) {
                 this.programTitle = reservation.getProgram().getTitle();
-                this.imageUrl = reservation.getProgram().getImageUrl();
                 if (reservation.getProgram().getType() != null) {
                     this.programType = reservation.getProgram().getType().name();
                 }
@@ -54,7 +52,6 @@ public class ReservationDto {
                 // program이 없는 레거시 데이터: schedule → program 경유
                 if (this.programTitle == null && reservation.getSchedule().getProgram() != null) {
                     this.programTitle = reservation.getSchedule().getProgram().getTitle();
-                    this.imageUrl = reservation.getSchedule().getProgram().getImageUrl();
                     if (reservation.getSchedule().getProgram().getType() != null) {
                         this.programType = reservation.getSchedule().getProgram().getType().name();
                     }

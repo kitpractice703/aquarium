@@ -9,7 +9,6 @@ public class ExhibitionDto {
     private String title;
     private String subTitle;
     private String description;
-    private String imageUrl;
     private String themeColor;
 
     public ExhibitionDto(Exhibition exhibition) {
@@ -17,7 +16,6 @@ public class ExhibitionDto {
         this.title = exhibition.getTitle();
         this.subTitle = exhibition.getSubTitle();
         this.description = exhibition.getDescription();
-        this.imageUrl = exhibition.getImageUrl();
         this.themeColor = exhibition.getThemeColor();
     }
 }

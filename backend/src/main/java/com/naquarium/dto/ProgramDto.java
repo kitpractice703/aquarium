@@ -8,7 +8,6 @@ public class ProgramDto {
     private Long id;
     private String title;
     private String description;
-    private String imageUrl;
     private int price;
     private String type;
 
@@ -16,7 +15,6 @@ public class ProgramDto {
         this.id = program.getId();
         this.title = program.getTitle();
         this.description = program.getDescription();
-        this.imageUrl = program.getImageUrl();
         this.price = program.getPrice();
         this.type = program.getType() != null ? program.getType().name() : null;
     }

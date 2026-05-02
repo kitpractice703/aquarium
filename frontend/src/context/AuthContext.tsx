@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { login as loginApi, logout as logoutApi, me } from "../api/authApi";
+import type { UserInfo } from "../types/api";
 
 interface LoginData {
   email: string;
@@ -10,7 +11,10 @@ type ModalType = "LOGIN" | "NOTICE" | null;
 
 interface AuthContextType {
   isLoggedIn: boolean;
+  isLoading: boolean;
   username: string | null;
+  role: "USER" | "ADMIN" | null;
+  isAdmin: boolean;
   login: (data: LoginData) => Promise<void>;
   logout: () => void;
   modalType: ModalType;
@@ -27,7 +31,9 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [username, setUsername] = useState<string | null>(null);
+  const [role, setRole] = useState<"USER" | "ADMIN" | null>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
   const [isResetOpen, setIsResetOpen] = useState(false);
 
@@ -38,29 +44,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const switchResetToLogin = () => { setIsResetOpen(false); setModalType("LOGIN"); };
 
   const checkLoginStatus = async () => {
+    setIsLoading(true);
     const token = localStorage.getItem("token");
     if (!token) {
       setIsLoggedIn(false);
       setUsername(null);
+      setRole(null);
+      setIsLoading(false);
       return;
     }
     try {
-      const data = await me();
+      const data: UserInfo = await me();
       setIsLoggedIn(true);
-      if (typeof data === "string") {
-        setUsername(data);
-      } else if (typeof data === "object" && data !== null) {
-        setUsername(data.username || data.name || data.email || "회원");
-      }
+      setUsername(data.username || data.email || "회원");
+      setRole(data.role || "USER");
     } catch {
       localStorage.removeItem("token");
       setIsLoggedIn(false);
       setUsername(null);
+      setRole(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    // Google OAuth2 로그인 후 ?token= 파라미터로 JWT 전달됨
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
     if (token) {
@@ -88,6 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.removeItem("token");
       setIsLoggedIn(false);
       setUsername(null);
+      setRole(null);
       alert("로그아웃 되었습니다.");
       window.location.href = "/";
     } catch (error) {
@@ -97,7 +106,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{
-      isLoggedIn, username, login, logout,
+      isLoggedIn, isLoading, username, role, isAdmin: role === "ADMIN",
+      login, logout,
       modalType, setModalType,
       isResetOpen,
       openLoginModal, closeLoginModal,

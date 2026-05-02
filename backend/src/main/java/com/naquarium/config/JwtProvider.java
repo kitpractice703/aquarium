@@ -24,9 +24,10 @@ public class JwtProvider {
         this.expiration = expiration;
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -37,6 +38,13 @@ public class JwtProvider {
         return Jwts.parserBuilder()
                 .setSigningKey(key).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getRole(String token) {
+        Object role = Jwts.parserBuilder()
+                .setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().get("role");
+        return role != null ? role.toString() : "USER";
     }
 
     public boolean validateToken(String token) {

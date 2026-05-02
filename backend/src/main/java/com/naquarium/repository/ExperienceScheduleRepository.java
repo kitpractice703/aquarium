@@ -12,4 +12,6 @@ public interface ExperienceScheduleRepository extends JpaRepository<ExperienceSc
     List<ExperienceSchedule> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
 
     List<ExperienceSchedule> findByProgramIdAndStartTimeBetweenOrderByStartTimeAsc(Long programId, LocalDateTime start, LocalDateTime end);
+
+    long countByStartTimeBetween(LocalDateTime start, LocalDateTime end);
 }

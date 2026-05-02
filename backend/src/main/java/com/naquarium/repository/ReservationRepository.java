@@ -22,4 +22,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT COUNT(r) > 0 FROM Reservation r WHERE r.user.email = :email AND r.visitDate = :visitDate AND r.status = :status AND r.program IS NULL")
     boolean existsByUserEmailAndVisitDateAndStatus(@Param("email") String email, @Param("visitDate") String visitDate, @Param("status") Reservation.ReservationStatus status);
+
+    long countByVisitDate(String visitDate);
+
+    @Query("SELECT r FROM Reservation r " +
+           "LEFT JOIN FETCH r.user " +
+           "LEFT JOIN FETCH r.program " +
+           "LEFT JOIN FETCH r.schedule s " +
+           "LEFT JOIN FETCH s.program " +
+           "ORDER BY r.reservedAt DESC")
+    List<Reservation> findAllForAdmin();
+
+    List<Reservation> findByUser_Id(Long userId);
 }

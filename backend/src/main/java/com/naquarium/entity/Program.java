@@ -26,9 +26,6 @@ public class Program {
     @Column(columnDefinition = "ENUM('PERFORMANCE', 'EXPERIENCE')")
     private ProgramType type;
 
-    @Column(name = "image_url")
-    private String imageUrl;
-
     @Column(nullable = false)
     private int price;
 

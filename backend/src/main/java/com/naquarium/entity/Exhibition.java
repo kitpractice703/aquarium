@@ -25,9 +25,6 @@ public class Exhibition {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "image_url")
-    private String imageUrl;
-
     @Column(name = "theme_color")
     private String themeColor;
 }

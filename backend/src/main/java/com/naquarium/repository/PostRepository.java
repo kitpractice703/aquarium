@@ -9,4 +9,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = {"user"})
     List<Post> findByCategoryOrderByCreatedAtDesc(Post.Category category);
+
+    List<Post> findByUser_Id(Long userId);
 }

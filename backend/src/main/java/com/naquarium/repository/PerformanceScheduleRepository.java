@@ -12,4 +12,6 @@ public interface PerformanceScheduleRepository extends JpaRepository<Performance
     List<PerformanceSchedule> findByStartTimeBetweenOrderByStartTimeAsc(LocalDateTime start, LocalDateTime end);
 
     List<PerformanceSchedule> findByProgramIdAndStartTimeBetweenOrderByStartTimeAsc(Long programId, LocalDateTime start, LocalDateTime end);
+
+    long countByStartTimeBetween(LocalDateTime start, LocalDateTime end);
 }

@@ -1,5 +1,6 @@
 package com.naquarium.config;
 
+import com.naquarium.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     @Value("${oauth2.success-url}")
     private String successUrl;
@@ -25,7 +27,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                                         Authentication authentication) throws IOException {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
         String email = oauth2User.getAttribute("email");
-        String token = jwtProvider.generateToken(email);
+        String role = userRepository.findByEmail(email)
+                .map(u -> u.getRole() != null ? u.getRole().name() : "USER")
+                .orElse("USER");
+        String token = jwtProvider.generateToken(email, role);
         getRedirectStrategy().sendRedirect(request, response, successUrl + "?token=" + token);
     }
 }

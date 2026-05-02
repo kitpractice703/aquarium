@@ -6,7 +6,7 @@ export interface ScheduleData {
   time: string;
   title: string;
   place: string;
-  status: string; // "open" | "closed"
+  status: string;
 }
 
 export interface ReviewData {
@@ -31,10 +31,9 @@ export interface ReservationData {
   visitTime?: string;
   startTime?: string;
   programTitle: string;
-  programType?: string; // "ADMISSION" | "PERFORMANCE" | "EXPERIENCE"
-  status: string; // "CONFIRMED" | "CANCELLED"
+  programType?: string;
+  status: string;
   location?: string;
-  imageUrl?: string;
 }
 
 export interface ReservationRequest {
@@ -60,7 +59,6 @@ export interface Program {
   id: number;
   title: string;
   description: string;
-  imageUrl: string;
   price: number;
   type: "EXPERIENCE" | "PERFORMANCE";
 }
@@ -91,4 +89,102 @@ export interface ThemeItem {
   desc: string;
   img: string;
   color: string;
+}
+
+// Auth
+export interface UserInfo {
+  id: number;
+  email: string;
+  username: string;
+  role: "USER" | "ADMIN";
+}
+
+// Admin
+export interface AdminSchedule {
+  id: number;
+  programId: number;
+  programTitle: string;
+  programType: "PERFORMANCE" | "EXPERIENCE";
+  location: string;
+  startTime: string;
+  isClosed: boolean;
+}
+
+export interface AdminScheduleRequest {
+  programId: number;
+  location: string;
+  startTime: string;
+}
+
+export interface AdminReservation {
+  id: number;
+  ticketNumber: string;
+  userEmail: string;
+  userName: string;
+  programTitle: string;
+  programType: string;
+  visitDate: string;
+  visitTime?: string;
+  location?: string;
+  adultCount: number;
+  teenCount: number;
+  totalPrice: number;
+  status: "CONFIRMED" | "CANCELLED";
+  reservedAt: string;
+}
+
+export interface AdminUser {
+  id: number;
+  email: string;
+  username: string;
+  phone?: string;
+  role: "USER" | "ADMIN";
+  provider: string;
+}
+
+export interface AdminReview {
+  id: number;
+  writerName: string;
+  writerEmail: string;
+  title: string;
+  content: string;
+  rating: number;
+  createdAt: string;
+}
+
+export interface AdminProgram {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  type: "PERFORMANCE" | "EXPERIENCE";
+}
+
+export interface AdminProgramRequest {
+  title: string;
+  description: string;
+  type: string;
+  price: number;
+}
+
+export interface AdminExhibition {
+  id: number;
+  title: string;
+  subTitle?: string;
+  description?: string;
+  themeColor?: string;
+}
+
+export interface AdminExhibitionRequest {
+  title: string;
+  subTitle: string;
+  description: string;
+  themeColor: string;
+}
+
+export interface DashboardStats {
+  todayReservations: number;
+  weekSchedules: number;
+  totalUsers: number;
+  recentReviews: AdminReview[];
 }

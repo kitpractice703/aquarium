@@ -126,7 +126,6 @@ export const useProgramBooking = (
         title: initialProgramTitle,
         price: fallbackPrice,
         description: "",
-        imageUrl: "",
         type: "EXPERIENCE",
       };
       setPrograms([fallbackProgram]);

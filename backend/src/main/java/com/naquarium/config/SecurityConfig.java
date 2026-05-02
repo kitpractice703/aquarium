@@ -62,6 +62,7 @@ public class SecurityConfig {
                                 "/api/posts/**",
                                 "/api/users/reset-password/**"
                         ).permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
