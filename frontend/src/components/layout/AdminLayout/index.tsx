@@ -9,7 +9,6 @@ const MENU_ITEMS = [
   { path: "/admin/users", label: "회원 관리" },
   { path: "/admin/reviews", label: "후기 관리" },
   { path: "/admin/programs", label: "프로그램 관리" },
-  { path: "/admin/exhibitions", label: "전시 관리" },
 ];
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -19,7 +18,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <S.Container>
       <S.Sidebar>
-        <S.Logo>나쿠아리움 관리자</S.Logo>
+        <S.LogoLink to="/admin/dashboard">Naquarium</S.LogoLink>
         <S.Nav>
           {MENU_ITEMS.map((item) => (
             <S.NavItem

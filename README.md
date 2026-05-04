@@ -149,9 +149,11 @@ erDiagram
 | ---------- | --------------------------- | ------------------------------- | ------------------------------------------------------ |
 | Repository | `UserRepositoryTest`        | `@DataJpaTest` + H2             | 이메일 조회, 중복 이메일 예외, 소셜 회원 null password |
 | Repository | `ReservationRepositoryTest` | `@DataJpaTest` + H2             | 관람권 보유 확인 쿼리 (`program IS NULL` 조건)         |
+| Service    | `AuthServiceTest`           | `@ExtendWith(MockitoExtension)` | 회원가입 성공 (role=USER, provider=local), 이메일 중복 예외 |
 | Service    | `UserServiceTest`           | `@ExtendWith(MockitoExtension)` | 비밀번호 불일치 예외, 소셜 회원 제한                   |
-| Controller | `AuthControllerTest`        | `@WebMvcTest` + MockMvc         | 회원가입 409 중복, 로그인 인증, 비인증 401             |
-| Controller | `ReservationControllerTest` | `@WebMvcTest` + MockMvc         | 가격 계산(대인×35000 + 소인×29000), 비인증 401         |
+| Service    | `ReservationServiceTest`    | `@ExtendWith(MockitoExtension)` | 가격 계산(대인×35000 + 소인×29000), 입장권 없이 예약 시 예외 |
+| Controller | `AuthControllerTest`        | `@WebMvcTest` + MockMvc         | 회원가입 409 중복, 로그인 JWT 반환, 비인증 401          |
+| Controller | `ReservationControllerTest` | `@WebMvcTest` + MockMvc         | 예약 성공, 입장권 미보유 400, 비인증 401               |
 | Controller | `PostApiControllerTest`     | `@WebMvcTest` + MockMvc         | 후기 목록 공개 접근, 후기 작성 인증 필요               |
 
 <br/>

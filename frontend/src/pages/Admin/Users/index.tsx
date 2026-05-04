@@ -1,29 +1,8 @@
-import { useEffect, useState } from "react";
-import { getAdminUsers, changeUserRole, deleteAdminUser } from "../../../api/adminApi";
-import type { AdminUser } from "../../../types/api";
+import { useUsers } from "./hooks/useUsers";
 import * as S from "../shared/style";
 
 const Users = () => {
-  const [users, setUsers] = useState<AdminUser[]>([]);
-  const [search, setSearch] = useState("");
-
-  const load = () =>
-    getAdminUsers(search || undefined).then(setUsers).catch(console.error);
-
-  useEffect(() => { load(); }, []);
-
-  const handleRoleChange = async (u: AdminUser) => {
-    const newRole = u.role === "ADMIN" ? "USER" : "ADMIN";
-    if (!confirm(`${u.email} 의 권한을 ${newRole}로 변경하시겠습니까?`)) return;
-    await changeUserRole(u.id, newRole);
-    load();
-  };
-
-  const handleDelete = async (u: AdminUser) => {
-    if (!confirm(`${u.email} 회원을 강제 탈퇴시키겠습니까?\n(예약 및 후기도 함께 삭제됩니다)`)) return;
-    await deleteAdminUser(u.id);
-    load();
-  };
+  const { users, search, setSearch, load, handleRoleChange, handleDelete } = useUsers();
 
   return (
     <div>
@@ -48,7 +27,7 @@ const Users = () => {
               <S.Th>전화번호</S.Th>
               <S.Th>가입방법</S.Th>
               <S.Th>권한</S.Th>
-              <S.Th>액션</S.Th>
+              <S.Th>변경</S.Th>
             </tr>
           </thead>
           <tbody>

@@ -1,25 +1,8 @@
-import { useEffect, useState } from "react";
-import { getAdminReviews, deleteReview } from "../../../api/adminApi";
-import type { AdminReview } from "../../../types/api";
+import { useReviews } from "./hooks/useReviews";
 import * as S from "../shared/style";
 
 const Reviews = () => {
-  const [reviews, setReviews] = useState<AdminReview[]>([]);
-  const [detail, setDetail] = useState<AdminReview | null>(null);
-
-  const load = () => getAdminReviews().then(setReviews).catch(console.error);
-
-  useEffect(() => { load(); }, []);
-
-  const handleDelete = async (r: AdminReview) => {
-    if (!confirm(`[${r.title}] 후기를 삭제하시겠습니까?`)) return;
-    await deleteReview(r.id);
-    setDetail(null);
-    load();
-  };
-
-  const stars = (rating: number) =>
-    "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating));
+  const { reviews, detail, setDetail, handleDelete, stars } = useReviews();
 
   return (
     <div>
@@ -33,7 +16,7 @@ const Reviews = () => {
               <S.Th>제목</S.Th>
               <S.Th>평점</S.Th>
               <S.Th>작성일</S.Th>
-              <S.Th>액션</S.Th>
+              <S.Th>변경</S.Th>
             </tr>
           </thead>
           <tbody>

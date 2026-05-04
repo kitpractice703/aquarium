@@ -1,88 +1,33 @@
-import { useEffect, useState } from "react";
-import {
-  getAdminSchedules,
-  createSchedule,
-  updateSchedule,
-  deleteSchedule,
-  toggleSchedule,
-  getAdminPrograms,
-} from "../../../api/adminApi";
-import type { AdminSchedule, AdminProgram } from "../../../types/api";
+import { useSchedules } from "./hooks/useSchedules";
 import * as S from "../shared/style";
 
-const EMPTY_FORM = { programId: 0, location: "", startTime: "" };
-
 const Schedules = () => {
-  const [schedules, setSchedules] = useState<AdminSchedule[]>([]);
-  const [programs, setPrograms] = useState<AdminProgram[]>([]);
-  const [filterDate, setFilterDate] = useState("");
-  const [filterType, setFilterType] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<AdminSchedule | null>(null);
-  const [form, setForm] = useState(EMPTY_FORM);
-
-  const load = () =>
-    getAdminSchedules(filterDate || undefined).then(setSchedules).catch(console.error);
-
-  useEffect(() => {
-    load();
-    getAdminPrograms().then(setPrograms).catch(console.error);
-  }, []);
-
-  const filtered = schedules.filter(
-    (s) => !filterType || s.programType === filterType
-  );
-
-  const openCreate = () => {
-    setEditing(null);
-    setForm(EMPTY_FORM);
-    setModalOpen(true);
-  };
-
-  const openEdit = (s: AdminSchedule) => {
-    setEditing(s);
-    setForm({ programId: s.programId, location: s.location, startTime: s.startTime });
-    setModalOpen(true);
-  };
-
-  const handleSubmit = async () => {
-    if (!form.programId || !form.location || !form.startTime) {
-      alert("모든 항목을 입력해주세요.");
-      return;
-    }
-    try {
-      if (editing) {
-        await updateSchedule(editing.id, editing.programType, form);
-      } else {
-        await createSchedule(form);
-      }
-      setModalOpen(false);
-      load();
-    } catch {
-      alert("저장에 실패했습니다.");
-    }
-  };
-
-  const handleDelete = async (s: AdminSchedule) => {
-    if (!confirm(`[${s.programTitle}] ${s.startTime} 일정을 삭제하시겠습니까?`)) return;
-    await deleteSchedule(s.id, s.programType);
-    load();
-  };
-
-  const handleToggle = async (s: AdminSchedule) => {
-    await toggleSchedule(s.id, s.programType);
-    load();
-  };
+  const {
+    programs, filterDate, setFilterDate, filterType, setFilterType,
+    modalOpen, setModalOpen, editing, form, setForm, dateRef, filtered,
+    load, openCreate, openEdit, handleSubmit, handleDelete, handleToggle,
+  } = useSchedules();
 
   return (
     <div>
       <S.PageTitle>공연 일정 관리</S.PageTitle>
       <S.FilterRow>
-        <S.Input
-          type="date"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
-        />
+        <S.DateWrapper>
+          <S.Input
+            ref={dateRef}
+            type="date"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+          />
+          <S.CalendarBtn type="button" onClick={() => dateRef.current?.showPicker()}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </S.CalendarBtn>
+        </S.DateWrapper>
         <S.Select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
           <option value="">전체 유형</option>
           <option value="PERFORMANCE">공연</option>
@@ -103,7 +48,7 @@ const Schedules = () => {
               <S.Th>날짜/시간</S.Th>
               <S.Th>장소</S.Th>
               <S.Th>상태</S.Th>
-              <S.Th>액션</S.Th>
+              <S.Th>변경</S.Th>
             </tr>
           </thead>
           <tbody>

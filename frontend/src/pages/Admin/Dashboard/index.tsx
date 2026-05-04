@@ -1,36 +1,31 @@
-import { useEffect, useState } from "react";
-import { getDashboardStats } from "../../../api/adminApi";
-import type { DashboardStats } from "../../../types/api";
+import { useDashboard } from "./hooks/useDashboard";
 import * as S from "../shared/style";
+import * as PS from "./style";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-
-  useEffect(() => {
-    getDashboardStats().then(setStats).catch(console.error);
-  }, []);
+  const { stats, stars } = useDashboard();
 
   return (
     <div>
       <S.PageTitle>대시보드</S.PageTitle>
-      <S.StatGrid>
-        <S.StatCard>
-          <S.StatLabel>오늘 예약</S.StatLabel>
-          <S.StatValue>{stats?.todayReservations ?? "-"}</S.StatValue>
-        </S.StatCard>
-        <S.StatCard>
-          <S.StatLabel>이번 주 일정</S.StatLabel>
-          <S.StatValue>{stats?.weekSchedules ?? "-"}</S.StatValue>
-        </S.StatCard>
-        <S.StatCard>
-          <S.StatLabel>전체 회원</S.StatLabel>
-          <S.StatValue>{stats?.totalUsers ?? "-"}</S.StatValue>
-        </S.StatCard>
-        <S.StatCard>
-          <S.StatLabel>최근 후기</S.StatLabel>
-          <S.StatValue>{stats?.recentReviews?.length ?? "-"}</S.StatValue>
-        </S.StatCard>
-      </S.StatGrid>
+      <PS.StatGrid>
+        <PS.StatCard>
+          <PS.StatLabel>오늘 예약</PS.StatLabel>
+          <PS.StatValue>{stats?.todayReservations ?? "-"}</PS.StatValue>
+        </PS.StatCard>
+        <PS.StatCard>
+          <PS.StatLabel>이번 주 일정</PS.StatLabel>
+          <PS.StatValue>{stats?.weekSchedules ?? "-"}</PS.StatValue>
+        </PS.StatCard>
+        <PS.StatCard>
+          <PS.StatLabel>전체 회원</PS.StatLabel>
+          <PS.StatValue>{stats?.totalUsers ?? "-"}</PS.StatValue>
+        </PS.StatCard>
+        <PS.StatCard>
+          <PS.StatLabel>최근 후기</PS.StatLabel>
+          <PS.StatValue>{stats?.recentReviews?.length ?? "-"}</PS.StatValue>
+        </PS.StatCard>
+      </PS.StatGrid>
 
       <S.Card>
         <S.PageTitle style={{ fontSize: 16, marginBottom: 16 }}>최근 후기</S.PageTitle>
@@ -51,7 +46,7 @@ const Dashboard = () => {
                 <S.Tr key={r.id}>
                   <S.Td>{r.writerName}</S.Td>
                   <S.Td>{r.title}</S.Td>
-                  <S.Td>{"★".repeat(Math.round(r.rating))} ({r.rating})</S.Td>
+                  <S.Td style={{ color: "#ffa502" }}>{stars(r.rating)} ({r.rating})</S.Td>
                   <S.Td>{r.createdAt}</S.Td>
                 </S.Tr>
               ))

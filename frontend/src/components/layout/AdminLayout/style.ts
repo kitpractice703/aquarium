@@ -23,13 +23,17 @@ export const Sidebar = styled.aside`
   border-right: 1px solid #1a2f52;
 `;
 
-export const Logo = styled.div`
+export const LogoLink = styled(Link)`
+  display: block;
   padding: 24px 20px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: #00d4ff;
-  letter-spacing: -0.3px;
+  letter-spacing: 1px;
   border-bottom: 1px solid #1a2f52;
+  text-decoration: none;
+  transition: color 0.15s;
+  &:hover { color: #33deff; }
 `;
 
 export const Nav = styled.nav`
