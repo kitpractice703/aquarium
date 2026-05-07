@@ -11,14 +11,30 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-/** 사용자 정보 컨트롤러 - 회원정보 수정, 비밀번호 재설정(2단계) */
+/**
+ * 회원정보 컨트롤러 (/api/users/**)
+ *
+ * - PUT  /api/users/me              회원정보 수정 (로그인 필요)
+ * - POST /api/users/reset-password/check  비밀번호 재설정 1단계: 본인 확인 (공개)
+ * - POST /api/users/reset-password        비밀번호 재설정 2단계: 새 비밀번호 저장 (공개)
+ *
+ * 비밀번호 재설정 엔드포인트는 SecurityConfig에서 permitAll로 설정해
+ * 로그인 없이도 접근할 수 있다.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
 
+    /**
+     * PUT /api/users/me - 마이페이지 회원정보 수정
+     * SecurityContext에서 이메일을 추출해 사용자를 식별한다.
+     *
+     * @return 200 OK | 400 Bad Request (검증 실패) | 500 Internal Server Error
+     */
     @PutMapping("/me")
     public ResponseEntity<String> updateMyInfo(@RequestBody UserUpdateRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -35,6 +51,12 @@ public class UserController {
         }
     }
 
+    /**
+     * POST /api/users/reset-password/check - 비밀번호 재설정 1단계 본인 확인
+     * 이메일과 전화번호로 가입 여부를 확인한다.
+     *
+     * @return 200 OK (확인 완료) | 400 Bad Request (검증 실패)
+     */
     @PostMapping("/reset-password/check")
     public ResponseEntity<?> checkUserForReset(@RequestBody PasswordResetCheckRequest request) {
         try {
@@ -45,6 +67,12 @@ public class UserController {
         }
     }
 
+    /**
+     * POST /api/users/reset-password - 비밀번호 재설정 2단계 새 비밀번호 저장
+     * 1단계 통과 후 호출해야 하며, 서버는 두 단계를 별도로 상태 관리하지 않는다.
+     *
+     * @return 200 OK | 400 Bad Request
+     */
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
         try {

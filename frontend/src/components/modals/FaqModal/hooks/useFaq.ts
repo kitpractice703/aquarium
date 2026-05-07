@@ -1,4 +1,10 @@
-/** FAQ 아코디언 - 정적 데이터 기반, 모달 열림/닫힘 시 스크롤 잠금 처리 */
+/**
+ * FAQ 아코디언 상태 관리 훅
+ *
+ * FAQ 데이터는 정적 배열로 관리한다 (API 불필요).
+ * 모달 열림/닫힘 시 스크롤 잠금·해제를 처리하고,
+ * 모달이 다시 열릴 때 열린 항목을 초기화한다.
+ */
 import { useState, useEffect } from "react";
 import type { FaqData } from "../../../../types/api";
 
@@ -54,6 +60,9 @@ const FAQ_LIST: FaqData[] = [
   },
 ];
 
+/**
+ * @param isOpen 모달 열림 여부 - true가 될 때 아코디언 상태를 초기화한다
+ */
 export const useFaq = (isOpen: boolean) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -64,10 +73,12 @@ export const useFaq = (isOpen: boolean) => {
     };
   }, [isOpen]);
 
+  // 모달이 다시 열릴 때 이전에 펼쳐진 항목을 닫아 초기 상태로 시작한다.
   useEffect(() => {
     if (isOpen) setOpenIndex(null);
   }, [isOpen]);
 
+  /** 아코디언 토글 - 이미 열린 항목을 클릭하면 닫는다 */
   const handleToggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
   };

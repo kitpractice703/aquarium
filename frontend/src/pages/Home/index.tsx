@@ -1,3 +1,14 @@
+/**
+ * 홈 페이지
+ *
+ * 섹션 구성: HeroSection → AboutSection → ThemeSection → ProgramSection → CommunitySection
+ *
+ * 모달 흐름:
+ * - 비로그인 사용자가 예매·리뷰 등 인증이 필요한 액션을 시도하면
+ *   LoginRequestModal → LoginModal 순으로 유도한다.
+ * - 프로그램 예매 시 해당 날짜 입장권이 없으면
+ *   ProgramBookingModal → TicketNoticeModal → BookingModal(입장권) 순으로 연결한다.
+ */
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useHomeData } from "./hooks/useHomeData";
@@ -39,6 +50,10 @@ const Home = () => {
     fixedTime?: string;
   } | null>(null);
 
+  /**
+   * 인증이 필요한 액션 실행 전 로그인 여부를 확인한다.
+   * 비로그인 상태이면 LoginRequestModal을 열고 false를 반환해 이후 동작을 중단한다.
+   */
   const checkLogin = () => {
     if (!isLoggedIn) {
       setIsLoginNoticeOpen(true);
@@ -51,10 +66,16 @@ const Home = () => {
     if (checkLogin()) setIsAdmissionModalOpen(true);
   };
 
+  /** 홈 프로그램 카드 클릭 시 프로그램 정보를 저장하고 예매 모달을 연다 */
   const handleProgramClick = (program: { id: number; title: string; price: number }) => {
     if (checkLogin()) setSelectedProgram(program);
   };
 
+  /**
+   * 홈 스케줄 항목 클릭 시 날짜·시간이 고정된 채로 예매 모달을 연다.
+   * status가 "open"이 아닌 항목(closed, 만석 등)은 클릭을 차단한다.
+   * price가 0인 경우 기본값 20,000원을 사용한다.
+   */
   const handleScheduleClick = (item: ScheduleData) => {
     if (item.status !== "open") return;
     if (checkLogin()) {
@@ -106,13 +127,14 @@ const Home = () => {
           fixedTime={selectedProgram.fixedTime}
           myReservations={myReservations}
           onRequireTicket={() => {
+            // 입장권 없이 프로그램 예매 시도 → 입장권 안내 모달로 연결
             setSelectedProgram(null);
             setIsTicketNoticeOpen(true);
           }}
         />
       )}
 
-      {/* 관람권 미보유 안내 → 확인 시 관람권 예약 모달로 전환 */}
+      {/* 입장권 필요 안내 → 확인 시 BookingModal(입장권)로 이동 */}
       <TicketNoticeModal
         isOpen={isTicketNoticeOpen}
         onClose={() => setIsTicketNoticeOpen(false)}
@@ -122,6 +144,7 @@ const Home = () => {
         }}
       />
 
+      {/* 비로그인 액션 차단 → 확인 시 로그인 모달로 이동 */}
       <LoginRequestModal
         isOpen={isLoginNoticeOpen}
         onClose={() => setIsLoginNoticeOpen(false)}

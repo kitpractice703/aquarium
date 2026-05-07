@@ -6,7 +6,7 @@ export const FooterContainer = styled.footer`
   background-color: #05080f;
   color: #555;
   font-size: 14px;
-  flex-shrink: 0; /* 화면이 작아져도 찌그러지지 않음 */
+  flex-shrink: 0;
 
   display: flex;
   flex-direction: column;

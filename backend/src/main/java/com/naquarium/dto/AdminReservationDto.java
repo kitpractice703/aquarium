@@ -5,6 +5,12 @@ import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * 관리자 예약 목록 응답 DTO
+ *
+ * 예약자 정보, 프로그램/스케줄 정보, 금액, 상태를 하나의 응답으로 통합한다.
+ * 티켓 번호는 예약 시각(yyyyMMdd)과 ID를 조합해 생성한다 (예: T20240507-00123).
+ */
 @Getter
 public class AdminReservationDto {
     private Long id;

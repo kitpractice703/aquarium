@@ -1,4 +1,3 @@
-/** 마이페이지 스타일 */
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -32,7 +31,6 @@ export const Title = styled.h2`
   letter-spacing: 2px;
 `;
 
-/** 2열 그리드: 정보 관리(좌) + 예매 내역(우), 모바일 1열 */
 export const ContentGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -56,7 +54,6 @@ export const Section = styled.div`
   overflow: hidden;
 `;
 
-/** 섹션 제목: 좌측 시안 바 */
 export const SectionTitle = styled.h3`
   font-size: 22px;
   margin-bottom: 30px;
@@ -108,7 +105,6 @@ export const InputGroup = styled.div`
   }
 `;
 
-/** 정보 수정 버튼: 호버 시 시안 전환 */
 export const UpdateButton = styled.button`
   width: 100%;
   margin-top: 20px;
@@ -138,7 +134,6 @@ export const TicketList = styled.div`
   overflow-y: auto;
   padding-right: 8px;
 
-  /* 커스텀 스크롤바 */
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -155,7 +150,6 @@ export const TicketList = styled.div`
   }
 `;
 
-/** 예매 카드: 프로그램 타입에 따라 배경/보더 색상 구분 */
 export const TicketCard = styled.div<{ $isProgram?: boolean }>`
   background: ${(props) =>
     props.$isProgram
@@ -216,7 +210,6 @@ export const TicketInfo = styled.div`
   }
 `;
 
-/** 예매 상태 배지: CONFIRMED=초록, 그 외=빨간 */
 export const TicketStatus = styled.div<{ $status: string }>`
   padding: 6px 12px;
   border-radius: 20px;
@@ -256,7 +249,6 @@ export const LoadingWrapper = styled.div`
   font-size: 18px;
 `;
 
-/** 프로그램 타입 배지: 공연(빨강) / 체험(노랑) */
 export const Badge = styled.span<{ $type: "PERFORMANCE" | "EXPERIENCE" }>`
   margin-right: 6px;
   font-weight: bold;

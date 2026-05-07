@@ -1,3 +1,10 @@
+/**
+ * 회원가입 폼 상태 관리 훅
+ *
+ * 폼 유효성 검사(이메일 형식, 비밀번호 길이·일치, 필수 입력)를
+ * 클라이언트 측에서 1차로 수행한 뒤 서버로 요청을 전달한다.
+ * 이미 로그인된 사용자가 접근하면 홈으로 리다이렉트한다.
+ */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
@@ -15,7 +22,7 @@ export const useSignup = () => {
     phone: "",
   });
 
-  // 이미 로그인된 상태라면 홈으로 리다이렉트
+  // 이미 로그인된 상태에서 회원가입 페이지 접근 시 홈으로 리다이렉트한다.
   useEffect(() => {
     if (isLoggedIn) navigate("/");
   }, [isLoggedIn, navigate]);
@@ -25,6 +32,11 @@ export const useSignup = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  /**
+   * 전화번호 자동 하이픈 포맷터.
+   * 숫자만 추출한 뒤 자리 수에 따라 하이픈을 삽입하고,
+   * 최대 11자리(010-0000-0000 = 13자)로 제한한다.
+   */
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/[^0-9]/g, "");
     let formattedValue = rawValue;
@@ -40,6 +52,11 @@ export const useSignup = () => {
     }
   };
 
+  /**
+   * 회원가입 제출.
+   * 클라이언트 유효성 검사 통과 후 서버에 요청하고,
+   * 성공 시 홈으로 이동해 로그인 모달을 열 수 있도록 유도한다.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

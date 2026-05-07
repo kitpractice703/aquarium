@@ -13,6 +13,16 @@ import AdminReviews from "./pages/Admin/Reviews";
 import AdminPrograms from "./pages/Admin/Programs";
 import AdminExhibitions from "./pages/Admin/Exhibitions";
 
+/**
+ * 전체 라우트 구성
+ *
+ * /admin/*: AdminRoute(ADMIN 권한 검사) → AdminLayout(사이드바) → 관리자 하위 페이지
+ *   - /admin 진입 시 /admin/dashboard 로 자동 리다이렉트
+ * /*: Layout(헤더·푸터) → 일반 사용자 페이지
+ *
+ * 레이아웃과 인증 로직을 라우트 레벨에서 분리해
+ * 각 페이지 컴포넌트가 UI에만 집중할 수 있도록 구성했다.
+ */
 function App() {
   return (
     <Routes>

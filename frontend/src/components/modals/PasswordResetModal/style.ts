@@ -1,4 +1,3 @@
-/** 비밀번호 재설정 모달 스타일 */
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -38,7 +37,6 @@ export const Label = styled.label`
   color: var(--text-gray);
 `;
 
-/** 다크 테마 입력 필드: 포커스 시 시안 글로우 */
 export const InputBox = styled.input`
   width: 100%;
   padding: 12px;
@@ -78,7 +76,6 @@ export const SubmitButton = styled.button`
   }
 `;
 
-/** 로그인으로 돌아가기 링크 */
 export const BackLink = styled.span`
   text-align: center;
   font-size: 13px;

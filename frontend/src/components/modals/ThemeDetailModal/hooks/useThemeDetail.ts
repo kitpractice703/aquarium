@@ -1,9 +1,19 @@
+/**
+ * 테마 상세 모달 상태 관리 훅
+ *
+ * 4개의 전시 테마(빛·균형·깊은·지켜야 할 바다)를 탭으로 전환하며 보여준다.
+ * 각 테마는 영상(mp4) 에셋과 고유 색상을 가진다.
+ */
 import { useState, useEffect } from "react";
 import lightSeaVideo from "../../../../assets/videos/light_sea.mp4";
 import balanceSeaVideo from "../../../../assets/videos/balance_sea.mp4";
 import deepSeaVideo from "../../../../assets/videos/deep_sea.mp4";
 import protectSeaVideo from "../../../../assets/videos/protect_sea.mp4";
 
+/**
+ * @param isOpen 모달 열림 여부
+ * @param initialThemeId 외부에서 클릭한 테마의 id (0~3)
+ */
 export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
   const THEMES = [
     {
@@ -39,7 +49,8 @@ export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
   const [activeTabId, setActiveTabId] = useState<number>(initialThemeId);
   const [prevIsOpen, setPrevIsOpen] = useState(false);
 
-  // 모달이 열릴 때 탭을 초기 테마로 리셋 (useEffect 대신 렌더 중 setState - React 권장 패턴)
+  // useEffect 없이 렌더 중 상태를 동기적으로 업데이트해 탭 초기화 시 깜빡임을 방지한다.
+  // 모달이 닫혔다 다시 열릴 때 이전 탭을 버리고 진입 테마로 초기화한다.
   if (isOpen && !prevIsOpen) {
     setPrevIsOpen(true);
     setActiveTabId(initialThemeId);
@@ -47,6 +58,7 @@ export const useThemeDetail = (isOpen: boolean, initialThemeId: number) => {
     setPrevIsOpen(false);
   }
 
+  // 모달 열림 여부에 따라 페이지 스크롤을 잠그거나 해제한다.
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);

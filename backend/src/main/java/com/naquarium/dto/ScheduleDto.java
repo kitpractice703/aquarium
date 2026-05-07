@@ -7,6 +7,12 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * 홈 화면 공개 스케줄 조회 응답 DTO
+ *
+ * PerformanceSchedule 엔티티를 프론트엔드 ScheduleData 인터페이스 형식으로 변환한다.
+ * status 필드는 isClosed 값에 따라 "open" | "closed" 문자열로 변환한다.
+ */
 @Data
 public class ScheduleDto {
     private Long id;

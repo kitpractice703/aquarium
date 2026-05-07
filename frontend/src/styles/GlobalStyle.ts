@@ -1,7 +1,12 @@
+/**
+ * 전역 스타일 (styled-components)
+ *
+ * CSS 변수로 디자인 토큰을 정의해 컴포넌트 스타일 파일에서 일관되게 참조한다.
+ * 다크 테마(--bg-dark)와 포인트 색상(--accent-cyan)이 전체 UI의 기조를 형성한다.
+ */
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
-  /* CSS 변수: 전역 테마 색상 */
   :root {
     --bg-dark: #0a0f1c;
     --bg-card: #151e32;
@@ -11,12 +16,12 @@ export const GlobalStyle = createGlobalStyle`
     --padding-section: 100px 20px;
   }
 
-  /* 리셋 스타일 */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
   html { 
     scroll-behavior: smooth; 
-    scroll-padding-top: 80px; /* 고정 헤더 높이만큼 스크롤 오프셋 */
+    /* 고정 헤더(80px) 높이만큼 앵커 스크롤 위치를 보정한다 */
+    scroll-padding-top: 80px;
   }
 
   body {
@@ -26,10 +31,9 @@ export const GlobalStyle = createGlobalStyle`
     background-color: var(--bg-dark);
     color: var(--text-white);
     line-height: 1.6;
-    overflow-x: hidden; /* 가로 스크롤 방지 */
+    overflow-x: hidden;
   }
   
-  /* 루트 레이아웃: 최소 높이 100vh (푸터 하단 고정) */
   #root {
     min-height: 100vh;
     display: flex;
@@ -42,7 +46,6 @@ export const GlobalStyle = createGlobalStyle`
   ul { list-style: none; }
   button { font-family: "Noto Sans KR", sans-serif; }
   
-  /* 커스텀 스크롤바 */
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: var(--bg-dark); }
   ::-webkit-scrollbar-thumb { background: #333; border-radius: 5px; }

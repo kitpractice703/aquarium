@@ -1,7 +1,5 @@
-/** 공통 모달 스타일 */
 import styled, { keyframes } from "styled-components";
 
-/** 모달 오버레이: 전체 화면, 반투명 + 블러 효과 */
 export const Overlay = styled.div<{ $isOpen: boolean }>`
   display: ${(props) => (props.$isOpen ? "flex" : "none")};
   position: fixed;
@@ -16,13 +14,11 @@ export const Overlay = styled.div<{ $isOpen: boolean }>`
   align-items: center;
 `;
 
-/** 슬라이드업 등장 애니메이션 */
 const slideUp = keyframes`
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 `;
 
-/** 모달 컨테이너: 기본 450px, maxWidth/height props로 확장 가능 */
 export const Container = styled.div<{ $maxWidth?: string; $height?: string }>`
   background-color: var(--bg-card);
   width: 90%;

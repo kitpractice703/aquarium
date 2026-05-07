@@ -1,4 +1,3 @@
-/** 로그인 모달 스타일 */
 import styled from "styled-components";
 
 export const InputGroup = styled.div`
@@ -13,7 +12,6 @@ export const Label = styled.label`
   font-size: 14px;
 `;
 
-/** 다크 테마 입력 필드: 포커스 시 시안 보더 */
 export const InputBox = styled.input`
   width: 100%;
   padding: 12px;
@@ -45,7 +43,6 @@ export const BtnAction = styled.button`
   }
 `;
 
-/** Google 소셜 로그인 버튼: 흰색 배경, Google 로고 아이콘 포함 */
 export const GoogleBtn = styled.button`
   width: 100%;
   padding: 15px;
@@ -67,7 +64,6 @@ export const GoogleBtn = styled.button`
   }
 `;
 
-/** 비밀번호 재설정 */
 export const Reset = styled.div`
   text-align: center;
   margin-top: 10px;
@@ -81,7 +77,6 @@ export const Reset = styled.div`
   }
 `;
 
-/** 회원가입 유도 링크 */
 export const SignupLink = styled.div`
   text-align: center;
   margin-top: 20px;

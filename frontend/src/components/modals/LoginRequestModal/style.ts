@@ -1,4 +1,3 @@
-/** 로그인 필요 안내 모달 스타일 */
 import styled from "styled-components";
 
 export const Container = styled.div`

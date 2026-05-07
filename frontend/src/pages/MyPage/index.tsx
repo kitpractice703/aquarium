@@ -1,3 +1,11 @@
+/**
+ * 마이페이지
+ *
+ * 좌측: 회원정보 수정 (비밀번호·전화번호)
+ * 우측: 예매 내역 목록 (오늘 이후 예매만 표시)
+ *
+ * 폼 상태·API 호출은 useMyPage 훅에서 관리한다.
+ */
 import * as S from "./style";
 import { useMyPage } from "./hooks/useMypage";
 
@@ -12,6 +20,10 @@ const MyPage = () => {
     handleUpdateInfo,
   } = useMyPage();
 
+  /**
+   * 예약 타입에 따라 배지를 렌더링한다.
+   * ADMISSION(일반 입장권)은 배지 없음, 공연·체험만 표시한다.
+   */
   const renderBadge = (type?: string) => {
     if (type === "PERFORMANCE") return <S.Badge $type="PERFORMANCE">[공연]</S.Badge>;
     if (type === "EXPERIENCE") return <S.Badge $type="EXPERIENCE">[체험]</S.Badge>;
@@ -33,6 +45,7 @@ const MyPage = () => {
             <S.InfoForm>
               <S.InputGroup>
                 <label>아이디 (이메일)</label>
+                {/* 이메일은 로그인 식별자이므로 수정 불가 */}
                 <input type="text" value={username || ""} disabled readOnly />
               </S.InputGroup>
               <S.InputGroup>
@@ -91,6 +104,7 @@ const MyPage = () => {
                 <S.EmptyMsg>예매 내역이 없습니다.</S.EmptyMsg>
               ) : (
                 reservations.map((ticket) => {
+                  // programType이 없거나 ADMISSION이면 일반 입장권 카드 스타일 적용
                   const isProgram =
                     ticket.programType === "PERFORMANCE" || ticket.programType === "EXPERIENCE";
 
@@ -98,6 +112,7 @@ const MyPage = () => {
                     <S.TicketCard key={ticket.id} $isProgram={isProgram}>
                       <S.TicketInfo>
                         <div className="res-number">
+                          {/* 발권 번호가 없으면 id로 대체 표시 */}
                           {ticket.ticketNumber || `T-${ticket.id}`}
                         </div>
                         <div className="title">
@@ -108,6 +123,7 @@ const MyPage = () => {
                           <span className="location">{ticket.location || "Naquarium 본관"}</span>
                           <span>
                             {ticket.visitDate}
+                            {/* 종일권은 시간 표시 생략 */}
                             {ticket.visitTime && ticket.visitTime !== "종일권"
                               ? ` ${ticket.visitTime}`
                               : ""}

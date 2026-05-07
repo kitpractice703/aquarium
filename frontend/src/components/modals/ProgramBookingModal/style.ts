@@ -1,4 +1,3 @@
-/** 프로그램 예약 모달 스타일 */
 import styled from "styled-components";
 
 export const Overlay = styled.div`
@@ -41,7 +40,6 @@ export const Label = styled.label`
   font-weight: bold;
 `;
 
-/** 다크 테마 입력 필드: 포커스 시 시안 보더 */
 export const Input = styled.input`
   width: 100%;
   padding: 12px;
@@ -57,7 +55,6 @@ export const Input = styled.input`
   }
 `;
 
-/** 커스텀 셀렉트: appearance 제거, 비활성 시 반투명 */
 export const Select = styled.select`
   width: 100%;
   padding: 12px;
@@ -80,7 +77,6 @@ export const ClosedNotice = styled.p`
   margin: 4px 0 0;
 `;
 
-/** 고정된 날짜/시간 표시 (읽기 전용) */
 export const FixedInfo = styled.div`
   color: #fff;
   font-weight: bold;
@@ -91,7 +87,6 @@ export const FixedInfo = styled.div`
   opacity: 0.8;
 `;
 
-/** 인원 수량 조절 */
 export const CounterRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -137,7 +132,6 @@ export const CounterRow = styled.div`
   }
 `;
 
-/** 하단 푸터: 총 금액 + 결제 버튼 */
 export const Footer = styled.div`
   display: flex;
   justify-content: space-between;

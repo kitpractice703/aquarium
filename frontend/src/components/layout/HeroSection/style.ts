@@ -21,7 +21,7 @@ export const Hero = styled.section`
 export const VideoBg = styled.video`
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 비율 유지하며 꽉 채움 */
+  object-fit: cover;
   position: absolute;
   top: 0;
   left: 0;
@@ -71,8 +71,6 @@ export const BtnMain = styled.button`
     box-shadow: 0 0 30px var(--accent-cyan);
   }
 `;
-
-/* ── 볼륨 컨트롤 (우측 하단) ── */
 
 export const VolumeControl = styled.div`
   position: absolute;
@@ -132,7 +130,6 @@ export const VolumeSlider = styled.input`
   outline: none;
   cursor: pointer;
 
-  /* 트랙 채움 효과 (Webkit) */
   &::-webkit-slider-runnable-track {
     height: 4px;
     border-radius: 2px;
@@ -144,7 +141,6 @@ export const VolumeSlider = styled.input`
     );
   }
 
-  /* 슬라이더 핸들 (Webkit) */
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -158,7 +154,6 @@ export const VolumeSlider = styled.input`
     cursor: pointer;
   }
 
-  /* 슬라이더 핸들 (Firefox) */
   &::-moz-range-thumb {
     width: 14px;
     height: 14px;
@@ -169,7 +164,6 @@ export const VolumeSlider = styled.input`
     cursor: pointer;
   }
 
-  /* 트랙 (Firefox) */
   &::-moz-range-track {
     height: 4px;
     border-radius: 2px;

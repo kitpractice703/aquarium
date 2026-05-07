@@ -1,9 +1,4 @@
-/** 관람 후기 모달 스타일 - 목록/상세/작성 뷰 */
 import styled from "styled-components";
-
-/* ========== [1] 목록 (List) 스타일 ========== */
-
-/** 테이블 헤더: 제목 / 평점 / 작성자 / 날짜 4열 그리드 */
 export const TableHeader = styled.div`
   display: grid;
   grid-template-columns: 1fr 120px 100px 120px;
@@ -19,7 +14,6 @@ export const TableHeader = styled.div`
   }
 `;
 
-/** 후기 아이템 행: 호버 시 배경 변경 */
 export const ReviewItem = styled.div`
   display: grid;
   grid-template-columns: 1fr 120px 100px 120px;
@@ -53,7 +47,6 @@ export const ReviewItem = styled.div`
   }
 `;
 
-/** 페이지네이션: margin-top: auto로 하단 고정 */
 export const Pagination = styled.div`
   display: flex;
   justify-content: center;
@@ -94,7 +87,6 @@ export const Pagination = styled.div`
   }
 `;
 
-/** 글쓰기 FAB 버튼: 우하단 고정, 호버 시 상승 + 글로우 */
 export const WriteBtn = styled.button`
   position: absolute;
   bottom: 30px;
@@ -117,7 +109,6 @@ export const WriteBtn = styled.button`
   }
 `;
 
-/* ========== [2] 상세 (Detail) 스타일 ========== */
 export const DetailView = styled.div`
   color: #fff;
 
@@ -154,7 +145,6 @@ export const DetailView = styled.div`
   }
 `;
 
-/* ========== [3] 작성 (Write) 스타일 ========== */
 export const WriteForm = styled.div`
   display: flex;
   flex-direction: column;
@@ -195,7 +185,6 @@ export const WriteForm = styled.div`
   }
 `;
 
-/** 액션 버튼: $outline 시 투명 배경 + 테두리 */
 export const FormActions = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -222,7 +211,6 @@ export const ActionBtn = styled.button<{ $outline?: boolean }>`
   }
 `;
 
-/** 빈 상태 메시지 */
 export const EmptyMessage = styled.div`
   padding: 40px;
   text-align: center;
@@ -230,7 +218,6 @@ export const EmptyMessage = styled.div`
   font-size: 16px;
 `;
 
-/** 별점 텍스트 (노란색) */
 export const RatingText = styled.span`
   color: #ffdd57;
 `;

@@ -1,4 +1,3 @@
-/** Header 컴포넌트 스타일 */
 import styled from "styled-components";
 
 export const HeaderWrapper = styled.header`
@@ -77,7 +76,7 @@ export const UserMenu = styled.div`
   font-size: 14px;
   color: var(--text-gray);
 
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  white-space: nowrap;
 
   span {
     cursor: pointer;
@@ -171,8 +170,6 @@ export const BookingButton = styled.button`
   }
 `;
 
-/* ──────────── 모바일 반응형 컴포넌트 ──────────── */
-
 export const HamburgerButton = styled.button<{ $isOpen: boolean }>`
   display: none;
   background: none;
@@ -196,7 +193,6 @@ export const HamburgerButton = styled.button<{ $isOpen: boolean }>`
     transition: all 0.3s ease;
   }
 
-  /* 열림 상태: X 모양 */
   ${(props) =>
     props.$isOpen &&
     `

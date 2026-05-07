@@ -15,6 +15,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 프로그램·스케줄 공개 조회 서비스
+ *
+ * 프로그램 예매 모달에서 사용하는 프로그램 목록과 날짜별 스케줄을 제공한다.
+ * 프로그램 타입(PERFORMANCE / EXPERIENCE)에 따라 조회 대상 레포지토리를 분기한다.
+ */
 @Service
 @RequiredArgsConstructor
 public class ProgramService {
@@ -23,12 +29,22 @@ public class ProgramService {
     private final PerformanceScheduleRepository performanceScheduleRepository;
     private final ExperienceScheduleRepository experienceScheduleRepository;
 
+    /** 전체 프로그램 목록 조회 (공개, 인증 불필요) */
     @Transactional(readOnly = true)
     public List<ProgramDto> getAllPrograms() {
         return programRepository.findAll().stream()
                 .map(ProgramDto::new).collect(Collectors.toList());
     }
 
+    /**
+     * 특정 프로그램의 날짜별 스케줄 조회.
+     * 프로그램 타입에 따라 performance_schedules 또는 experience_schedules를 조회한다.
+     * date가 null이면 해당 프로그램의 전체 스케줄을 반환한다.
+     *
+     * @param programId 조회할 프로그램 ID
+     * @param date      날짜 필터 (null이면 전체 조회)
+     * @return 시작 시간 오름차순 스케줄 목록
+     */
     @Transactional(readOnly = true)
     public List<ProgramScheduleDto> getSchedulesByProgramAndDate(Long programId, LocalDate date) {
         Program program = programRepository.findById(programId)

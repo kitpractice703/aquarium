@@ -1,4 +1,3 @@
-/** 관람 예매 모달 스타일 - 달력/인원/확인 단계 */
 import styled from "styled-components";
 
 export const StepTitle = styled.h3`
@@ -8,7 +7,6 @@ export const StepTitle = styled.h3`
   text-align: center;
 `;
 
-/* Step 1: 달력 그리드 (7열) */
 export const CalendarGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -23,7 +21,6 @@ export const DayHeader = styled.div`
   margin-bottom: 10px;
 `;
 
-/** 날짜 버튼: 선택 시 시안 배경, 비활성 시 회색 + not-allowed */
 export const DateBtn = styled.button<{
   $selected: boolean;
   $disabled: boolean;
@@ -47,7 +44,6 @@ export const DateBtn = styled.button<{
   }
 `;
 
-/** 휴관일 표시 라벨 */
 export const ClosedLabel = styled.span`
   position: absolute;
   bottom: 3px;
@@ -58,7 +54,6 @@ export const ClosedLabel = styled.span`
   white-space: nowrap;
 `;
 
-/* Step 2: 시간 선택 (현재 미사용, 종일권으로 대체) */
 export const TimeGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -82,7 +77,6 @@ export const TimeBtn = styled.button<{ $selected: boolean }>`
   }
 `;
 
-/* Step 3: 인원 선택 카운터 */
 export const CounterRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -135,7 +129,6 @@ export const CounterRow = styled.div`
   }
 `;
 
-/* Step 4: 결과 요약 박스 */
 export const SummaryBox = styled.div`
   background: rgba(255, 255, 255, 0.05);
   padding: 25px;

@@ -117,7 +117,6 @@ export const EmptyRow = styled.tr`
   }
 `;
 
-// Modal
 export const Overlay = styled.div`
   position: fixed;
   inset: 0;

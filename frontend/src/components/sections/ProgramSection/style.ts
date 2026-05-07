@@ -156,7 +156,6 @@ export const ScheduleItem = styled.div`
     min-width: 70px;
     text-align: center;
 
-    /* 예매 가능: 시안 배지 */
     &.open {
       background: rgba(0, 242, 255, 0.1);
       color: var(--accent-cyan);
@@ -168,14 +167,12 @@ export const ScheduleItem = styled.div`
       }
     }
 
-    /* 마감: 빨간 배지 */
     &.closed {
       background: rgba(255, 107, 107, 0.1);
       color: #ff6b6b;
       border: 1px solid #ff6b6b;
       cursor: default;
     }
-    /* 준비 중: 회색 배지 */
     &.ready {
       background: rgba(255, 255, 255, 0.1);
       color: #aaa;

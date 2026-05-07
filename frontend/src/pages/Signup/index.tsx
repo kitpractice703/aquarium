@@ -1,3 +1,9 @@
+/**
+ * 회원가입 페이지
+ *
+ * 이름·이메일·비밀번호·전화번호를 입력받아 회원가입을 처리한다.
+ * 폼 상태와 유효성 검사는 useSignup 훅에서 관리한다.
+ */
 import * as S from "./style";
 import { useSignup } from "./hooks/useSignup";
 
@@ -72,6 +78,7 @@ const Signup = () => {
           <S.SubmitButton type="submit">가입하기</S.SubmitButton>
         </S.Form>
 
+        {/* 이미 계정이 있는 사용자를 위한 로그인 모달 바로 열기 */}
         <S.LoginLink>
           이미 계정이 있으신가요? <span onClick={openLoginModal}>로그인</span>
         </S.LoginLink>

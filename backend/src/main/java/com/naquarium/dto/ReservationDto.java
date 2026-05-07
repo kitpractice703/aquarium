@@ -7,6 +7,17 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * 사용자 마이페이지 예약 조회 응답 DTO
+ *
+ * 입장권 예약과 프로그램 예약 두 가지를 단일 형식으로 변환한다.
+ * 연관 엔티티 로딩 실패(LazyLoading 예외)에 대비한 방어 로직을 포함한다.
+ *
+ * 프로그램 정보 조회 우선순위:
+ *   1. reservation.program (직접 참조)
+ *   2. reservation.schedule.program (레거시 데이터 호환)
+ *   3. 없으면 "Naquarium 관람권" (입장권) 기본값
+ */
 @Getter
 public class ReservationDto {
     private static final Logger log = LoggerFactory.getLogger(ReservationDto.class);
