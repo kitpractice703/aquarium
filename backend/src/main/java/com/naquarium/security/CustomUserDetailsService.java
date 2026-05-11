@@ -1,4 +1,4 @@
-package com.naquarium.service;
+package com.naquarium.security;
 
 import com.naquarium.entity.User;
 import com.naquarium.repository.UserRepository;

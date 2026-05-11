@@ -1,4 +1,4 @@
-package com.naquarium.config;
+package com.naquarium.security;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

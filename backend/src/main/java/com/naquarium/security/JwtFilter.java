@@ -1,4 +1,4 @@
-package com.naquarium.config;
+package com.naquarium.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

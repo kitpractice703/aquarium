@@ -1,6 +1,6 @@
 package com.naquarium.controller;
 
-import com.naquarium.config.JwtProvider;
+import com.naquarium.security.JwtProvider;
 import com.naquarium.dto.LoginRequest;
 import com.naquarium.dto.SignupRequest;
 import com.naquarium.dto.UserInfoDto;

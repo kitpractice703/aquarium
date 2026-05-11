@@ -1,6 +1,9 @@
 package com.naquarium.config;
 
-import com.naquarium.service.CustomOAuth2UserService;
+import com.naquarium.security.CustomOAuth2UserService;
+import com.naquarium.security.JwtFilter;
+import com.naquarium.security.JwtProvider;
+import com.naquarium.security.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

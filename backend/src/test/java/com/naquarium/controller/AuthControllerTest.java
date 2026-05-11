@@ -1,6 +1,6 @@
 package com.naquarium.controller;
 
-import com.naquarium.config.JwtProvider;
+import com.naquarium.security.JwtProvider;
 import com.naquarium.config.TestSecurityConfig;
 import com.naquarium.entity.User;
 import com.naquarium.repository.UserRepository;

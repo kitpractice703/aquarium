@@ -1,4 +1,4 @@
-package com.naquarium.config;
+package com.naquarium.security;
 
 import com.naquarium.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
